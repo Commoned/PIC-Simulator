@@ -1,0 +1,91 @@
+                    00001           ;TPicSim15
+                    00002           ;Programm zum Test des 16F84-Simulators.
+                    00003           ;Es wird die richtige Funktionsweise des Portlatch getestet
+                    00004           ;
+                    00005           ;(c) St. Lehmann  
+                    00006           ;14.05.2020 
+                    00007           
+                    00008           list c=132          ;Zeilenlänge im LST auf 132 Zeichen setzen
+                    00009             
+                    00010           ;Definition einiger Symbole
+                    00011           indirect equ 0
+                    00012           pcl      equ 02h
+                    00013           status   equ 03h
+                    00014           fsr      equ 04h
+                    00015           ra       equ 05h
+                    00016           rb       equ 06h
+                    00017           pclath   equ 0ah
+                    00018           intcon   equ 0bh
+                    00019           rp0      equ 5               ;Bankumschaltbit
+                    00020           
+                    00021           ;Definition des Prozessors
+                    00022           device 16F84
+                    00023           ;Festlegen des Codebeginns
+                    00024           org 0
+                    00025  start    
+0000 2810           00026           goto main
+                    00027             
+                    00028  init     
+0001 1683           00029           bsf   status,rp0    ;auf Bank 1 umschalten
+0002 300E           00030           movlw 0Eh           ;Port A wird auf xxxo iiio eingestellt
+0003 0085           00031           movwf ra            ;Trisregister Port A beschreiben
+0004 300F           00032           movlw 0Fh           ;Port B wird auf oooo iiii eingestellt
+0005 0086           00033           movwf rb            ;Trisregister Port B beschreiben
+0006 1283           00034           bcf   status,rp0    ;zurück auf Bank0
+0007 0008           00035           return
+                    00036           
+                    00037  trisRA   
+0008 1683           00038           bsf   status,rp0
+0009 0085           00039           movwf ra
+000A 1283           00040           bcf   status,rp0
+000B 0008           00041           return
+                    00042             
+                    00043  trisRb   
+000C 1683           00044           bsf   status,rp0
+000D 0086           00045           movwf rb
+000E 1283           00046           bcf   status,rp0
+000F 0008           00047           return
+                    00048             
+                    00049  main       
+0010 2001           00050           call  init          ;Ports initialisieren
+0011 1405           00051           bsf   ra,0          ;eine 1 an RA0 ausgeben
+0012 0000           00052           nop
+0013 1005           00053           bcf   ra,0          ;eine 0 an RA0 ausgeben
+0014 0000           00054           nop
+0015 1386           00055           bcf   rb,7          ;eine 0 an RB7 ausgeben
+0016 0000           00056           nop
+0017 1786           00057           bsf   rb,7          ;eine 1 an RB7 ausgeben
+0018 0000           00058           nop
+                    00059             
+                    00060           ;Funktionsprüfung an RA0         
+0019 300F           00061           movlw 0Fh           ;RA0 auf Eingang stellen
+001A 2008           00062           call  trisRA
+001B 0000           00063           nop
+001C 0000           00064           nop
+001D 0000           00065           nop
+001E 1405           00066           bsf   ra,0          ;nur das interne Latch wird beschrieben
+001F 0000           00067           nop                 ;der Pegel an RA0 ändert sich noch nicht.
+0020 0000           00068           nop
+0021 0000           00069           nop
+0022 300E           00070           movlw 0Eh           ;jetzt wird RA0 wieder auf Ausgang gestellt
+0023 2008           00071           call  trisRA        ;und die 1 kommt sofort am Pin RA0 an.
+0024 0000           00072           nop
+0025 0000           00073           nop
+0026 0000           00074           nop
+                    00075           
+                    00076           ;Funktionsprüfung an RB7
+0027 308F           00077           movlw 08Fh         ;RB7 auf Eingang wechseln
+0028 200C           00078           call  trisRB
+0029 0000           00079           nop
+002A 0000           00080           nop
+002B 1386           00081           bcf   rb,7          ;RB7 intern auf 0 setzen, Pin bleibt unverändert
+002C 0000           00082           nop
+002D 0000           00083           nop
+002E 300F           00084           movlw 0Fh           ;RB7 wieder auf Ausgang setzen, die 0 erscheint
+002F 200C           00085           call  trisRB        ;sofort am Pin RB7
+0030 0000           00086           nop
+0031 0000           00087           nop
+                    00088           
+                    00089  ende     
+0032 2832           00090           goto ende
+                    00091             
