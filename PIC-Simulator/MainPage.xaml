@@ -9,6 +9,7 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
+        <TextBlock FontFamily="Comic Sans MS" FontSize="50">PIC-Simulator</TextBlock>
 
     </Grid>
 </Page>
