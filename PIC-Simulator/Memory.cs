@@ -27,7 +27,31 @@ namespace PIC_Simulator
         public short stackpointer = 7;
         public short[] stack = new short[7];
 
-        
+        public Memory()
+        {
+            initMem();
+        }
+
+        public void initMem()
+        {
+            memory[2] = 0;
+            memory[3] = 12;
+            memory[10] = 0;
+            memory[11] = 0;
+            memory[0x81] = 0xFF;
+            memory[0x83] = 0x18;
+            memory[0x85] = 0x1F;
+            memory[0x86] = 0xFF;
+            memory[0x88] = 0x0;
+            memory[0x8A] = 0x0;
+            memory[0x8B] = 0x0;
+        }
+
+        public void resetMem()
+        {
+            initMem();
+            // To be continued...
+        }
     }
 
 

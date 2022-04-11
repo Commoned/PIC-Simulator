@@ -22,8 +22,10 @@ namespace PIC_Simulator
     /// </summary>
     public sealed partial class MainPage : Page
     {
+        Memory memory;
         public MainPage()
         {
+            memory = new Memory();
             this.InitializeComponent();
             
         }
