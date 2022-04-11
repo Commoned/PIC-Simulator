@@ -22,6 +22,7 @@ namespace PIC_Simulator
     /// </summary>
     public sealed partial class MainPage : Page
     {
+        private FileReader filereader;
         public MainPage()
         {
             this.InitializeComponent();
