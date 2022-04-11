@@ -25,6 +25,7 @@ namespace PIC_Simulator
         public MainPage()
         {
             this.InitializeComponent();
+            
         }
     }
 }
