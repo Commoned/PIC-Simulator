@@ -27,6 +27,7 @@ namespace PIC_Simulator
         {
             
             this.InitializeComponent();
+            
         }
 
         private void openButton_Click(object sender, RoutedEventArgs e)
