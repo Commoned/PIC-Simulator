@@ -15,16 +15,17 @@ namespace PIC_Simulator
         public FileReader()
         {
             picker = new FileOpenPicker();
-           
+
 
         }
 
         public Line[] GetLines()
         {
             var file = picker.PickSingleFileAsync().GetResults();
-            
+
 
 
             return lines;
         }
+    }
 }
