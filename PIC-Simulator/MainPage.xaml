@@ -20,12 +20,18 @@
             <ColumnDefinition/>
 
         </Grid.ColumnDefinitions>
-        <MenuBar Grid.Row="0" Grid.ColumnSpan="3" Background="Gray">
-            <MenuBarItem Width="100px" FontSize="15px" Title="Datei" />
+        <MenuBar  Grid.Row="0" Grid.ColumnSpan="3" Background="Gray">
+            <MenuBarItem Width="auto" FontSize="15px" Title="Data">
+                <MenuFlyoutItem x:Name="openButton" Text="Open file..." Click="openButton_Click">
+                    
+                </MenuFlyoutItem>
+            </MenuBarItem>
+                
+            
 
 
         </MenuBar>
-        <TextBlock Grid.Row="1" Grid.Column="1" FontFamily="Comic Sans MS" FontSize="50">PIC-Simulator</TextBlock>
+        <TextBlock x:Name="pic_title" Grid.Row="1" Grid.Column="1" FontFamily="Comic Sans MS" FontSize="50">PIC-Simulator</TextBlock>
         
     </Grid>
 </Page>

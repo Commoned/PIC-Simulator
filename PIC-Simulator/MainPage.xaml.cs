@@ -24,7 +24,13 @@ namespace PIC_Simulator
     {
         public MainPage()
         {
+            
             this.InitializeComponent();
+        }
+
+        private void openButton_Click(object sender, RoutedEventArgs e)
+        {
+            
         }
     }
 }
