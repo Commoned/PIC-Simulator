@@ -33,5 +33,15 @@ namespace PIC_Simulator
         {
             
         }
+
+        private void settingsButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (!StandardPopup.IsOpen) { StandardPopup.IsOpen = true; }
+        }
+
+        private void settings_close_Click(object sender, RoutedEventArgs e)
+        {
+            if (StandardPopup.IsOpen) { StandardPopup.IsOpen = false; }
+        }
     }
 }
