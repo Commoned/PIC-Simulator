@@ -9,7 +9,23 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
-        <TextBlock FontFamily="Comic Sans MS" FontSize="50">PIC-Simulator</TextBlock>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.1*"/>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0.1*" />
+            <ColumnDefinition/>
+            <ColumnDefinition/>
 
+        </Grid.ColumnDefinitions>
+        <MenuBar Grid.Row="0" Grid.ColumnSpan="3" Background="Gray">
+            <MenuBarItem Width="100px" FontSize="15px" Title="Datei" />
+
+
+        </MenuBar>
+        <TextBlock Grid.Row="1" Grid.Column="1" FontFamily="Comic Sans MS" FontSize="50">PIC-Simulator</TextBlock>
+        
     </Grid>
 </Page>
