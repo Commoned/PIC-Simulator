@@ -22,12 +22,12 @@ namespace PIC_Simulator
     /// </summary>
     public sealed partial class MainPage : Page
     {
+        Memory memory;
         private FileReader filereader;
         public MainPage()
         {
-            
+            memory = new Memory();
             this.InitializeComponent();
-            
         }
 
         private void openButton_Click(object sender, RoutedEventArgs e)
