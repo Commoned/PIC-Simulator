@@ -21,17 +21,40 @@
 
         </Grid.ColumnDefinitions>
         <MenuBar  Grid.Row="0" Grid.ColumnSpan="3" Background="Gray">
-            <MenuBarItem Width="auto" FontSize="15px" Title="Data">
+            <MenuBarItem Width="auto"  Title="Data">
                 <MenuFlyoutItem x:Name="openButton" Text="Open file..." Click="openButton_Click">
+                
+                </MenuFlyoutItem>
+                <MenuFlyoutItem x:Name="settingsButton" Text="Settings..." Click="settingsButton_Click">
                     
                 </MenuFlyoutItem>
             </MenuBarItem>
+            
                 
             
 
 
         </MenuBar>
         <TextBlock x:Name="pic_title" Grid.Row="1" Grid.Column="1" FontFamily="Comic Sans MS" FontSize="50">PIC-Simulator</TextBlock>
-        
+        <Grid>
+            <Grid.RowDefinitions>
+                
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                
+            </Grid.ColumnDefinitions>
+        </Grid>
+
+            <Popup   x:Name="StandardPopup">
+            <Border BorderBrush="{StaticResource ApplicationForegroundThemeBrush}" 
+            Background="{StaticResource ApplicationPageBackgroundThemeBrush}"
+            BorderThickness="2" Margin="10,10" Width="500" Height="500">
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <TextBlock Text="Simple Popup" FontSize="24.667" HorizontalAlignment="Center"/>
+                    <Button Content="Close" Click="settings_close_Click" HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Border>
+        </Popup>
     </Grid>
+    
 </Page>
