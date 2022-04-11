@@ -9,6 +9,29 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.1*"/>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0.1*" />
+            <ColumnDefinition/>
+            <ColumnDefinition/>
 
+        </Grid.ColumnDefinitions>
+        <MenuBar  Grid.Row="0" Grid.ColumnSpan="3" Background="Gray">
+            <MenuBarItem Width="auto" FontSize="15px" Title="Data">
+                <MenuFlyoutItem x:Name="openButton" Text="Open file..." Click="openButton_Click">
+                    
+                </MenuFlyoutItem>
+            </MenuBarItem>
+                
+            
+
+
+        </MenuBar>
+        <TextBlock x:Name="pic_title" Grid.Row="1" Grid.Column="1" FontFamily="Comic Sans MS" FontSize="50">PIC-Simulator</TextBlock>
+        
     </Grid>
 </Page>

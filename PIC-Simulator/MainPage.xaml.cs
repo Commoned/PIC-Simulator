@@ -25,7 +25,13 @@ namespace PIC_Simulator
         private FileReader filereader;
         public MainPage()
         {
+            
             this.InitializeComponent();
+        }
+
+        private void openButton_Click(object sender, RoutedEventArgs e)
+        {
+            
         }
     }
 }
