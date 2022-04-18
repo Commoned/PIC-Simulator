@@ -35,7 +35,7 @@ namespace PIC_Simulator
         public void initMem()
         {
             memory[2] = 0;
-            memory[3] = 12;
+            memory[3] = 18;
             memory[10] = 0;
             memory[11] = 0;
             memory[0x81] = 0xFF;

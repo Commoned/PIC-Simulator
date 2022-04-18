@@ -11,6 +11,7 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="0.1*"/>
+            <RowDefinition Height="0.15*"/>
             <RowDefinition/>
             <RowDefinition/>
         </Grid.RowDefinitions>
@@ -23,27 +24,32 @@
         <MenuBar  Grid.Row="0" Grid.ColumnSpan="3" Background="Gray">
             <MenuBarItem Width="auto"  Title="Data">
                 <MenuFlyoutItem x:Name="openButton" Text="Open file..." Click="openButton_Click">
-                
+
                 </MenuFlyoutItem>
                 <MenuFlyoutItem x:Name="settingsButton" Text="Settings..." Click="settingsButton_Click">
-                    
+
                 </MenuFlyoutItem>
             </MenuBarItem>
-            
-                
-            
-
-
         </MenuBar>
+
+        <ItemsControl Grid.Row="2" Grid.Column="1" ItemsSource="{Binding Array}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock Width="100" Text="{Binding Col0}" />
+                        <TextBlock Width="100" Text="{Binding Col1}" />
+                        <TextBlock Width="100" Text="{Binding Col2}" />
+                        <TextBlock Width="100" Text="{Binding Col3}" />
+                        <TextBlock Width="100" Text="{Binding Col4}" />
+                        <TextBlock Width="100" Text="{Binding Col5}" />
+                        <TextBlock Width="100" Text="{Binding Col6}" />
+                        <TextBlock Width="100" Text="{Binding Col7}" />
+                    </StackPanel>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
         <TextBlock x:Name="pic_title" Grid.Row="1" Grid.Column="1" FontFamily="Comic Sans MS" FontSize="50">PIC-Simulator</TextBlock>
-        <Grid>
-            <Grid.RowDefinitions>
-                
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                
-            </Grid.ColumnDefinitions>
-        </Grid>
+        
 
             <Popup   x:Name="StandardPopup">
             <Border BorderBrush="{StaticResource ApplicationForegroundThemeBrush}" 

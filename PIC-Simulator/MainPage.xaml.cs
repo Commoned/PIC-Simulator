@@ -26,13 +26,25 @@ namespace PIC_Simulator
         private FileReader filereader;
         public MainPage()
         {
+            this.DataContext = this;
             memory = new Memory();
             this.InitializeComponent();
         }
 
+        public short[] Array
+        {
+            get { return memory.memory; }
+            
+        }
+
+        
+
         private void openButton_Click(object sender, RoutedEventArgs e)
         {
-            
+            // Daniels stuff
+            memory.initMem();
+
+
         }
 
         private void settingsButton_Click(object sender, RoutedEventArgs e)
