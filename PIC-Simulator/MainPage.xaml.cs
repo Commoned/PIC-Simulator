@@ -23,11 +23,13 @@ namespace PIC_Simulator
     public sealed partial class MainPage : Page
     {
         Memory memory;
+        Decoder decoder;
         private FileReader filereader;
         public MainPage()
         {
             this.DataContext = this;
             memory = new Memory();
+            decoder = new Decoder();
             this.InitializeComponent();
         }
 
