@@ -24,6 +24,8 @@ namespace PIC_Simulator
         public static byte EEADR = 0x09;
         public static byte PCLATH = 0xA;
         public static byte INTCON = 0x0B;
+        public static byte W = 0x10;
+
         
         public short[] eeprom = new short[1024];
         public short[] memoryb1 = new short[128];
@@ -47,12 +49,37 @@ namespace PIC_Simulator
         {
             get { return memoryb1; }
             set {
-                if (value != this.memoryb1)
-                {
-                    memoryb1 = value;
-                    NotifyPropertyChanged();
-                }
+                 NotifyPropertyChanged("Memoryb1");
             }
+        }
+
+        public short Pcl
+        {
+            get { return memoryb1[0x02]; }
+            set { 
+                memoryb1[0x02] = value;
+                NotifyPropertyChanged("Pcl");
+            }
+        }
+
+        public void push(short value)
+        {
+            if(stackpointer != 0)
+            {
+                stack[stackpointer] = value;
+                stackpointer--;
+            }
+            else
+            {
+                stack[stackpointer] = value;
+                stackpointer = 7;
+            }
+        }
+
+        public short pop()
+        {
+            stackpointer++;
+            return stack[stackpointer-1];
         }
 
         public void initMem()

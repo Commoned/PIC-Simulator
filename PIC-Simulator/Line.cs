@@ -8,11 +8,11 @@ namespace PIC_Simulator
 {
     internal class Line
     {
-        private int linenumber;
-        private int instruction;
-        private int codeline;
+        private short linenumber;
+        public short instruction;
+        public short codeline;
         private string readable;
-        public Line(int linenumber,int instruction, int codeline, string readable)
+        public Line(short linenumber,short codeline, short instruction, string readable)
         {
             this.linenumber = linenumber;
             this.instruction = instruction;
@@ -26,20 +26,22 @@ namespace PIC_Simulator
             set { readable = value; }
         }
 
-        public int Linenumber
+        public short Linenumber
         {
             get { return linenumber; }
             set { linenumber = value; }
         }
 
-        public int Instruction
+        public string Instruction
         {
-            get { return instruction; }
-            set
-                { linenumber = value; }
+            get {
+                
+                return Convert.ToString(this.instruction,16).ToUpper(); 
+            }
+            set { linenumber = Convert.ToInt16(value); }
         }
 
-        public int Codeline
+        public short Codeline
         {
             get { return codeline; }
             set { codeline = value; }

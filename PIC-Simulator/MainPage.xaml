@@ -32,7 +32,7 @@
         </MenuBar>
 
         <StackPanel x:Name="Control_Stack" Width="60" HorizontalAlignment="Left" Background="Gray" Grid.Row="1" Grid.RowSpan="3">
-            <Button x:Name="Start_Button" Background="Green" Width="{Binding ActualWidth, ElementName=Control_Stack}" Height="{Binding ActualWidth, ElementName=Control_Stack}" FontSize="30" Content="&#x25B6;"></Button>
+            <Button x:Name="Start_Button" Click="Start_Button_Click" Background="Green" Width="{Binding ActualWidth, ElementName=Control_Stack}" Height="{Binding ActualWidth, ElementName=Control_Stack}" FontSize="30" Content="&#x25B6;"></Button>
             <Button x:Name="Skip_Button" Content="&#x21B7;" FontSize="30" Background="Gray" Width="{Binding ActualWidth, ElementName=Control_Stack}" Height="{Binding ActualWidth, ElementName=Control_Stack}"/>
         </StackPanel>
         <TextBlock FontSize="36" Grid.Row="2" Grid.Column="1" VerticalAlignment="Top" Text="BANK1"/>
@@ -77,7 +77,7 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <StackPanel Orientation="Horizontal">
+                        <StackPanel  Orientation="Horizontal" >
                             <Button Content="X"></Button>
                             <TextBlock Margin="0,0,10,0" Text="{Binding Linenumber}"/>
                             <TextBlock Margin="0,0,10,0" Text="{Binding Codeline}"/>

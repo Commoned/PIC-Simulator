@@ -10,6 +10,7 @@ namespace PIC_Simulator
     internal class Processor
     {
         public List<Line> lines = new List<Line>();
+        private Memory memory;
         string test =
 @"
                     00001           ;TPicSim1
@@ -47,7 +48,7 @@ namespace PIC_Simulator
             
             
             
-        public Processor()
+        public Processor(Memory memory)
         {
             var test2 = test.Split('\n');
             foreach(string s in test2)
@@ -71,12 +72,62 @@ namespace PIC_Simulator
                 {
                     var beginnums = Regex.Match(s,"[0-9A-F]{4}\\s[0-9A-F]{4}").Value;
                     var splits = beginnums.Split(' ');
-                    int intValue = int.Parse(splits[1], System.Globalization.NumberStyles.HexNumber);
+                    short intValue = short.Parse(splits[1], System.Globalization.NumberStyles.HexNumber);
                     lines.Add(new Line(num,Convert.ToInt16(splits[0]),intValue,strings[1]));
                 }
                 
             }
+            this.memory = memory;
+        }
 
+        public void Run()
+        {
+            
+            foreach (Line line in lines)
+            {
+                if(line.instruction != 0)
+                {
+                   Decode(line.instruction);
+                   memory.Pcl++;
+                   
+                }
+            }
+        }
+
+        public void Decode(short toDecode)
+        {
+            ushort masklower = 0b_1111_1111;
+            ushort maskhigher = 0xFF00;
+
+            short instruction = (short)(toDecode & maskhigher);
+            instruction = (short)(instruction >> 8);
+            short value = (short)(toDecode & masklower) ;
+
+            switch (instruction)
+            {
+                case 0x30: //movlw
+                    movlw(value);
+                    break;
+                case 0x39:
+                    addlw(value);
+                    break;
+            }
+                
+        }
+
+        public void movlw(short value)
+        {
+
+            memory.memoryb1[0x10] = value;
+            
+            memory.Memoryb1 = null; // STUPID BESSERE LÖSUNG SUCHEN
+            
+        }
+
+        public void addlw(short value)
+        {
+            memory.memoryb1[0x10] = (short)(memory.memoryb1[0x10] + value);
+            memory.Memoryb1 = null;
         }
 
 

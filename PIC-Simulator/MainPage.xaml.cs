@@ -29,7 +29,7 @@ namespace PIC_Simulator
         {
             this.DataContext = this;
             memory = new Memory();
-            processor = new Processor();
+            processor = new Processor(memory);
             DataContext = memory;
             
             this.InitializeComponent();
@@ -57,5 +57,13 @@ namespace PIC_Simulator
         {
             if (StandardPopup.IsOpen) { StandardPopup.IsOpen = false; }
         }
+
+        private void Start_Button_Click(object sender, RoutedEventArgs e)
+        {
+            processor.Run();
+            
+        }
+
+
     }
 }
