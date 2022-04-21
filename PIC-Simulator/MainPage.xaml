@@ -10,44 +10,45 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="0.1*"/>
-            <RowDefinition Height="0.15*"/>
+            <RowDefinition Height="45"/>
+            <RowDefinition Height="60"/>
             <RowDefinition/>
             <RowDefinition/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="0.1*" />
+            <ColumnDefinition Width="50" />
             <ColumnDefinition/>
             <ColumnDefinition/>
 
         </Grid.ColumnDefinitions>
-        <MenuBar  Grid.Row="0" Grid.ColumnSpan="3" Background="Gray">
+        <MenuBar VerticalAlignment="Stretch" Height="45"  Grid.Row="0" Grid.ColumnSpan="3" Background="Gray">
             <MenuBarItem Width="auto"  Title="Data">
                 <MenuFlyoutItem x:Name="openButton" Text="Open file..." Click="openButton_Click">
 
                 </MenuFlyoutItem>
                 <MenuFlyoutItem x:Name="settingsButton" Text="Settings..." Click="settingsButton_Click">
-
                 </MenuFlyoutItem>
             </MenuBarItem>
         </MenuBar>
 
-        <ItemsControl Grid.Row="2" Grid.Column="1" ItemsSource="{Binding Array}">
+        <StackPanel x:Name="Control_Stack" Width="60" HorizontalAlignment="Left" Background="Gray" Grid.Row="1" Grid.RowSpan="3">
+            <Button x:Name="Start_Button" Background="Green" Width="{Binding ActualWidth, ElementName=Control_Stack}" Height="{Binding ActualWidth, ElementName=Control_Stack}" FontSize="30" Content="&#x25B6;"></Button>
+            <Button x:Name="Skip_Button" Content="&#x21B7;" FontSize="30" Background="Gray" Width="{Binding ActualWidth, ElementName=Control_Stack}" Height="{Binding ActualWidth, ElementName=Control_Stack}"/>
+        </StackPanel>
+
+        <GridView x:Name="items" ItemsSource="x:Bind memory.memory" Background="Gray" Grid.Row="2" Grid.Column="1" >
+            <GridView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <ItemsWrapGrid MaximumRowsOrColumns="8" Orientation="Horizontal"/>
+                </ItemsPanelTemplate>
+            </GridView.ItemsPanel>
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel Orientation="Vertical">
-                        <TextBlock Width="100" Text="{Binding Col0}" />
-                        <TextBlock Width="100" Text="{Binding Col1}" />
-                        <TextBlock Width="100" Text="{Binding Col2}" />
-                        <TextBlock Width="100" Text="{Binding Col3}" />
-                        <TextBlock Width="100" Text="{Binding Col4}" />
-                        <TextBlock Width="100" Text="{Binding Col5}" />
-                        <TextBlock Width="100" Text="{Binding Col6}" />
-                        <TextBlock Width="100" Text="{Binding Col7}" />
-                    </StackPanel>
+                    <TextBlock Width="50" Height="50" Text="{Binding memory}" Margin="0,0,5,5" />
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
-        </ItemsControl>
+            
+        </GridView>
         <TextBlock x:Name="pic_title" Grid.Row="1" Grid.Column="1" FontFamily="Comic Sans MS" FontSize="50">PIC-Simulator</TextBlock>
         
 

@@ -30,14 +30,11 @@ namespace PIC_Simulator
             this.DataContext = this;
             memory = new Memory();
             decoder = new Decoder();
+            
             this.InitializeComponent();
         }
 
-        public short[] Array
-        {
-            get { return memory.memory; }
-            
-        }
+       
 
         
 
