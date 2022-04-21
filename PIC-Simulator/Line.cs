@@ -19,5 +19,34 @@ namespace PIC_Simulator
             this.codeline = codeline;  
             this.readable = readable;   
         }
+
+        public string Readable
+        {
+            get { return readable; }
+            set { readable = value; }
+        }
+
+        public int Linenumber
+        {
+            get { return linenumber; }
+            set { linenumber = value; }
+        }
+
+        public int Instruction
+        {
+            get { return instruction; }
+            set
+                { linenumber = value; }
+        }
+
+        public int Codeline
+        {
+            get { return codeline; }
+            set { codeline = value; }
+
+        }
+
+        
+        
     }
 }

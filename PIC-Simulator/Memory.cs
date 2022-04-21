@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace PIC_Simulator
 {
     
-    internal class Memory
+    public class Memory : INotifyPropertyChanged
     {
         public static byte PORTA = 0x05;
         public static byte PORTB = 0x06;
@@ -23,7 +25,9 @@ namespace PIC_Simulator
         public static byte PCLATH = 0xA;
         public static byte INTCON = 0x0B;
         
-        public short[] memory = new short[1024];
+        public short[] eeprom = new short[1024];
+        public short[] memoryb1 = new short[128];
+        public short[] memoryb2 = new short[128];//Beide Bänke in einem Array maybe
         public short stackpointer = 7;
         public short[] stack = new short[7];
 
@@ -32,19 +36,38 @@ namespace PIC_Simulator
             initMem();
         }
 
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+
+        public short[] Memoryb1
+        {
+            get { return memoryb1; }
+            set {
+                if (value != this.memoryb1)
+                {
+                    memoryb1 = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
         public void initMem()
         {
-            memory[2] = 0;
-            memory[3] = 18;
-            memory[10] = 0;
-            memory[11] = 0;
-            memory[0x81] = 0xFF;
-            memory[0x83] = 0x18;
-            memory[0x85] = 0x1F;
-            memory[0x86] = 0xFF;
-            memory[0x88] = 0x0;
-            memory[0x8A] = 0x0;
-            memory[0x8B] = 0x0;
+            memoryb1[2] = 0;
+            memoryb1[3] = 18;
+            memoryb1[10] = 0;
+            memoryb1[11] = 0;
+            memoryb2[1] = 0xFF;
+            memoryb2[3] = 0x18;
+            memoryb2[5] = 0x1F;
+            memoryb2[6] = 0xFF;
+            memoryb2[8] = 0x0;
+            memoryb2[0x0A] = 0x0;
+            memoryb2[0x0B] = 0x0;
         }
 
         public void resetMem()
