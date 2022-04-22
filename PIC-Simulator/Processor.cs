@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
+using Windows.UI.Xaml;
 
 namespace PIC_Simulator
 {
@@ -46,12 +47,14 @@ namespace PIC_Simulator
                     00029             
 
 ";
-        
-            
-            
-            
+        public DispatcherTimer Clock = new DispatcherTimer();
+
+
+
         public Processor(Memory memory)
         {
+            Clock.Tick += Clock_Tick;
+            this.Clock.Interval = new TimeSpan(20);
             short intValue = 0;
             string[] splits = { };
             var test2 = test.Split('\n');
@@ -87,20 +90,19 @@ namespace PIC_Simulator
             this.memory = memory;
         }
 
-        public void Run()
+        private void Clock_Tick(object sender, object e)
         {
-            var lastinst = runlines.Last();
-
-            for(memory.Pcl = 0; memory.Pcl<= lastinst.codeline; memory.Pcl++)
-            {
-                var line = runlines[memory.Pcl];
-                if (line.instruction != 0)
-                {
-                    Decode(line.instruction);
-                }
-            }
-            
+            Step();
         }
+
+        public void Step()
+        {
+            Line line = runlines[memory.Pcl];
+            this.Decode(line.instruction);
+            memory.Pcl++;
+        }
+
+       
 
         public void Decode(short toDecode)
         {
@@ -118,6 +120,9 @@ namespace PIC_Simulator
                     break;
                 case 0x39: //andlw
                     andlw();
+                    break;
+                case 0x28:
+                    Goto(value);
                     break;
             }
                 
@@ -161,6 +166,11 @@ namespace PIC_Simulator
         public void xorlw()
         {
 
+        }
+
+        public void Goto(short value)
+        {
+            memory.Pcl = value;
         }
     }
 }

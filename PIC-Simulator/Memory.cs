@@ -6,6 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace PIC_Simulator
 {
     
@@ -25,7 +26,7 @@ namespace PIC_Simulator
         public static byte PCLATH = 0xA;
         public static byte INTCON = 0x0B;
         public static byte W = 0x10;
-
+        
         
         public short[] eeprom = new short[1024];
         public short[] memoryb1 = new short[128];
@@ -37,18 +38,33 @@ namespace PIC_Simulator
         {
             initMem();
         }
-
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler PropertyChanged = delegate { };
+        
         private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
         {
+            
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            
         }
 
+        
 
-        public short[] Memoryb1
+       
+
+        public string[] Memoryb1
         {
-            get { return memoryb1; }
+            get { 
+                string[] ret = new string[memoryb1.Length];
+                int index = 0;
+                foreach(var item in memoryb1)
+                {
+                    ret[index] = Convert.ToString(item, 16).ToUpper();
+                    index++;
+                }
+                return ret;
+            }
             set {
+                
                  NotifyPropertyChanged("Memoryb1");
             }
         }
