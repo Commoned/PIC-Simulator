@@ -102,19 +102,7 @@ namespace PIC_Simulator
             memory.Pcl++;
         }
 
-        public void Run()
-        {
-            var lastinst = runlines.Last();
-
-            for(memory.Pcl = 0; memory.Pcl<= lastinst.codeline; memory.Pcl++)
-            {
-                var line = runlines[memory.Pcl];
-                if (line.instruction != 0)
-                {
-                    Decode(line.instruction);
-                }
-            }
-        }
+       
 
         public void Decode(short toDecode)
         {
