@@ -20,38 +20,6 @@ namespace PIC_Simulator
             
         public Processor(Memory memory)
         {
-            short intValue = 0;
-            string[] splits = { };
-            var test2 = test.Split('\n');
-            foreach(string s in test2)
-            {
-                short num;
-                try
-                {
-                    num = Convert.ToInt16(Regex.Match(s, "\\s[0-9]{5}").Value.Trim());
-                }
-                catch { continue; }
-
-                var strings = Regex.Split(s, "[0-9]{5}");
-
-
-                Regex.Match(s,"");
-                if (s.StartsWith(' '))
-                {
-                    lines.Add(new Line(num,0,0, strings[1]));
-                }
-                else
-                {
-                    var beginnums = Regex.Match(s,"[0-9A-F]{4}\\s[0-9A-F]{4}").Value;
-                    splits = beginnums.Split(' ');
-                    intValue = short.Parse(splits[1], System.Globalization.NumberStyles.HexNumber);
-                    lines.Add(new Line(num,Convert.ToInt16(splits[0]),intValue,strings[1]));
-                }
-                if(intValue != 0)
-                {
-                    runlines.Add(new Line(num, Convert.ToInt16(splits[0]), intValue, strings[1]));
-                }
-            }
             this.memory = memory;
         }
 

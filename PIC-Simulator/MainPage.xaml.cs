@@ -46,9 +46,11 @@ namespace PIC_Simulator
 
         
 
-        private async void openButton_Click(object sender, RoutedEventArgs e)
+        private void openButton_Click(object sender, RoutedEventArgs e)
         {
             filereader.GetLines();
+            processor.lines = filereader.lines;
+            CodeStack.ItemsSource = processor.lines;
             memory.initMem();
         }
 
