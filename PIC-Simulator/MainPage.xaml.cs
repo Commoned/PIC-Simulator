@@ -65,19 +65,21 @@ namespace PIC_Simulator
         }
 
         private void Start_Button_Click(object sender, RoutedEventArgs e)
-        {
+        {   
             if(!processor.isRunning)
             {
-                Start_Button.Background = (SolidColorBrush)Resources["GreenColor"];
+                Start_Button.Background = (SolidColorBrush)Resources["RedColor"];
+                processor.Clock.Start();
                 processor.isRunning = true;
             }
             else
             {
 
-                Start_Button.Background = (SolidColorBrush)Resources["RedColor"];
+                Start_Button.Background = (SolidColorBrush)Resources["GreenColor"];
+                processor.Clock.Stop();
                 processor.isRunning =false;
             }
-            processor.Run();
+            
         }
     }
 }
