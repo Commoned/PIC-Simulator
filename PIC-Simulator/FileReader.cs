@@ -22,7 +22,7 @@ namespace PIC_Simulator
 
         }
 
-        public async void GetLines()
+        public async Task GetLines()
         {
             var picker = new Windows.Storage.Pickers.FileOpenPicker();
             picker.ViewMode = Windows.Storage.Pickers.PickerViewMode.Thumbnail;
@@ -31,12 +31,15 @@ namespace PIC_Simulator
 
             lines.Clear();
             Windows.Storage.StorageFile file = await picker.PickSingleFileAsync();
+
             //Windows.Storage.StorageFile sampleFile = await StorageFile.GetFileFromPathAsync(file.Path);
-            var input = await FileIO.ReadLinesAsync(file, Windows.Storage.Streams.UnicodeEncoding.Utf16BE);
+            var input = await FileIO.ReadLinesAsync(file,Windows.Storage.Streams.UnicodeEncoding.Utf8);
             short intValue = 0;
             string[] splits = { };
+            
             foreach (string s in input)
             {
+                
                 short num;
                 try
                 {
