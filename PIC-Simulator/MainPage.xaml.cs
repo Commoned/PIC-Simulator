@@ -12,6 +12,10 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using System.Threading.Tasks;
+using System.Threading;
+
+
 
 // Die Elementvorlage "Leere Seite" wird unter https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x407 dokumentiert.
 
@@ -25,6 +29,7 @@ namespace PIC_Simulator
         Memory memory;
         Processor processor;
         private FileReader filereader;
+        
         public MainPage()
         {
             this.DataContext = this;
@@ -60,10 +65,18 @@ namespace PIC_Simulator
 
         private void Start_Button_Click(object sender, RoutedEventArgs e)
         {
+            if(!processor.isRunning)
+            {
+                Start_Button.Background = (SolidColorBrush)Resources["GreenColor"];
+                processor.isRunning = true;
+            }
+            else
+            {
+
+                Start_Button.Background = (SolidColorBrush)Resources["RedColor"];
+                processor.isRunning =false;
+            }
             processor.Run();
-            
         }
-
-
     }
 }

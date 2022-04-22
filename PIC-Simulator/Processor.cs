@@ -10,7 +10,9 @@ namespace PIC_Simulator
     internal class Processor
     {
         public List<Line> lines = new List<Line>();
+        public List<Line> runlines = new List<Line>();
         private Memory memory;
+        public bool isRunning = false;
         string test =
 @"
                     00001           ;TPicSim1
@@ -50,6 +52,8 @@ namespace PIC_Simulator
             
         public Processor(Memory memory)
         {
+            short intValue = 0;
+            string[] splits = { };
             var test2 = test.Split('\n');
             foreach(string s in test2)
             {
@@ -71,27 +75,31 @@ namespace PIC_Simulator
                 else
                 {
                     var beginnums = Regex.Match(s,"[0-9A-F]{4}\\s[0-9A-F]{4}").Value;
-                    var splits = beginnums.Split(' ');
-                    short intValue = short.Parse(splits[1], System.Globalization.NumberStyles.HexNumber);
+                    splits = beginnums.Split(' ');
+                    intValue = short.Parse(splits[1], System.Globalization.NumberStyles.HexNumber);
                     lines.Add(new Line(num,Convert.ToInt16(splits[0]),intValue,strings[1]));
                 }
-                
+                if(intValue != 0)
+                {
+                    runlines.Add(new Line(num, Convert.ToInt16(splits[0]), intValue, strings[1]));
+                }
             }
             this.memory = memory;
         }
 
         public void Run()
         {
-            
-            foreach (Line line in lines)
+            var lastinst = runlines.Last();
+
+            for(memory.Pcl = 0; memory.Pcl<= lastinst.codeline; memory.Pcl++)
             {
-                if(line.instruction != 0)
+                var line = runlines[memory.Pcl];
+                if (line.instruction != 0)
                 {
-                   Decode(line.instruction);
-                   memory.Pcl++;
-                   
+                    Decode(line.instruction);
                 }
             }
+            
         }
 
         public void Decode(short toDecode)
@@ -108,8 +116,8 @@ namespace PIC_Simulator
                 case 0x30: //movlw
                     movlw(value);
                     break;
-                case 0x39:
-                    addlw(value);
+                case 0x39: //andlw
+                    andlw();
                     break;
             }
                 
@@ -127,9 +135,32 @@ namespace PIC_Simulator
         public void addlw(short value)
         {
             memory.memoryb1[0x10] = (short)(memory.memoryb1[0x10] + value);
+            if(memory.memoryb1[0x10] > 255)
+            {
+                memory.memoryb1[Memory.STATUS] = (short)(memory.memoryb1[Memory.STATUS] + 0b_0000_0010);
+                memory.memoryb1[0x10] = 255;
+            }
             memory.Memoryb1 = null;
         }
 
+        public void andlw()
+        {
 
+        }
+
+        public void iorlw()
+        {
+
+        }
+
+        public void sublw()
+        {
+
+        }
+
+        public void xorlw()
+        {
+
+        }
     }
 }
