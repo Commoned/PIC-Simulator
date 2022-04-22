@@ -4,46 +4,97 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:PIC_Simulator"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" d:DataContext="{d:DesignInstance Type=local:Memory}"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-
+    <Page.Resources>
+        <SolidColorBrush x:Key="RedColor" Color="Red" />
+        <SolidColorBrush x:Key="GreenColor" Color="Green" />
+    </Page.Resources>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="0.1*"/>
+            <RowDefinition Height="45"/>
+            <RowDefinition Height="60"/>
             <RowDefinition/>
             <RowDefinition/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="0.1*" />
+            <ColumnDefinition Width="50" />
             <ColumnDefinition/>
             <ColumnDefinition/>
 
         </Grid.ColumnDefinitions>
-        <MenuBar  Grid.Row="0" Grid.ColumnSpan="3" Background="Gray">
+        <MenuBar VerticalAlignment="Stretch" Height="45"  Grid.Row="0" Grid.ColumnSpan="3" Background="Gray">
             <MenuBarItem Width="auto"  Title="Data">
                 <MenuFlyoutItem x:Name="openButton" Text="Open file..." Click="openButton_Click">
-                
+
                 </MenuFlyoutItem>
                 <MenuFlyoutItem x:Name="settingsButton" Text="Settings..." Click="settingsButton_Click">
-                    
                 </MenuFlyoutItem>
             </MenuBarItem>
-            
-                
-            
-
-
         </MenuBar>
+
+        <StackPanel x:Name="Control_Stack" Width="60" HorizontalAlignment="Left" Background="Gray" Grid.Row="1" Grid.RowSpan="3">
+            <Button x:Name="Start_Button" Click="Start_Button_Click" Background="Green" Width="{Binding ActualWidth, ElementName=Control_Stack}" Height="{Binding ActualWidth, ElementName=Control_Stack}" FontSize="30" Content="&#x25B6;"></Button>
+            <Button x:Name="Skip_Button" Content="&#x21B7;" FontSize="30" Background="Gray" Width="{Binding ActualWidth, ElementName=Control_Stack}" Height="{Binding ActualWidth, ElementName=Control_Stack}"/>
+        </StackPanel>
+        <TextBlock FontSize="36" Grid.Row="2" Grid.Column="1" VerticalAlignment="Top" Text="BANK1"/>
+        <GridView Margin="10,50,0,0" HorizontalAlignment="Left" Width="650" x:Name="items" ItemsSource="{Binding Memoryb1}" Grid.Row="2" Grid.Column="1" >
+            <GridView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <ItemsWrapGrid  MaximumRowsOrColumns="8" Orientation="Horizontal"/>
+                </ItemsPanelTemplate>
+            </GridView.ItemsPanel>
+        </GridView>
+        <StackPanel Margin="10,0,0,0" Orientation="Horizontal" Grid.Row="2" Grid.Column="2">
+            <StackPanel>
+                <TextBlock Text="RA" FontSize="30"/>
+                <CheckBox Content="7"></CheckBox>
+                <CheckBox Content="6"></CheckBox>
+                <CheckBox Content="5"></CheckBox>
+                <CheckBox Content="4"></CheckBox>
+                <CheckBox Content="3"></CheckBox>
+                <CheckBox Content="2"></CheckBox>
+                <CheckBox Content="1"></CheckBox>
+                <CheckBox Content="0"></CheckBox>
+            </StackPanel>
+            <StackPanel>
+                <TextBlock Text="RB" FontSize="30"/>
+                <CheckBox Content="7"></CheckBox>
+                <CheckBox Content="6"></CheckBox>
+                <CheckBox Content="5"></CheckBox>
+                <CheckBox Content="4"></CheckBox>
+                <CheckBox Content="3"></CheckBox>
+                <CheckBox Content="2"></CheckBox>
+                <CheckBox Content="1"></CheckBox>
+                <CheckBox Content="0"></CheckBox>
+            </StackPanel>
+            
+        </StackPanel>
+        <ScrollViewer Grid.Row="3" Grid.Column="1" VerticalScrollBarVisibility="Auto">
+            <ItemsControl x:Name="CodeStack"  Background="LightGray" >
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel ScrollViewer.IsVerticalRailEnabled="True"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel  Orientation="Horizontal" >
+                            <Button Content="X"></Button>
+                            <TextBlock Margin="0,0,10,0" Text="{Binding Linenumber}"/>
+                            <TextBlock Margin="0,0,10,0" Text="{Binding Codeline}"/>
+                            <TextBlock Margin="0,0,10,0" Text="{Binding Instruction}"/>
+                            <TextBlock Margin="0,0,10,0" Text="{Binding Readable}"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+        
+        
         <TextBlock x:Name="pic_title" Grid.Row="1" Grid.Column="1" FontFamily="Comic Sans MS" FontSize="50">PIC-Simulator</TextBlock>
-        <Grid>
-            <Grid.RowDefinitions>
-                
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                
-            </Grid.ColumnDefinitions>
-        </Grid>
+            
 
             <Popup   x:Name="StandardPopup">
             <Border BorderBrush="{StaticResource ApplicationForegroundThemeBrush}" 

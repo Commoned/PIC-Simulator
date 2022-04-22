@@ -119,6 +119,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Processor.cs" />
     <Compile Include="FileReader.cs" />
     <Compile Include="Line.cs" />
     <Compile Include="MainPage.xaml.cs">
