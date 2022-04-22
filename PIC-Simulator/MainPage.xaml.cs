@@ -35,6 +35,7 @@ namespace PIC_Simulator
             this.DataContext = this;
             memory = new Memory();
             processor = new Processor(memory);
+            filereader = new FileReader();
             DataContext = memory;
             
             this.InitializeComponent();
@@ -45,12 +46,10 @@ namespace PIC_Simulator
 
         
 
-        private void openButton_Click(object sender, RoutedEventArgs e)
+        private async void openButton_Click(object sender, RoutedEventArgs e)
         {
-            // Daniels stuff
+            filereader.GetLines();
             memory.initMem();
-
-
         }
 
         private void settingsButton_Click(object sender, RoutedEventArgs e)
