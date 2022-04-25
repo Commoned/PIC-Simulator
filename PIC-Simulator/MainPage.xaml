@@ -75,6 +75,8 @@
         </GridView>
         
         -->
+        
+        
         <StackPanel Margin="10,0,0,0" Orientation="Horizontal" Grid.Row="2" Grid.Column="2">
             <StackPanel>
                 <TextBlock Text="RA" FontSize="30"/>

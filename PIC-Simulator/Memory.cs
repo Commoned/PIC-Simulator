@@ -97,6 +97,7 @@ namespace PIC_Simulator
             set { 
                 memoryb1[0x02] = value;
                 NotifyPropertyChanged("Pcl");
+                
             }
         }
 
