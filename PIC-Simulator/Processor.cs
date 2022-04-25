@@ -115,17 +115,16 @@ namespace PIC_Simulator
             memory.memoryb1[Memory.W] = value;
             
             memory.updateMemView(); 
-            
         }
 
         public void addlw(short value)
         {
-            checkDigitCarryFlag(memory.memoryb1[Memory.W], value);
+            checkDigitCarryFlag(Memory.W, value);
 
             memory.memoryb1[Memory.W] = (short)(memory.memoryb1[Memory.W] + value);
 
-            checkCarryFlag(memory.memoryb1[Memory.W]);
-            checkZeroFlag(memory.memoryb1[Memory.W]);
+            checkCarryFlag(Memory.W);
+            checkZeroFlag(Memory.W);
             memory.updateMemView();
         }
 
@@ -133,7 +132,7 @@ namespace PIC_Simulator
         {
             memory.memoryb1[Memory.W] = (short)(memory.memoryb1[Memory.W] & value);
 
-            checkZeroFlag(memory.memoryb1[Memory.W]);
+            checkZeroFlag(Memory.W);
             memory.updateMemView();
         }
 
@@ -141,18 +140,18 @@ namespace PIC_Simulator
         {
             memory.memoryb1[Memory.W] = (short) (memory.memoryb1[Memory.W] | value);
 
-            checkZeroFlag(memory.memoryb1[Memory.W]);
+            checkZeroFlag(Memory.W);
             memory.updateMemView();
         }
 
         public void sublw(short value)
         {
-            checkDigitCarryFlag(memory.memoryb1[Memory.W] ,value);
+            checkDigitCarryFlag(Memory.W ,value);
 
             memory.memoryb1[Memory.W] = (short) (memory.memoryb1[Memory.W] - value);
 
-            checkCarryFlag(memory.memoryb1[Memory.W]);
-            checkZeroFlag(memory.memoryb1[Memory.W]);
+            checkCarryFlag(Memory.W);
+            checkZeroFlag(Memory.W);
             //MISSING 2nd's complement
             memory.updateMemView();
         }
@@ -161,9 +160,8 @@ namespace PIC_Simulator
         {
             memory.memoryb1[Memory.W] = (short)(memory.memoryb1[Memory.W] ^ value);
 
-            checkZeroFlag(memory.memoryb1[Memory.W]);
-            memory.updateMemView();
-            
+            checkZeroFlag(Memory.W);
+            memory.updateMemView();   
         }
 
         public void nop()
