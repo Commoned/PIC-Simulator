@@ -148,11 +148,14 @@ namespace PIC_Simulator
         {
             checkDigitCarryFlag(Memory.W ,value);
 
-            memory.memoryb1[Memory.W] = (short) (memory.memoryb1[Memory.W] - value);
+            short wreg = (short)(memory.memoryb1[Memory.W] - value);
+            if (wreg < 0)
+            {
+                memory.memoryb1[Memory.W] = (short) ((short)(wreg ^ 0b_1111_1111_1111_1111) + 1);
+            }
 
             checkCarryFlag(Memory.W);
             checkZeroFlag(Memory.W);
-            //MISSING 2nd's complement
             memory.updateMemView();
         }
 
