@@ -55,10 +55,25 @@ namespace PIC_Simulator
                     movlw(value);
                     break;
                 case 0x39: //andlw
-                    andlw();
+                    andlw(value);
                     break;
-                case 0x28:
+                case 0x38: //iorlw
+                    iorlw(value);
+                    break;
+                case 0x3C: //sublw
+                    sublw(value);
+                    break;
+                case 0x3A: //xorlw
+                    xorlw(value);
+                    break;
+                case 0x3E: //addlw
+                    addlw(value);
+                    break;
+                case 0x28: //goto
                     Goto(value);
+                    break;
+                case 0x20: //call
+                    call(value);
                     break;
             }
                 
@@ -76,32 +91,81 @@ namespace PIC_Simulator
         public void addlw(short value)
         {
             memory.memoryb1[0x10] = (short)(memory.memoryb1[0x10] + value);
+            //???Handles digit carry flag???
             if(memory.memoryb1[0x10] > 255)
             {
                 memory.memoryb1[Memory.STATUS] = (short)(memory.memoryb1[Memory.STATUS] + 0b_0000_0010);
                 memory.memoryb1[0x10] = 255;
             }
+            //Handles zero flag
+            if (memory.memoryb1[Memory.W] == 0)
+            {
+                memory.memoryb1[Memory.STATUS] = (short)(memory.memoryb1[Memory.STATUS] + 0b_0000_0100);
+            }
+            //MISSING Handler for carry flag
             memory.Memoryb1 = null;
         }
 
-        public void andlw()
+        public void andlw(short value)
         {
-
+            memory.memoryb1[Memory.W] = (short)(memory.memoryb1[Memory.W] & value);
+            //Handles zero flag
+            if(memory.memoryb1[Memory.W] == 0)
+            {
+                memory.memoryb1[Memory.STATUS] = (short)(memory.memoryb1[Memory.STATUS] + 0b_0000_0100);
+            }
+            memory.memoryb1 = null;
         }
 
-        public void iorlw()
+        public void iorlw(short value)
         {
-
+            memory.memoryb1[Memory.W] = (short) (memory.memoryb1[Memory.W] | value);
+            //Handles zero flag
+            if(memory.memoryb1[Memory.W] == 0)
+            {
+                memory.memoryb1[Memory.STATUS] = (short)(memory.memoryb1[Memory.STATUS] + 0b_0000_0100);
+            }
+            memory.memoryb1 = null;
         }
 
-        public void sublw()
+        public void sublw(short value)
         {
-
+            memory.memoryb1[Memory.W] = (short) (memory.memoryb1[Memory.W] - value);
+            //Handles zero flag
+            if (memory.memoryb1[Memory.W] == 0)
+            {
+                memory.memoryb1[Memory.STATUS] = (short)(memory.memoryb1[Memory.STATUS] + 0b_0000_0100);
+            }
+            //MISSING Handler for digit carry flag
+            //MISSING Handler for carry flag
+            memory.memoryb1 = null;
         }
 
-        public void xorlw()
+        public void xorlw(short value)
         {
+            memory.memoryb1[Memory.W] = (short)(memory.memoryb1[Memory.W] ^ value);
+            //Handles zero flag
+            if (memory.memoryb1[Memory.W] == 0)
+            {
+                memory.memoryb1[Memory.STATUS] = (short)(memory.memoryb1[Memory.STATUS] + 0b_0000_0100);
+            }
+            memory.memoryb1 = null;
+        }
 
+        public void nop()
+        {
+            //MISSING No operation
+        }
+
+        public void retlw(short value)
+        {
+            memory.memoryb1[Memory.W] = value;
+            nop();
+        }
+
+        public void call(short value)
+        {
+            //MISSING Call mit Rücksprung
         }
 
         public void Goto(short value)

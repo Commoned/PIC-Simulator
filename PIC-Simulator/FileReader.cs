@@ -14,7 +14,7 @@ namespace PIC_Simulator
     {
         public List<Line> lines = new List<Line>();
         FileOpenPicker picker;
-        public string alllines;
+
         public FileReader()
         {
             picker = new FileOpenPicker();
