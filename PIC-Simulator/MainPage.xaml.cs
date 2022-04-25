@@ -49,13 +49,20 @@ namespace PIC_Simulator
         private async void openButton_Click(object sender, RoutedEventArgs e)
         {
             processor.lines.Clear();
+            processor.runlines.Clear();
             await filereader.GetLines();
             
             processor.lines = filereader.lines;
             CodeStack.ItemsSource = null;
             Thread.Sleep(1000);
             CodeStack.ItemsSource = processor.lines;
-
+            foreach(Line line in processor.lines)
+            {
+                if(line.instruction != 0)
+                {
+                    processor.runlines.Add(line);
+                }
+            }
             memory.initMem();
         }
 
@@ -76,6 +83,7 @@ namespace PIC_Simulator
                 Start_Button.Background = (SolidColorBrush)Resources["RedColor"];
                 processor.Clock.Start();
                 processor.isRunning = true;
+                memory.initMem();
             }
             else
             {

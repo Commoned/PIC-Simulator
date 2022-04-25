@@ -34,8 +34,9 @@ namespace PIC_Simulator
         public void Step()
         {
             Line line = runlines[memory.Pcl];
-            this.Decode(line.instruction);
             memory.Pcl++;
+            this.Decode(line.instruction);
+            
         }
 
        
