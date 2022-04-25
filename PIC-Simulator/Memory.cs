@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace PIC_Simulator
 {
-    
+
     public class Memory : INotifyPropertyChanged
     {
         public static byte PORTA = 0x05;
@@ -26,8 +26,8 @@ namespace PIC_Simulator
         public static byte PCLATH = 0xA;
         public static byte INTCON = 0x0B;
         public static byte W = 0x10;
-        
-        
+
+
         public short[] eeprom = new short[1024];
         public short[] memoryb1 = new short[128];
         public short[] memoryb2 = new short[128];//Beide Bänke in einem Array maybe
@@ -39,36 +39,56 @@ namespace PIC_Simulator
             initMem();
         }
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
-        
+
         private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
         {
-            
+
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-            
+
         }
 
-        
 
-       
+
+
 
         public string[] Memoryb1
         {
-            get { 
+            get {
                 string[] ret = new string[memoryb1.Length];
                 int index = 0;
-                foreach(var item in memoryb1)
+                foreach (var item in memoryb1)
                 {
                     ret[index] = Convert.ToString(item, 16).ToUpper();
                     index++;
                 }
                 return ret;
             }
-           
+
         }
+
+
+        public string WReg
+        {
+            get
+            {
+                return "0x" + Convert.ToString(memoryb1[Memory.W], 16).ToUpper();
+            }
+        }
+
+        public string FSRReg
+        {
+            get
+            {
+                return "0x" + Convert.ToString(memoryb1[Memory.FSR], 16).ToUpper();
+            }
+        }
+
+        
 
         public void updateMemView()
         {
             NotifyPropertyChanged("Memoryb1");
+            NotifyPropertyChanged("WReg");
         }
 
         public short Pcl
@@ -79,6 +99,8 @@ namespace PIC_Simulator
                 NotifyPropertyChanged("Pcl");
             }
         }
+
+        
 
         public void push(short value)
         {
