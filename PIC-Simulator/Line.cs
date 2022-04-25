@@ -12,12 +12,14 @@ namespace PIC_Simulator
         public short instruction;
         public short codeline;
         private string readable;
-        public Line(short linenumber,short codeline, short instruction, string readable)
+        public bool executable;
+        public Line(short linenumber,short codeline, short instruction, string readable, bool executable)
         {
             this.linenumber = linenumber;
             this.instruction = instruction;
             this.codeline = codeline;  
-            this.readable = readable;   
+            this.readable = readable;
+            this.executable = executable;
         }
 
         public string Readable
@@ -48,6 +50,11 @@ namespace PIC_Simulator
 
         }
 
+        public bool Executable
+        {
+            get { return executable; }
+            set { executable = value; }
+        }
         
         
     }

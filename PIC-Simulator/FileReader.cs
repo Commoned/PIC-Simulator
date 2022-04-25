@@ -53,14 +53,14 @@ namespace PIC_Simulator
                 Regex.Match(s, "");
                 if (s.StartsWith(' '))
                 {
-                    lines.Add(new Line(num, 0, 0, strings[1]));
+                    lines.Add(new Line(num, 0, 0, strings[1], false));
                 }
                 else
                 {
                     var beginnums = Regex.Match(s, "[0-9A-F]{4}\\s[0-9A-F]{4}").Value;
                     splits = beginnums.Split(' ');
                     intValue = short.Parse(splits[1], System.Globalization.NumberStyles.HexNumber);
-                    lines.Add(new Line(num, Convert.ToInt16(splits[0]), intValue, strings[1]));
+                    lines.Add(new Line(num, Convert.ToInt16(splits[0]), intValue, strings[1], true));
                 }
                
             }
