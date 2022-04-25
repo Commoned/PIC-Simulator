@@ -20,8 +20,9 @@
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="55" />
+            <ColumnDefinition Width="0.4*"/>
             <ColumnDefinition/>
-            <ColumnDefinition/>
+            
 
         </Grid.ColumnDefinitions>
         <MenuBar VerticalAlignment="Stretch" Height="45"  Grid.Row="0" Grid.ColumnSpan="3" Background="Gray">
@@ -34,13 +35,13 @@
             </MenuBarItem>
         </MenuBar>
 
-        <StackPanel x:Name="Control_Stack" Width="60" HorizontalAlignment="Left" Background="Gray" Grid.Row="1" Grid.RowSpan="3">
-            <Button x:Name="Start_Button" Click="Start_Button_Click" Background="Green" Width="{Binding ActualWidth, ElementName=Control_Stack}" Height="{Binding ActualWidth, ElementName=Control_Stack}" FontSize="30" Content="&#x25B6;"></Button>
-            <Button x:Name="Skip_Button" Content="&#x21B7;" FontSize="30" Background="Gray" Width="{Binding ActualWidth, ElementName=Control_Stack}" Height="{Binding ActualWidth, ElementName=Control_Stack}"/>
+        <StackPanel x:Name="Control_Stack" Width="55" HorizontalAlignment="Left" Background="Gray" Grid.Row="1" Grid.RowSpan="3">
+            <Button x:Name="Start_Button" IsEnabled="False" Click="Start_Button_Click" Background="Green" Width="{Binding ActualWidth, ElementName=Control_Stack}" Height="{Binding ActualWidth, ElementName=Control_Stack}" FontSize="30" FontFamily="Segoe MDL2 Assets" Content="&#xE768;"></Button>
+            <Button x:Name="Skip_Button" FontFamily="Segoe MDL2 Assets" Content="&#xEA62;" FontSize="30" Background="Gray" Width="{Binding ActualWidth, ElementName=Control_Stack}" Height="{Binding ActualWidth, ElementName=Control_Stack}"/>
         </StackPanel>
         <TextBlock FontSize="36" Grid.Row="2" Grid.Column="1" VerticalAlignment="Top" Text="RAM"/>
-        <ScrollViewer Grid.Row="2" Grid.Column="1" Margin="10,50,0,0" VerticalScrollBarVisibility="Auto">
-            <ItemsControl Margin="10,50,0,0" HorizontalAlignment="Left" x:Name="items" ItemsSource="{Binding Memoryb1}">
+        <ScrollViewer Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" Margin="10,50,0,0" VerticalScrollBarVisibility="Auto" Width="360">
+            <ItemsControl  HorizontalAlignment="Left" x:Name="items" ItemsSource="{Binding Memoryb1}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <ItemsWrapGrid MaximumRowsOrColumns="8" Orientation="Horizontal"></ItemsWrapGrid>
@@ -54,6 +55,7 @@
                        
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
+                <TextBlock>TEst</TextBlock>
             </ItemsControl>
         </ScrollViewer>
 

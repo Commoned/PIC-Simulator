@@ -64,6 +64,7 @@ namespace PIC_Simulator
                 }
             }
             memory.initMem();
+            Start_Button.IsEnabled = true;
         }
 
         private void settingsButton_Click(object sender, RoutedEventArgs e)
@@ -81,6 +82,7 @@ namespace PIC_Simulator
             if(!processor.isRunning)
             {
                 Start_Button.Background = (SolidColorBrush)Resources["RedColor"];
+                Start_Button.Content = "\uE71A";
                 processor.Clock.Start();
                 processor.isRunning = true;
                 memory.initMem();
@@ -89,6 +91,7 @@ namespace PIC_Simulator
             {
 
                 Start_Button.Background = (SolidColorBrush)Resources["GreenColor"];
+                Start_Button.Content = "\uE768";
                 processor.Clock.Stop();
                 processor.isRunning =false;
             }
