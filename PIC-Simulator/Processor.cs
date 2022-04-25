@@ -92,11 +92,11 @@ namespace PIC_Simulator
         public void addlw(short value)
         {
             memory.memoryb1[0x10] = (short)(memory.memoryb1[0x10] + value);
-            //???Handles digit carry flag???
-            if(memory.memoryb1[0x10] > 255)
+            //Handles digit carry flag
+            if(memory.memoryb1[Memory.W] > 255)
             {
                 memory.memoryb1[Memory.STATUS] = (short)(memory.memoryb1[Memory.STATUS] + 0b_0000_0010);
-                memory.memoryb1[0x10] = 255;
+                memory.memoryb1[Memory.W] = 255;
             }
             //Handles zero flag
             if (memory.memoryb1[Memory.W] == 0)
@@ -137,6 +137,7 @@ namespace PIC_Simulator
             {
                 memory.memoryb1[Memory.STATUS] = (short)(memory.memoryb1[Memory.STATUS] + 0b_0000_0100);
             }
+            //MISSING 2nd's complement
             //MISSING Handler for digit carry flag
             //MISSING Handler for carry flag
             memory.memoryb1 = null;
@@ -155,7 +156,7 @@ namespace PIC_Simulator
 
         public void nop()
         {
-            //MISSING No operation
+            //No operation
         }
 
         public void retlw(short value)
@@ -167,6 +168,11 @@ namespace PIC_Simulator
         public void call(short value)
         {
             //MISSING Call mit Rücksprung
+        }
+
+        public void Return()
+        {
+
         }
 
         public void Goto(short value)
