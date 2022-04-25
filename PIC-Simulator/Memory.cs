@@ -63,10 +63,12 @@ namespace PIC_Simulator
                 }
                 return ret;
             }
-            set {
-                
-                 NotifyPropertyChanged("Memoryb1");
-            }
+           
+        }
+
+        public void updateMemView()
+        {
+            NotifyPropertyChanged("Memoryb1");
         }
 
         public short Pcl
