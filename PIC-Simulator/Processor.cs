@@ -39,7 +39,13 @@ namespace PIC_Simulator
             
         }
 
-       
+       public void checkZeroFlag()
+        {
+            if (memory.memoryb1[Memory.W] == 0)
+            {
+                memory.memoryb1[Memory.STATUS] = (short)(memory.memoryb1[Memory.STATUS] + 0b_0000_0100);
+            }
+        }
 
         public void Decode(short toDecode)
         {
@@ -98,11 +104,7 @@ namespace PIC_Simulator
                 memory.memoryb1[Memory.STATUS] = (short)(memory.memoryb1[Memory.STATUS] + 0b_0000_0010);
                 memory.memoryb1[Memory.W] = 255;
             }
-            //Handles zero flag
-            if (memory.memoryb1[Memory.W] == 0)
-            {
-                memory.memoryb1[Memory.STATUS] = (short)(memory.memoryb1[Memory.STATUS] + 0b_0000_0100);
-            }
+            checkZeroFlag();
             //MISSING Handler for carry flag
             memory.updateMemView();
         }
@@ -110,33 +112,21 @@ namespace PIC_Simulator
         public void andlw(short value)
         {
             memory.memoryb1[Memory.W] = (short)(memory.memoryb1[Memory.W] & value);
-            //Handles zero flag
-            if(memory.memoryb1[Memory.W] == 0)
-            {
-                memory.memoryb1[Memory.STATUS] = (short)(memory.memoryb1[Memory.STATUS] + 0b_0000_0100);
-            }
+            checkZeroFlag();
             memory.updateMemView();
         }
 
         public void iorlw(short value)
         {
             memory.memoryb1[Memory.W] = (short) (memory.memoryb1[Memory.W] | value);
-            //Handles zero flag
-            if(memory.memoryb1[Memory.W] == 0)
-            {
-                memory.memoryb1[Memory.STATUS] = (short)(memory.memoryb1[Memory.STATUS] + 0b_0000_0100);
-            }
+            checkZeroFlag();
             memory.updateMemView();
         }
 
         public void sublw(short value)
         {
             memory.memoryb1[Memory.W] = (short) (memory.memoryb1[Memory.W] - value);
-            //Handles zero flag
-            if (memory.memoryb1[Memory.W] == 0)
-            {
-                memory.memoryb1[Memory.STATUS] = (short)(memory.memoryb1[Memory.STATUS] + 0b_0000_0100);
-            }
+            checkZeroFlag();
             //MISSING 2nd's complement
             //MISSING Handler for digit carry flag
             //MISSING Handler for carry flag
@@ -146,11 +136,7 @@ namespace PIC_Simulator
         public void xorlw(short value)
         {
             memory.memoryb1[Memory.W] = (short)(memory.memoryb1[Memory.W] ^ value);
-            //Handles zero flag
-            if (memory.memoryb1[Memory.W] == 0)
-            {
-                memory.memoryb1[Memory.STATUS] = (short)(memory.memoryb1[Memory.STATUS] + 0b_0000_0100);
-            }
+            checkZeroFlag();
             memory.updateMemView();
             
         }
