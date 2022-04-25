@@ -85,7 +85,7 @@ namespace PIC_Simulator
 
             memory.memoryb1[0x10] = value;
             
-            memory.Memoryb1 = null; // STUPID BESSERE LÖSUNG SUCHEN
+            memory.updateMemView(); 
             
         }
 
@@ -104,7 +104,7 @@ namespace PIC_Simulator
                 memory.memoryb1[Memory.STATUS] = (short)(memory.memoryb1[Memory.STATUS] + 0b_0000_0100);
             }
             //MISSING Handler for carry flag
-            memory.Memoryb1 = null;
+            memory.updateMemView();
         }
 
         public void andlw(short value)
@@ -115,7 +115,7 @@ namespace PIC_Simulator
             {
                 memory.memoryb1[Memory.STATUS] = (short)(memory.memoryb1[Memory.STATUS] + 0b_0000_0100);
             }
-            memory.memoryb1 = null;
+            memory.updateMemView();
         }
 
         public void iorlw(short value)
@@ -126,7 +126,7 @@ namespace PIC_Simulator
             {
                 memory.memoryb1[Memory.STATUS] = (short)(memory.memoryb1[Memory.STATUS] + 0b_0000_0100);
             }
-            memory.memoryb1 = null;
+            memory.updateMemView();
         }
 
         public void sublw(short value)
@@ -140,7 +140,7 @@ namespace PIC_Simulator
             //MISSING 2nd's complement
             //MISSING Handler for digit carry flag
             //MISSING Handler for carry flag
-            memory.memoryb1 = null;
+            memory.updateMemView();
         }
 
         public void xorlw(short value)
@@ -151,7 +151,8 @@ namespace PIC_Simulator
             {
                 memory.memoryb1[Memory.STATUS] = (short)(memory.memoryb1[Memory.STATUS] + 0b_0000_0100);
             }
-            memory.memoryb1 = null;
+            memory.updateMemView();
+            
         }
 
         public void nop()
