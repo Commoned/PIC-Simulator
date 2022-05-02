@@ -99,7 +99,6 @@ namespace PIC_Simulator
                 Start_Button.Content = "\uE71A";
                 processor.Clock.Start();
                 processor.isRunning = true;
-                memory.initMem();
             }
             else
             {
@@ -110,6 +109,17 @@ namespace PIC_Simulator
                 processor.isRunning =false;
             }
             
+        }
+
+        private void Skip_Button_Click(object sender, RoutedEventArgs e)
+        {
+            processor.Clock.Stop();
+            processor.Clock_Tick(this,this);
+        }
+
+        private void Reset_Button_Click(object sender, RoutedEventArgs e)
+        {
+            memory.initMem();
         }
     }
 }

@@ -23,7 +23,7 @@
             <ColumnDefinition Width="55" />
             <ColumnDefinition Width="0.4*"/>
             <ColumnDefinition/>
-            
+
 
         </Grid.ColumnDefinitions>
         <MenuBar VerticalAlignment="Stretch" Height="45"  Grid.Row="0" Grid.ColumnSpan="3" Background="Gray">
@@ -38,7 +38,8 @@
 
         <StackPanel x:Name="Control_Stack" Width="55" HorizontalAlignment="Left" Background="Gray" Grid.Row="1" Grid.RowSpan="3">
             <Button x:Name="Start_Button" IsEnabled="False" Click="Start_Button_Click" Background="Green" Width="{Binding ActualWidth, ElementName=Control_Stack}" Height="{Binding ActualWidth, ElementName=Control_Stack}" FontSize="30" FontFamily="Segoe MDL2 Assets" Content="&#xE768;"></Button>
-            <Button x:Name="Skip_Button" FontFamily="Segoe MDL2 Assets" Content="&#xEA62;" FontSize="30" Background="Gray" Width="{Binding ActualWidth, ElementName=Control_Stack}" Height="{Binding ActualWidth, ElementName=Control_Stack}"/>
+            <Button x:Name="Skip_Button" Click="Skip_Button_Click" FontFamily="Segoe MDL2 Assets" Content="&#xEA62;" FontSize="30" Background="Gray" Width="{Binding ActualWidth, ElementName=Control_Stack}" Height="{Binding ActualWidth, ElementName=Control_Stack}"/>
+            <Button x:Name="Reset_Button" Click="Reset_Button_Click"  Background="Gray" Width="{Binding ActualWidth, ElementName=Control_Stack}" Height="{Binding ActualWidth, ElementName=Control_Stack}" FontSize="30" FontFamily="Segoe MDL2 Assets" Content="&#xE777;"></Button>        
         </StackPanel>
         <TextBlock FontSize="36" Grid.Row="2" Grid.Column="1" VerticalAlignment="Top" Text="RAM"/>
         <ScrollViewer Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" Margin="10,50,0,0" VerticalScrollBarVisibility="Auto" Width="360">
@@ -53,7 +54,7 @@
                         <Border Background="SlateGray" BorderBrush="DarkSlateGray" BorderThickness="1">
                             <TextBlock TextAlignment="Center" Margin="10" Width="20"  Text="{Binding}"></TextBlock>
                         </Border>
-                       
+
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
                 <TextBlock>TEst</TextBlock>
@@ -76,8 +77,8 @@
         </GridView>
         
         -->
-        
-        
+
+
         <StackPanel Margin="10,0,0,0" Orientation="Horizontal" Grid.Row="2" Grid.Column="2">
             <StackPanel>
                 <TextBlock Text="RA" FontSize="30"/>
@@ -101,16 +102,16 @@
                 <CheckBox Content="1"></CheckBox>
                 <CheckBox Content="0"></CheckBox>
             </StackPanel>
-            
+
         </StackPanel>
         <TextBlock Text="Spezialfunktionsregister" Grid.Row="3" Grid.Column="1" />
         <StackPanel Margin="5,15,0,0" Grid.Row="3" Grid.Column="1">
             <StackPanel Orientation="Horizontal">
-                <TextBlock Margin="0,0,5,0">WReg: </TextBlock>
+                <TextBlock Margin="0,0,5,0">WReg:</TextBlock>
                 <TextBlock Text="{Binding WReg}"></TextBlock>
             </StackPanel>
             <StackPanel Orientation="Horizontal">
-                <TextBlock Margin="0,0,5,0">FSR: </TextBlock>
+                <TextBlock Margin="0,0,5,0">FSR:</TextBlock>
                 <TextBlock Text="{Binding FSRReg}"></TextBlock>
             </StackPanel>
             <StackPanel Orientation="Horizontal">
@@ -119,23 +120,22 @@
             </StackPanel>
 
         </StackPanel>
-        <ScrollViewer Grid.Row="3" Grid.Column="2" Margin="10,0,0,0" VerticalScrollBarVisibility="Auto">
-            <ListView x:Name="CodeStack" >
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel    Orientation="Horizontal" >
-                            <Button Content="X"></Button>
-                            <TextBlock Margin="0,0,10,0" Width="20" Text="{Binding Linenumber}"/>
-                            <TextBlock Margin="0,0,10,0" Width="20" Text="{Binding Codeline}"/>
-                            <TextBlock Margin="0,0,10,0" Width="40" Text="{Binding Instruction}"/>
-                            <TextBlock Margin="0,0,10,0" Width="auto" Text="{Binding Readable}"/>
-                        </StackPanel>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-        </ScrollViewer>
-        
-        
+
+        <ListView x:Name="CodeStack" Grid.Row="3" Grid.Column="2" Margin="10,0,0,0" >
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel    Orientation="Horizontal" >
+                        <Button Content="X"></Button>
+                        <TextBlock Margin="0,0,10,0" Width="20" Text="{Binding Linenumber}"/>
+                        <TextBlock Margin="0,0,10,0" Width="20" Text="{Binding Codeline}"/>
+                        <TextBlock Margin="0,0,10,0" Width="40" Text="{Binding Instruction}"/>
+                        <TextBlock Margin="0,0,10,0" Width="auto" Text="{Binding Readable}"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
+
         <TextBlock x:Name="pic_title" Grid.Row="1" Grid.Column="1" FontFamily="Comic Sans MS" FontSize="50">PIC-Simulator</TextBlock>
             
 

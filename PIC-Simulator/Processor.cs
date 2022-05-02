@@ -25,12 +25,12 @@ namespace PIC_Simulator
         {
             this.codeInterface = codeInterface;
             Clock.Tick += Clock_Tick;
-            this.Clock.Interval = new TimeSpan(0,0,1);
+            this.Clock.Interval = new TimeSpan(0,0,0,0,1);
             
             this.memory = memory;
         }
 
-        private void Clock_Tick(object sender, object e)
+        public void Clock_Tick(object sender, object e)
         {
             codeInterface.selectCode(runlines[memory.Pcl].Linenumber -1);
             Step();
