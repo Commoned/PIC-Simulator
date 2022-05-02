@@ -20,6 +20,7 @@ namespace PIC_Simulator
             this.codeline = codeline;  
             this.readable = readable;
             this.executable = executable;
+            
         }
 
         public string Readable
@@ -31,7 +32,7 @@ namespace PIC_Simulator
         public short Linenumber
         {
             get { return linenumber; }
-            set { linenumber = value; }
+            
         }
 
         public string Instruction

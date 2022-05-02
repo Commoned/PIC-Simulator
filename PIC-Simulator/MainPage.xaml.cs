@@ -24,7 +24,7 @@ namespace PIC_Simulator
     /// <summary>
     /// Eine leere Seite, die eigenständig verwendet oder zu der innerhalb eines Rahmens navigiert werden kann.
     /// </summary>
-    public sealed partial class MainPage : Page
+    public sealed partial class MainPage : Page , ICodeInterface
     {
         Memory memory;
         Processor processor;
@@ -34,12 +34,14 @@ namespace PIC_Simulator
         {
             this.DataContext = this;
             memory = new Memory();
-            processor = new Processor(memory);
+            processor = new Processor(this,memory);
             filereader = new FileReader();
             DataContext = memory;
             
             this.InitializeComponent();
             CodeStack.ItemsSource = processor.lines;
+            
+            
         }
 
        
@@ -54,7 +56,7 @@ namespace PIC_Simulator
             
             processor.lines = filereader.lines;
             CodeStack.ItemsSource = null;
-            Thread.Sleep(1000);
+            Thread.Sleep(200);
             CodeStack.ItemsSource = processor.lines;
             foreach(Line line in processor.lines)
             {
@@ -64,7 +66,20 @@ namespace PIC_Simulator
                 }
             }
             memory.initMem();
+            
+            Start_Button.IsEnabled = true;
+
+           
+            
         }
+
+        public void selectCode(int line)
+        {
+            this.CodeStack.SelectedIndex = line;
+            this.CodeStack.ScrollIntoView(this.CodeStack.SelectedItem,ScrollIntoViewAlignment.Leading);
+        }
+
+        
 
         private void settingsButton_Click(object sender, RoutedEventArgs e)
         {
@@ -81,18 +96,30 @@ namespace PIC_Simulator
             if(!processor.isRunning)
             {
                 Start_Button.Background = (SolidColorBrush)Resources["RedColor"];
+                Start_Button.Content = "\uE71A";
                 processor.Clock.Start();
                 processor.isRunning = true;
-                memory.initMem();
             }
             else
             {
 
                 Start_Button.Background = (SolidColorBrush)Resources["GreenColor"];
+                Start_Button.Content = "\uE768";
                 processor.Clock.Stop();
                 processor.isRunning =false;
             }
             
+        }
+
+        private void Skip_Button_Click(object sender, RoutedEventArgs e)
+        {
+            processor.Clock.Stop();
+            processor.Clock_Tick(this,this);
+        }
+
+        private void Reset_Button_Click(object sender, RoutedEventArgs e)
+        {
+            memory.initMem();
         }
     }
 }

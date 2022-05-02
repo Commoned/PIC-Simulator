@@ -37,6 +37,7 @@ namespace PIC_Simulator
             short intValue = 0;
             string[] splits = { };
             
+            
             foreach (string s in input)
             {
                 
@@ -53,7 +54,7 @@ namespace PIC_Simulator
                 Regex.Match(s, "");
                 if (s.StartsWith(' '))
                 {
-                    lines.Add(new Line(num, 0, 0, strings[1], false));
+                    lines.Add(new Line(num, 0,0, strings[1], false));
                 }
                 else
                 {

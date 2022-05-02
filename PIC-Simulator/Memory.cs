@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace PIC_Simulator
 {
-    
+
     public class Memory : INotifyPropertyChanged
     {
         public static byte PORTA = 0x05;
@@ -26,8 +26,8 @@ namespace PIC_Simulator
         public static byte PCLATH = 0xA;
         public static byte INTCON = 0x0B;
         public static byte W = 0x10;
-        
-        
+
+
         public short[] eeprom = new short[1024];
         public short[] memoryb1 = new short[128];
         public short[] memoryb2 = new short[128];//Beide Bänke in einem Array maybe
@@ -39,36 +39,82 @@ namespace PIC_Simulator
             initMem();
         }
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
-        
+
         private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
         {
-            
+
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-            
+
         }
 
-        
 
-       
+
+
 
         public string[] Memoryb1
         {
-            get { 
+            get {
                 string[] ret = new string[memoryb1.Length];
                 int index = 0;
-                foreach(var item in memoryb1)
+                foreach (var item in memoryb1)
                 {
                     ret[index] = Convert.ToString(item, 16).ToUpper();
                     index++;
                 }
                 return ret;
             }
-           
+            set
+            {
+
+            }
+
         }
+
+
+        public string WReg
+        {
+            get
+            {
+                string hexnum = string.Format("0x{0:X2}", memoryb1[Memory.W]);
+                return hexnum;
+            }
+        }
+
+        public string FSRReg
+        {
+            get
+            {
+                string hexnum = string.Format("0x{0:X2}", memoryb1[Memory.FSR]);
+                return hexnum;
+            }
+        }
+        public char[] Status
+        {
+            get
+            {
+                char[] bits = Convert.ToString(memoryb1[Memory.STATUS], 2).PadLeft(8, '0').ToCharArray();
+                
+                return bits;
+
+            }
+        }
+        public string PclView
+        {
+            get
+            {
+                string hexnum = string.Format("0x{0:X2}", memoryb1[Memory.PCL]);
+                return hexnum;
+            }
+        }
+
+        
 
         public void updateMemView()
         {
             NotifyPropertyChanged("Memoryb1");
+            NotifyPropertyChanged("WReg");
+            NotifyPropertyChanged("Status");
+            NotifyPropertyChanged("PclView");
         }
 
         public short Pcl
@@ -77,8 +123,11 @@ namespace PIC_Simulator
             set { 
                 memoryb1[0x02] = value;
                 NotifyPropertyChanged("Pcl");
+                
             }
         }
+
+        
 
         public void push(short value)
         {
@@ -103,7 +152,7 @@ namespace PIC_Simulator
         public void initMem()
         {
             memoryb1[2] = 0;
-            memoryb1[3] = 18;
+            memoryb1[3] = 0x18;
             memoryb1[10] = 0;
             memoryb1[11] = 0;
             memoryb2[1] = 0xFF;
