@@ -75,7 +75,7 @@ namespace PIC_Simulator
         {
             get
             {
-                string hexnum = string.Format("0x{0:X4}", memoryb1[Memory.W]);
+                string hexnum = string.Format("0x{0:X2}", memoryb1[Memory.W]);
                 return hexnum;
             }
         }
@@ -84,16 +84,26 @@ namespace PIC_Simulator
         {
             get
             {
-                string hexnum = string.Format("0x{0:X4}", memoryb1[Memory.FSR]);
+                string hexnum = string.Format("0x{0:X2}", memoryb1[Memory.FSR]);
                 return hexnum;
             }
         }
-        public string Status
+        public char[] Status
         {
             get
             {
-                return "0b" + Convert.ToString(memoryb1[Memory.STATUS], 2).PadLeft(8,'0');
+                char[] bits = Convert.ToString(memoryb1[Memory.STATUS], 2).PadLeft(8, '0').ToCharArray();
+                
+                return bits;
 
+            }
+        }
+        public string PclView
+        {
+            get
+            {
+                string hexnum = string.Format("0x{0:X2}", memoryb1[Memory.PCL]);
+                return hexnum;
             }
         }
 
@@ -104,6 +114,7 @@ namespace PIC_Simulator
             NotifyPropertyChanged("Memoryb1");
             NotifyPropertyChanged("WReg");
             NotifyPropertyChanged("Status");
+            NotifyPropertyChanged("PclView");
         }
 
         public short Pcl
@@ -141,7 +152,7 @@ namespace PIC_Simulator
         public void initMem()
         {
             memoryb1[2] = 0;
-            memoryb1[3] = 18;
+            memoryb1[3] = 0x18;
             memoryb1[10] = 0;
             memoryb1[11] = 0;
             memoryb2[1] = 0xFF;
