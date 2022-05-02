@@ -82,6 +82,14 @@ namespace PIC_Simulator
                 return "0x" + Convert.ToString(memoryb1[Memory.FSR], 16).ToUpper();
             }
         }
+        public string Status
+        {
+            get
+            {
+                return "0b" + Convert.ToString(memoryb1[Memory.STATUS], 2).ToUpper();
+
+            }
+        }
 
         
 
