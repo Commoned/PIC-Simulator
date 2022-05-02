@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 using Windows.UI.Xaml;
+using System.Threading;
 
 namespace PIC_Simulator
 {
@@ -14,21 +15,26 @@ namespace PIC_Simulator
         public List<Line> runlines = new List<Line>();
         private Memory memory;
         public bool isRunning = false;
-
+        ICodeInterface codeInterface;
         public DispatcherTimer Clock = new DispatcherTimer();
+        public int quartz = 20;
 
 
 
-        public Processor(Memory memory)
+        public Processor(ICodeInterface codeInterface,Memory memory)
         {
+            this.codeInterface = codeInterface;
             Clock.Tick += Clock_Tick;
-            this.Clock.Interval = new TimeSpan(20);
+            this.Clock.Interval = new TimeSpan(0,0,0,0,1);
+            
             this.memory = memory;
         }
 
-        private void Clock_Tick(object sender, object e)
+        public void Clock_Tick(object sender, object e)
         {
+            codeInterface.selectCode(runlines[memory.Pcl].Linenumber -1);
             Step();
+            
         }
 
         public void Step()
@@ -233,4 +239,9 @@ namespace PIC_Simulator
             memory.Pcl = value;
         }
     }
+}
+
+interface ICodeInterface
+{
+    void selectCode(int line);
 }
