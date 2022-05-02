@@ -61,22 +61,7 @@
             </ItemsControl>
         </ScrollViewer>
 
-        <!--
-        
-        <GridView Margin="10,50,0,0" HorizontalAlignment="Left" Width="650" x:Name="items" ItemsSource="{Binding Memoryb1}" Grid.Row="2" Grid.Column="1" >
-            <GridView.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <ItemsWrapGrid  MaximumRowsOrColumns="8" Orientation="Horizontal"/>
-                </ItemsPanelTemplate>
-            </GridView.ItemsPanel>
-            <GridView.ItemTemplate>
-                <DataTemplate>
-                    <TextBlock Text="{Binding}"></TextBlock>
-                </DataTemplate>
-            </GridView.ItemTemplate>
-        </GridView>
-        
-        -->
+
 
 
         <StackPanel Margin="10,0,0,0" Orientation="Horizontal" Grid.Row="2" Grid.Column="2">
@@ -114,9 +99,34 @@
                 <TextBlock Margin="0,0,5,0">FSR:</TextBlock>
                 <TextBlock Text="{Binding FSRReg}"></TextBlock>
             </StackPanel>
-            <StackPanel Orientation="Horizontal">
+            <StackPanel Orientation="Vertical">
                 <TextBlock Margin="0,0,5,0">STATUS:</TextBlock>
-                <TextBlock Text="{Binding Status}"></TextBlock>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Width="30" Margin="0,0,5,0">IRP</TextBlock>
+                    <TextBlock Width="30" Margin="0,0,5,0">RP1</TextBlock>
+                    <TextBlock Width="30" Margin="0,0,5,0">RP0</TextBlock>
+                    <TextBlock Width="30" Margin="0,0,5,0">TO</TextBlock>
+                    <TextBlock Width="30" Margin="0,0,5,0">PD</TextBlock>
+                    <TextBlock Width="30" Margin="0,0,5,0">Z</TextBlock>
+                    <TextBlock Width="30" Margin="0,0,5,0">DC</TextBlock>
+                    <TextBlock Width="30" Margin="0,0,5,0">C</TextBlock>
+                </StackPanel>
+                <ItemsControl ItemsSource="{Binding Status}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal"></StackPanel>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Width="30" Margin="0,0,5,0" Text="{Binding}"></TextBlock>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Margin="0,0,5,0">Pcl:</TextBlock>
+                <TextBlock Text="{Binding PclView}"></TextBlock>
             </StackPanel>
 
         </StackPanel>

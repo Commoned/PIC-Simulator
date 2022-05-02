@@ -45,6 +45,7 @@ namespace PIC_Simulator
             
         }
 
+
         /// <summary>
         /// Checks Zero Flag
         /// Sets zero flag if register value is zero
@@ -185,7 +186,7 @@ namespace PIC_Simulator
         public void iorlw(short value)
         {
             memory.memoryb1[Memory.W] = (short) (memory.memoryb1[Memory.W] | value);
-
+          
             checkZeroFlag(Memory.W);
             memory.updateMemView();
         }
@@ -202,6 +203,7 @@ namespace PIC_Simulator
 
             checkCarryFlag(Memory.W);
             checkZeroFlag(Memory.W);
+
             memory.updateMemView();
         }
 
@@ -234,6 +236,11 @@ namespace PIC_Simulator
         {
             memory.memoryb1[Memory.PCL] = memory.pop();
             nop();
+        }
+
+        public void Return()
+        {
+
         }
 
         public void Goto(short value)
