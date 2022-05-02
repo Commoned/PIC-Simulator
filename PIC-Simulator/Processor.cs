@@ -226,12 +226,14 @@ namespace PIC_Simulator
 
         public void call(short value)
         {
+            memory.push((short)(memory.memoryb1[Memory.PCL]+1));
             //MISSING Call mit Rücksprung stack[stackpointer]
         }
 
         public void Return()
         {
-            //MISSING Return from subfunction
+            memory.memoryb1[Memory.PCL] = memory.pop();
+            nop();
         }
 
         public void Goto(short value)

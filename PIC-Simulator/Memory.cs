@@ -97,6 +97,7 @@ namespace PIC_Simulator
         {
             NotifyPropertyChanged("Memoryb1");
             NotifyPropertyChanged("WReg");
+            NotifyPropertyChanged("Status");
         }
 
         public short Pcl
