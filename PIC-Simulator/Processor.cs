@@ -167,7 +167,7 @@ namespace PIC_Simulator
                             nop();
                             break;
                         default:
-                            movwf(value);
+                            //movwf(value);
                             break;
                     }
                     break;

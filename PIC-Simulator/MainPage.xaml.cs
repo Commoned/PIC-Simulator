@@ -29,6 +29,7 @@ namespace PIC_Simulator
         Memory memory;
         Processor processor;
         private FileReader filereader;
+        public object tempSender;
         
         public MainPage()
         {
@@ -120,6 +121,29 @@ namespace PIC_Simulator
         private void Reset_Button_Click(object sender, RoutedEventArgs e)
         {
             memory.initMem();
+        }
+
+        private void TextBlock_PointerPressed(object sender, PointerRoutedEventArgs e)
+        {
+            var block = (Border)sender;
+            var text = (TextBlock)block.Child;
+            Pop_Reg.Text = text.Text;
+            Click_Popup.IsOpen = true;
+            tempSender = sender;
+        }
+
+        private void Pop_Save_Click(object sender, RoutedEventArgs e)
+        {
+            var tempBorder = (Border)tempSender;
+            var text = (TextBlock)tempBorder.Child;
+            var toSave = text.Text;
+
+            var border = (ItemsControl)text.Parent;
+            var itecont = tempBorder.Parent;
+            
+            memory.memoryb1[0]= Convert.ToInt16(text.Text,16);
+            memory.updateMemView();
+            Click_Popup.IsOpen = false;
         }
     }
 }
