@@ -43,6 +43,7 @@ namespace PIC_Simulator
             memory.Pcl++;
             this.Decode(line.instruction);
             
+
         }
 
 
@@ -153,6 +154,19 @@ namespace PIC_Simulator
                 case 0x20: //call
                     call(value);
                     break;
+                case 0x34:
+                    retlw(value);
+                    break;
+                case 0x00:
+                    if(value == 0x0008)
+                    {
+                        Return();
+                    }
+                    if(value == 0)
+                    {
+                        nop();
+                    }
+                    break;
             }
                 
         }
@@ -217,18 +231,24 @@ namespace PIC_Simulator
 
         public void nop()
         {
+            memory.updateMemView();
             //No operation
         }
 
         public void retlw(short value)
         {
             memory.memoryb1[Memory.W] = value;
+            memory.memoryb1[Memory.PCL] = memory.pop();
             nop();
+            memory.updateMemView();
         }
 
         public void call(short value)
         {
-            memory.push((short)(memory.memoryb1[Memory.PCL]+1));
+            memory.push((short)(memory.memoryb1[Memory.PCL]));
+            memory.Pcl = value;
+            nop();
+            memory.updateMemView();
             //MISSING Call mit Rücksprung stack[stackpointer]
         }
 
@@ -236,11 +256,13 @@ namespace PIC_Simulator
         {
             memory.memoryb1[Memory.PCL] = memory.pop();
             nop();
+            memory.updateMemView();
         }
 
         public void Goto(short value)
         {
             memory.Pcl = value;
+            memory.updateMemView();
         }
     }
 }

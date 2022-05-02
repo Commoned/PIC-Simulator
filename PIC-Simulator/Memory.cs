@@ -31,7 +31,7 @@ namespace PIC_Simulator
         public short[] eeprom = new short[1024];
         public short[] memoryb1 = new short[128];
         public short[] memoryb2 = new short[128];//Beide Bänke in einem Array maybe
-        public short stackpointer = 7;
+        public short stackpointer = 6;
         public short[] stack = new short[7];
 
         public Memory()
@@ -139,14 +139,14 @@ namespace PIC_Simulator
             else
             {
                 stack[stackpointer] = value;
-                stackpointer = 7;
+                stackpointer = 6;
             }
         }
 
         public short pop()
         {
             stackpointer++;
-            return stack[stackpointer-1];
+            return stack[stackpointer];
         }
 
         public void initMem()
