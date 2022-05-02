@@ -63,6 +63,10 @@ namespace PIC_Simulator
                 }
                 return ret;
             }
+            set
+            {
+
+            }
 
         }
 
@@ -71,7 +75,8 @@ namespace PIC_Simulator
         {
             get
             {
-                return "0x" + Convert.ToString(memoryb1[Memory.W], 16).ToUpper();
+                string hexnum = string.Format("0x{0:X4}", memoryb1[Memory.W]);
+                return hexnum;
             }
         }
 
@@ -79,14 +84,15 @@ namespace PIC_Simulator
         {
             get
             {
-                return "0x" + Convert.ToString(memoryb1[Memory.FSR], 16).ToUpper();
+                string hexnum = string.Format("0x{0:X4}", memoryb1[Memory.FSR]);
+                return hexnum;
             }
         }
         public string Status
         {
             get
             {
-                return "0b" + Convert.ToString(memoryb1[Memory.STATUS], 2).ToUpper();
+                return "0b" + Convert.ToString(memoryb1[Memory.STATUS], 2).PadLeft(8,'0');
 
             }
         }
@@ -97,6 +103,7 @@ namespace PIC_Simulator
         {
             NotifyPropertyChanged("Memoryb1");
             NotifyPropertyChanged("WReg");
+            NotifyPropertyChanged("Status");
         }
 
         public short Pcl
