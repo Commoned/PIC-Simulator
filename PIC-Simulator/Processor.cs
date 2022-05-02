@@ -53,7 +53,7 @@ namespace PIC_Simulator
         /// Unsets zero flag if register value is not zero but zero flag is set
         /// </summary>
         /// <param name="register">Register which is checked</param>
-       public void checkZeroFlag(short register)
+        public void checkZeroFlag(short register)
         {
             if (memory.memoryb1[register] == 0)
             {
@@ -133,8 +133,14 @@ namespace PIC_Simulator
                 case 0x30: //movlw
                     movlw(value);
                     break;
+                case 0x08: //movf
+                    movf(value);
+                    break;
                 case 0x39: //andlw
                     andlw(value);
+                    break;
+                case 0x05: //andwf
+                    andwf(value);
                     break;
                 case 0x38: //iorlw
                     iorlw(value);
@@ -148,14 +154,36 @@ namespace PIC_Simulator
                 case 0x3E: //addlw
                     addlw(value);
                     break;
+                case 0x07: //addwf
+                    addwf(value);
+                    break;
                 case 0x28: //goto
                     Goto(value);
                     break;
                 case 0x20: //call
                     call(value);
                     break;
-                case 0x34:
+                case 0x34: //retlw
                     retlw(value);
+                    break;
+                case 0x09: //comf
+                    comf(value);
+                    break;
+                case 0x03: //decf
+                    decf(value);
+                    break;
+                case 0x0A: //incf
+                    incf(value);
+                    break;
+                case 0x01:
+                    if (value != 0) //clrf
+                    {
+                        clrf(value);
+                    }
+                    else //clrw
+                    {
+                        clrw();
+                    }
                     break;
                 case 0x00:
                     switch (value)
@@ -182,6 +210,39 @@ namespace PIC_Simulator
             memory.updateMemView(); 
         }
 
+        public void movwf(short value)
+        {
+            short freg = (short)(value & 0b_0111_1111);
+            short destvalue = (short)(value & 0b_1000_0000);
+
+            if (destvalue == 0b_1000_0000)
+            {
+                memory.memoryb1[freg] = memory.memoryb1[Memory.W];
+            }
+
+            memory.updateMemView();
+        }
+
+        public void movf(short value)
+        {
+            short destreg;
+            short freg = (short)(value & 0b_0111_1111);
+            short destvalue = (short)(value & 0b_1000_0000);
+
+            if (destvalue != 0b_1000_0000)
+            {
+                destreg = Memory.W;
+            }
+            else
+            {
+                destreg = freg;
+            }
+
+            memory.memoryb1[destreg] = memory.memoryb1[freg];
+
+            checkZeroFlag(destreg);
+            memory.updateMemView();
+        }
         public void addlw(short value)
         {
             checkDigitCarryFlag(Memory.W, value);
@@ -193,11 +254,57 @@ namespace PIC_Simulator
             memory.updateMemView();
         }
 
+        public void addwf(short value)
+        {
+            short destreg;
+            short freg =        (short)(value & 0b_0111_1111);
+            short destvalue =   (short)(value & 0b_1000_0000);
+
+            if (destvalue != 0b_1000_0000)
+            {
+                destreg = Memory.W;
+            }
+            else
+            {
+                destreg = freg;
+            }
+
+            checkDigitCarryFlag(destreg, memory.memoryb1[freg]);
+
+            memory.memoryb1[destreg] = (short)(memory.memoryb1[Memory.W] + memory.memoryb1[freg]);
+
+            checkCarryFlag(destreg);
+            checkZeroFlag(destreg);
+            memory.updateMemView();
+        }
+
         public void andlw(short value)
         {
             memory.memoryb1[Memory.W] = (short)(memory.memoryb1[Memory.W] & value);
 
             checkZeroFlag(Memory.W);
+            memory.updateMemView();
+        }
+
+        public void andwf(short value)
+        {
+            short destreg;
+            short freg =        (short)(value & 0b_0111_1111);
+            short destvalue =   (short)(value & 0b_1000_0000);
+
+            if( destvalue != 0b_1000_0000)
+            {
+                destreg = Memory.W;
+            }
+            else
+            {
+                destreg = freg;
+            }
+
+            memory.memoryb1[destreg] = (short)(memory.memoryb1[Memory.W] & memory.memoryb1[freg]);
+
+
+            checkZeroFlag(destreg);
             memory.updateMemView();
         }
 
@@ -209,19 +316,69 @@ namespace PIC_Simulator
             memory.updateMemView();
         }
 
+        public void iorwf(short value)
+        {
+            short destreg;
+            short freg = (short)(value & 0b_0111_1111);
+            short destvalue = (short)(value & 0b_1000_0000);
+
+            if (destvalue != 0b_1000_0000)
+            {
+                destreg = Memory.W;
+            }
+            else
+            {
+                destreg = freg;
+            }
+
+            memory.memoryb1[destreg] = (short) (memory.memoryb1[Memory.W] | memory.memoryb1[freg]);
+
+            checkZeroFlag(destreg);
+            memory.updateMemView();
+        }
+
         public void sublw(short value)
         {
-            checkDigitCarryFlag(Memory.W ,value);
+            checkDigitCarryFlag(Memory.W, value);
 
-            short wreg = (short)(memory.memoryb1[Memory.W] - value);
-            memory.memoryb1[Memory.W] = wreg;
+            short regvalue = (short)(memory.memoryb1[Memory.W] - value);
+            memory.memoryb1[Memory.W] = regvalue;
             checkCarryFlag(Memory.W);
-            if (wreg < 0)
+            if (regvalue < 0)
             {
-                memory.memoryb1[Memory.W] = (short) ((short)(wreg ^ 0b_1111_1111_1111_1111) + 1);
+                memory.memoryb1[Memory.W] = (short) ((short)(regvalue ^ 0b_1111_1111_1111_1111) + 1);
             }
 
             checkZeroFlag(Memory.W);
+            memory.updateMemView();
+        }
+
+        public void subwf(short value)
+        {
+            short destreg;
+            short freg = (short)(value & 0b_0111_1111);
+            short destvalue = (short)(value & 0b_1000_0000);
+
+            if (destvalue != 0b_1000_0000)
+            {
+                destreg = Memory.W;
+            }
+            else
+            {
+                destreg = freg;
+            }
+
+            checkDigitCarryFlag(Memory.W, memory.memoryb1[freg]);
+
+            short regvalue = (short)(memory.memoryb1[Memory.W] - memory.memoryb1[freg]);
+            memory.memoryb1[destreg] = regvalue;
+            checkCarryFlag(destreg);
+            if (regvalue < 0)
+            {
+                memory.memoryb1[destreg] = (short)((short)(regvalue ^ 0b_1111_1111_1111_1111) + 1);
+            }
+
+            checkZeroFlag(destreg);
             memory.updateMemView();
         }
 
@@ -231,6 +388,27 @@ namespace PIC_Simulator
 
             checkZeroFlag(Memory.W);
             memory.updateMemView();   
+        }
+
+        public void xorwf(short value)
+        {
+            short destreg;
+            short freg = (short)(value & 0b_0111_1111);
+            short destvalue = (short)(value & 0b_1000_0000);
+
+            if (destvalue != 0b_1000_0000)
+            {
+                destreg = Memory.W;
+            }
+            else
+            {
+                destreg = freg;
+            }
+
+            memory.memoryb1[destreg] = (short)(memory.memoryb1[Memory.W] ^ memory.memoryb1[freg]);
+
+            checkZeroFlag(destreg);
+            memory.updateMemView();
         }
 
         public void nop()
@@ -253,7 +431,6 @@ namespace PIC_Simulator
             memory.Pcl = value;
             nop();
             memory.updateMemView();
-            //MISSING Call mit Rücksprung stack[stackpointer]
         }
 
         public void Return()
@@ -267,6 +444,91 @@ namespace PIC_Simulator
         {
             memory.Pcl = value;
             memory.updateMemView();
+        }
+       
+        public void clrf(short value)
+        {
+            short freg = (short)(value & 0b_0111_1111);
+
+            memory.memoryb1[freg] = 0b_0000_0000;
+
+            checkZeroFlag(freg);
+            memory.updateMemView();
+        }
+
+        public void clrw()
+        {
+            memory.memoryb1[Memory.W] = 0b_0000_0000;
+
+            checkZeroFlag(Memory.W);
+            memory.updateMemView();
+        }
+
+        public void comf(short value)
+        {
+            short destreg;
+            short freg = (short)(value & 0b_0111_1111);
+            short destvalue = (short)(value & 0b_1000_0000);
+
+            if (destvalue != 0b_1000_0000)
+            {
+                destreg = Memory.W;
+            }
+            else
+            {
+                destreg = freg;
+            }
+
+            memory.memoryb1[destreg] = (short)(0xFF - memory.memoryb1[freg]);
+
+            checkZeroFlag(destreg);
+            memory.updateMemView();
+        }
+
+        public void decf(short value)
+        {
+            short destreg;
+            short freg = (short)(value & 0b_0111_1111);
+            short destvalue = (short)(value & 0b_1000_0000);
+
+            if (destvalue != 0b_1000_0000)
+            {
+                destreg = Memory.W;
+            }
+            else
+            {
+                destreg = freg;
+            }
+
+            memory.memoryb1[destreg] = (short)(memory.memoryb1[freg] - 1);
+            checkZeroFlag(destreg);
+            memory.updateMemView();
+        }
+
+        public void incf(short value)
+        {
+            short destreg;
+            short freg = (short)(value & 0b_0111_1111);
+            short destvalue = (short)(value & 0b_1000_0000);
+
+            if (destvalue != 0b_1000_0000)
+            {
+                destreg = Memory.W;
+            }
+            else
+            {
+                destreg = freg;
+            }
+
+            memory.memoryb1[destreg] = (short)(memory.memoryb1[freg] + 1);
+
+            checkZeroFlag(destreg);
+            memory.updateMemView();
+        }
+
+        public void swapf(short value)
+        {
+            //MISSING Work
         }
     }
 }
