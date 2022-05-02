@@ -103,7 +103,7 @@ namespace PIC_Simulator
 
         public void checkCarryFlag(short register)
         {
-            if (memory.memoryb1[register] > 255)
+            if ((ushort)(memory.memoryb1[register]) > 255)
             {
                 memory.memoryb1[Memory.STATUS] = (short)(memory.memoryb1[Memory.STATUS] + 0b_0000_0001);
                 memory.memoryb1[register] = (short)(memory.memoryb1[register] & 0b_0000_0000_1111_1111);
@@ -210,14 +210,14 @@ namespace PIC_Simulator
             checkDigitCarryFlag(Memory.W ,value);
 
             short wreg = (short)(memory.memoryb1[Memory.W] - value);
+            memory.memoryb1[Memory.W] = wreg;
+            checkCarryFlag(Memory.W);
             if (wreg < 0)
             {
                 memory.memoryb1[Memory.W] = (short) ((short)(wreg ^ 0b_1111_1111_1111_1111) + 1);
             }
 
-            checkCarryFlag(Memory.W);
             checkZeroFlag(Memory.W);
-
             memory.updateMemView();
         }
 
@@ -258,8 +258,6 @@ namespace PIC_Simulator
             nop();
             memory.updateMemView();
         }
-
-
 
         public void Goto(short value)
         {
