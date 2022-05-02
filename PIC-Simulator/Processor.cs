@@ -238,11 +238,6 @@ namespace PIC_Simulator
             nop();
         }
 
-        public void Return()
-        {
-
-        }
-
         public void Goto(short value)
         {
             memory.Pcl = value;
