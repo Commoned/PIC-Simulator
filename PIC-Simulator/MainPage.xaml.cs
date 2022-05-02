@@ -60,7 +60,7 @@ namespace PIC_Simulator
             CodeStack.ItemsSource = processor.lines;
             foreach(Line line in processor.lines)
             {
-                if(line.instruction != 0)
+                if(line.executable)
                 {
                     processor.runlines.Add(line);
                 }
