@@ -158,13 +158,17 @@ namespace PIC_Simulator
                     retlw(value);
                     break;
                 case 0x00:
-                    if(value == 0x0008)
+                    switch (value)
                     {
-                        Return();
-                    }
-                    if(value == 0)
-                    {
-                        nop();
+                        case 0x08:
+                            Return();
+                            break;
+                        case 0x00:
+                            nop();
+                            break;
+                        default:
+                            movwf(value);
+                            break;
                     }
                     break;
             }
