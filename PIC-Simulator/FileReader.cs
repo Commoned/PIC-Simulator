@@ -7,6 +7,8 @@ using Windows.Storage;
 using Windows.Storage.Pickers;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
+using System.IO;
+using Windows.Storage.Streams;
 
 namespace PIC_Simulator
 {
@@ -25,15 +27,35 @@ namespace PIC_Simulator
         public async Task GetLines()
         {
             var picker = new Windows.Storage.Pickers.FileOpenPicker();
+            
             picker.ViewMode = Windows.Storage.Pickers.PickerViewMode.Thumbnail;
             picker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.PicturesLibrary;
             picker.FileTypeFilter.Add(".lst");
 
             lines.Clear();
+            string[] input = null;
             Windows.Storage.StorageFile file = await picker.PickSingleFileAsync();
+            try
+            {
+
+                if (file != null)
+                {
+                    IBuffer buffer = await FileIO.ReadBufferAsync(file);
+                    DataReader reader = DataReader.FromBuffer(buffer);
+                    byte[] fileContent = new byte[reader.UnconsumedBufferLength];
+                    reader.ReadBytes(fileContent);
+                    string text = Encoding.UTF8.GetString(fileContent, 0, fileContent.Length);
+                    input = text.Split('\n');
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            
 
             //Windows.Storage.StorageFile sampleFile = await StorageFile.GetFileFromPathAsync(file.Path);
-            var input = await FileIO.ReadLinesAsync(file,Windows.Storage.Streams.UnicodeEncoding.Utf8);
+            //var input = await FileIO.ReadLinesAsync(file,Windows.Storage.Streams.UnicodeEncoding.Utf8);
             short intValue = 0;
             string[] splits = { };
             
@@ -50,23 +72,25 @@ namespace PIC_Simulator
 
                 var strings = Regex.Split(s, "[0-9]{5}");
 
-
+                
                 Regex.Match(s, "");
                 if (s.StartsWith(' '))
                 {
-                    lines.Add(new Line(num, 0,0, strings[1], false));
+                    lines.Add(new Line(num, 0, 0, strings[1], false));
                 }
                 else
                 {
                     var beginnums = Regex.Match(s, "[0-9A-F]{4}\\s[0-9A-F]{4}").Value;
                     splits = beginnums.Split(' ');
                     intValue = short.Parse(splits[1], System.Globalization.NumberStyles.HexNumber);
-                    lines.Add(new Line(num, Convert.ToInt16(splits[0]), intValue, strings[1], true));
+                    lines.Add(new Line(num, short.Parse(splits[0], System.Globalization.NumberStyles.HexNumber), intValue, strings[1], true));
                 }
-               
             }
-            
-            
+                
+               
         }
+            
+            
     }
 }
+
