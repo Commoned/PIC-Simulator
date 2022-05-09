@@ -106,8 +106,8 @@ namespace PIC_Simulator
 
             if(funcType == "sub")
             {
-                regvalue = (short)(regvalue - maskedvalue);
-                if (regvalue <=15)
+                regvalue = (short)(maskedvalue - regvalue);
+                if (regvalue <= 15 && regvalue >= 0)
                 {
                     memory.memoryb1[Memory.STATUS] = (short)(memory.memoryb1[Memory.STATUS] + 0b_0000_0010);
                 }
