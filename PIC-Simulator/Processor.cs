@@ -78,45 +78,87 @@ namespace PIC_Simulator
         /// </summary>
         /// <param name="register">Register which is checked</param>
         /// <param name="value">Value for calculation</param>
-        public void checkDigitCarryFlag(short register, short value)
+        public void checkDigitCarryFlag(short register, short value, string funcType)
         {
             ushort digitcarrymask = 0b_0000_1111;
 
-            short reg = (short)(memory.memoryb1[register] & digitcarrymask);
+            short regvalue = (short)(memory.memoryb1[register] & digitcarrymask);
             short maskedvalue = (short)(value & digitcarrymask);
 
-            reg = (short)(reg + maskedvalue);
-            if (reg > 15)
+            regvalue = (short)(regvalue + maskedvalue);
+
+            if(funcType == "add")
             {
-                memory.memoryb1[Memory.STATUS] = (short)(memory.memoryb1[Memory.STATUS] + 0b_0000_0010);
-            }
-            else
-            {
-                ushort digitcarryflagmask = 0b_0000_0010;
-                short digitcarrystatus = (short)(memory.memoryb1[Memory.STATUS] & digitcarryflagmask);
-                if(digitcarrystatus != 0b_0000_0000)
+                if (regvalue > 15)
                 {
-                    memory.memoryb1[Memory.STATUS] = (short)(memory.memoryb1[Memory.STATUS] - 0b_0000_0010);
+                    memory.memoryb1[Memory.STATUS] = (short)(memory.memoryb1[Memory.STATUS] + 0b_0000_0010);
+                }
+                else
+                {
+                    ushort digitcarryflagmask = 0b_0000_0010;
+                    short digitcarrystatus = (short)(memory.memoryb1[Memory.STATUS] & digitcarryflagmask);
+                    if (digitcarrystatus != 0b_0000_0000)
+                    {
+                        memory.memoryb1[Memory.STATUS] = (short)(memory.memoryb1[Memory.STATUS] - 0b_0000_0010);
+                    }
                 }
             }
+
+            if(funcType == "sub")
+            {
+                if (regvalue < 15)
+                {
+                    memory.memoryb1[Memory.STATUS] = (short)(memory.memoryb1[Memory.STATUS] + 0b_0000_0010);
+                }
+                else
+                {
+                    ushort digitcarryflagmask = 0b_0000_0010;
+                    short digitcarrystatus = (short)(memory.memoryb1[Memory.STATUS] & digitcarryflagmask);
+                    if (digitcarrystatus != 0b_0000_0000)
+                    {
+                        memory.memoryb1[Memory.STATUS] = (short)(memory.memoryb1[Memory.STATUS] - 0b_0000_0010);
+                    }
+                }
+            }
+            
         }
 
-        public void checkCarryFlag(short register)
+        public void checkCarryFlag(short register, string funcType)
         {
-            if ((ushort)(memory.memoryb1[register]) > 255)
+            ushort carryflagmask = 0b_0000_0001;
+            short carrystatus = (short)(memory.memoryb1[Memory.STATUS] & carryflagmask);
+
+            if (funcType == "add")
             {
-                memory.memoryb1[Memory.STATUS] = (short)(memory.memoryb1[Memory.STATUS] + 0b_0000_0001);
+                if ((short)(memory.memoryb1[register]) > 255)
+                {
+                    memory.memoryb1[Memory.STATUS] = (short)(memory.memoryb1[Memory.STATUS] + 0b_0000_0001);
+                }
+                else
+                {
+                    if (carrystatus != 0b_0000_0000)
+                    {
+                        memory.memoryb1[Memory.STATUS] = (short)(memory.memoryb1[Memory.STATUS] - 0b_0000_0001);
+                    }
+                }
                 memory.memoryb1[register] = (short)(memory.memoryb1[register] & 0b_0000_0000_1111_1111);
             }
-            else
+            
+            if(funcType == "sub")
             {
-                ushort carryflagmask = 0b_0000_0001;
-                short carrystatus = (short)(memory.memoryb1[Memory.STATUS] & carryflagmask);
-                if (carrystatus != 0b_0000_0000)
+                if ((short)(memory.memoryb1[register]) >= 0)
                 {
-                    memory.memoryb1[Memory.STATUS] = (short)(memory.memoryb1[Memory.STATUS] - 0b_0000_0001);
+                    memory.memoryb1[Memory.STATUS] = (short)(memory.memoryb1[Memory.STATUS] + 0b_0000_0001);
                 }
-            }
+                else
+                {
+                    if (carrystatus != 0b_0000_0000)
+                    {
+                        memory.memoryb1[Memory.STATUS] = (short)(memory.memoryb1[Memory.STATUS] - 0b_0000_0001);
+                    }
+                }
+                memory.memoryb1[register] = (short)(memory.memoryb1[register] & 0b_0000_0000_1111_1111);
+            } 
         }
 
         public void Decode(short toDecode)
@@ -175,6 +217,12 @@ namespace PIC_Simulator
                 case 0x0A: //incf
                     incf(value);
                     break;
+                case 0x04: //iorwf
+                    iorwf(value);
+                    break;
+                case 0x02: //subwf
+                    subwf(value);
+                    break;
                 case 0x01:
                     if (value != 0) //clrf
                     {
@@ -195,7 +243,7 @@ namespace PIC_Simulator
                             nop();
                             break;
                         default:
-                            //movwf(value);
+                            movwf(value);
                             break;
                     }
                     break;
@@ -245,11 +293,11 @@ namespace PIC_Simulator
         }
         public void addlw(short value)
         {
-            checkDigitCarryFlag(Memory.W, value);
+            checkDigitCarryFlag(Memory.W, value, "add");
 
             memory.memoryb1[Memory.W] = (short)(memory.memoryb1[Memory.W] + value);
 
-            checkCarryFlag(Memory.W);
+            checkCarryFlag(Memory.W, "add");
             checkZeroFlag(Memory.W);
             memory.updateMemView();
         }
@@ -269,11 +317,11 @@ namespace PIC_Simulator
                 destreg = freg;
             }
 
-            checkDigitCarryFlag(destreg, memory.memoryb1[freg]);
+            checkDigitCarryFlag(destreg, memory.memoryb1[freg], "add");
 
             memory.memoryb1[destreg] = (short)(memory.memoryb1[Memory.W] + memory.memoryb1[freg]);
 
-            checkCarryFlag(destreg);
+            checkCarryFlag(destreg, "add");
             checkZeroFlag(destreg);
             memory.updateMemView();
         }
@@ -338,17 +386,13 @@ namespace PIC_Simulator
         }
 
         public void sublw(short value)
-        {
-            checkDigitCarryFlag(Memory.W, value);
-
-            short regvalue = (short)(memory.memoryb1[Memory.W] - value);
+        {   
+            checkDigitCarryFlag(Memory.W, value, "sub");
+            
+            short regvalue = (short)(value - memory.memoryb1[Memory.W]);
             memory.memoryb1[Memory.W] = regvalue;
-            checkCarryFlag(Memory.W);
-            if (regvalue < 0)
-            {
-                memory.memoryb1[Memory.W] = (short) ((short)(regvalue ^ 0b_1111_1111_1111_1111) + 1);
-            }
-
+            checkCarryFlag(Memory.W, "sub");
+            
             checkZeroFlag(Memory.W);
             memory.updateMemView();
         }
@@ -368,16 +412,12 @@ namespace PIC_Simulator
                 destreg = freg;
             }
 
-            checkDigitCarryFlag(Memory.W, memory.memoryb1[freg]);
+            checkDigitCarryFlag(Memory.W, memory.memoryb1[freg], "sub");
 
-            short regvalue = (short)(memory.memoryb1[Memory.W] - memory.memoryb1[freg]);
+            short regvalue = (short)(memory.memoryb1[freg] - memory.memoryb1[Memory.W]);
             memory.memoryb1[destreg] = regvalue;
-            checkCarryFlag(destreg);
-            if (regvalue < 0)
-            {
-                memory.memoryb1[destreg] = (short)((short)(regvalue ^ 0b_1111_1111_1111_1111) + 1);
-            }
-
+            checkCarryFlag(destreg, "sub");
+            
             checkZeroFlag(destreg);
             memory.updateMemView();
         }
@@ -500,7 +540,7 @@ namespace PIC_Simulator
                 destreg = freg;
             }
 
-            memory.memoryb1[destreg] = (short)(memory.memoryb1[freg] - 1);
+            memory.memoryb1[destreg] = (short)((memory.memoryb1[freg] - 1) & 0b_0000_0000_1111_1111);
             checkZeroFlag(destreg);
             memory.updateMemView();
         }
