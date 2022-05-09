@@ -85,10 +85,10 @@ namespace PIC_Simulator
             short regvalue = (short)(memory.memoryb1[register] & digitcarrymask);
             short maskedvalue = (short)(value & digitcarrymask);
 
-            regvalue = (short)(regvalue + maskedvalue);
-
             if(funcType == "add")
             {
+                regvalue = (short)(regvalue + maskedvalue);
+
                 if (regvalue > 15)
                 {
                     memory.memoryb1[Memory.STATUS] = (short)(memory.memoryb1[Memory.STATUS] + 0b_0000_0010);
@@ -106,7 +106,8 @@ namespace PIC_Simulator
 
             if(funcType == "sub")
             {
-                if (regvalue < 15)
+                regvalue = (short)(regvalue - maskedvalue);
+                if (regvalue <=15)
                 {
                     memory.memoryb1[Memory.STATUS] = (short)(memory.memoryb1[Memory.STATUS] + 0b_0000_0010);
                 }
@@ -222,6 +223,12 @@ namespace PIC_Simulator
                     break;
                 case 0x02: //subwf
                     subwf(value);
+                    break;
+                case 0x0E: //swapf
+                    swapf(value);
+                    break;
+                case 0x06: //xorwf
+                    xorwf(value);
                     break;
                 case 0x01:
                     if (value != 0) //clrf
@@ -568,7 +575,24 @@ namespace PIC_Simulator
 
         public void swapf(short value)
         {
-            //MISSING Work
+            short destreg;
+            short freg = (short)(value & 0b_0111_1111);
+            short destvalue = (short)(value & 0b_1000_0000);
+
+            if (destvalue != 0b_1000_0000)
+            {
+                destreg = Memory.W;
+            }
+            else
+            {
+                destreg = freg;
+            }
+
+            short regvalue = memory.memoryb1[destreg];
+            short lowerregvalue = (short) (regvalue & 0b_0000_1111);
+
+            memory.memoryb1[destreg] = (short) ((regvalue >> 4) + (lowerregvalue << 4));
+            memory.updateMemView();
         }
     }
 }
