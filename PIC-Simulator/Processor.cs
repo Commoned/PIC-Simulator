@@ -210,11 +210,7 @@ namespace PIC_Simulator
                 nop();
                 isSkip = false;
                 return;
-            }
-
-
-
-            
+            }            
 
             switch (instruction)
             {
@@ -281,6 +277,12 @@ namespace PIC_Simulator
                 case 0x0c: //rrf
                     rrf(value);
                     break;
+                case 0x0F: //incfsz
+                    isSkip = incfsz(value);
+                    break;
+                case 0x0B: //decfsz
+                    isSkip = decfsz(value);
+                    break;  
                 case 0x01:
                     if (value != 0) //clrf
                     {
@@ -711,8 +713,7 @@ namespace PIC_Simulator
 
             memory.updateMemView();
         }
-    }
-
+    
         public void bsf(short instruction,short value)
         {
             short destreg = (short)(value & 0b_0111_1111);
@@ -902,6 +903,68 @@ namespace PIC_Simulator
             else
             {
                 return true;
+            }
+        }
+
+        public bool decfsz(short value)
+        {
+            short destreg;
+            short freg = (short)(value & 0b_0111_1111);
+            short destvalue = (short)(value & 0b_1000_0000);
+
+            if (destvalue != 0b_1000_0000)
+            {
+                destreg = Memory.W;
+            }
+            else
+            {
+                destreg = freg;
+            }
+
+            memory.memoryb1[destreg] = (short)((memory.memoryb1[freg] - 1) & 0b_0000_0000_1111_1111);
+            memory.updateMemView();
+
+            if (memory.memoryb1[destreg] == 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public bool incfsz(short value)
+        {
+            short destreg;
+            short freg = (short)(value & 0b_0111_1111);
+            short destvalue = (short)(value & 0b_1000_0000);
+
+            if (destvalue != 0b_1000_0000)
+            {
+                destreg = Memory.W;
+            }
+            else
+            {
+                destreg = freg;
+            }
+            if((short)(memory.memoryb1[freg] + 1) < 0b_1111_1111)
+            {
+                memory.memoryb1[destreg] = (short)(memory.memoryb1[freg] + 1);
+            }
+            if ((short)(memory.memoryb1[freg] + 1) >= 0b_1111_1111)
+            {
+                memory.memoryb1[destreg] = (short)(0b_0000_0000);
+            }
+            memory.updateMemView();
+
+            if (memory.memoryb1[destreg] == 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
             }
         }
     }
