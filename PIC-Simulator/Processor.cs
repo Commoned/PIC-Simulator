@@ -196,6 +196,29 @@ namespace PIC_Simulator
             }
         }
 
+        public short checkIndirect(short value)
+        {
+            short regval = 0;
+            if ((value & 0b_01111111) == 0) // Wenn 0 dann indirekte Adressierung
+            {
+                regval = memory.memoryb1[Memory.FSR];
+
+                if ((value & 0b_10000000) != 0)
+                {
+                    regval = (short)(regval | 0b_10000000);
+                }
+                else
+                {
+                    regval = (short)(regval & 0b_11111111);
+                }
+            }
+            else
+            {
+                regval = value;
+            }
+            return regval;
+        }
+
         public void Decode(short toDecode)
         {
             ushort masklower = 0b_1111_1111;
@@ -218,12 +241,14 @@ namespace PIC_Simulator
                     movlw(value);
                     break;
                 case 0x08: //movf
+                    value = checkIndirect(value);
                     movf(value);
                     break;
                 case 0x39: //andlw
                     andlw(value);
                     break;
                 case 0x05: //andwf
+                    value = checkIndirect(value);
                     andwf(value);
                     break;
                 case 0x38: //iorlw
@@ -239,6 +264,7 @@ namespace PIC_Simulator
                     addlw(value);
                     break;
                 case 0x07: //addwf
+                    value = checkIndirect(value);
                     addwf(value);
                     break;
                 case 0x28: //goto
@@ -251,24 +277,31 @@ namespace PIC_Simulator
                     retlw(value);
                     break;
                 case 0x09: //comf
+                    value = checkIndirect(value);
                     comf(value);
                     break;
                 case 0x03: //decf
+                    value = checkIndirect(value);
                     decf(value);
                     break;
                 case 0x0A: //incf
+                    value = checkIndirect(value);
                     incf(value);
                     break;
                 case 0x04: //iorwf
+                    value = checkIndirect(value);
                     iorwf(value);
                     break;
                 case 0x02: //subwf
+                    value = checkIndirect(value);
                     subwf(value);
                     break;
                 case 0x0E: //swapf
+                    value = checkIndirect(value);
                     swapf(value);
                     break;
                 case 0x06: //xorwf
+                    value = checkIndirect(value);
                     xorwf(value);
                     break;
                 case 0x0D: //rlf
@@ -286,6 +319,7 @@ namespace PIC_Simulator
                 case 0x01:
                     if (value != 0) //clrf
                     {
+                        value = checkIndirect(value);
                         clrf(value);
                     }
                     else //clrw
@@ -303,6 +337,7 @@ namespace PIC_Simulator
                             nop();
                             break;
                         default:
+                            value = checkIndirect(value);
                             movwf(value);
                             break;
                     }
