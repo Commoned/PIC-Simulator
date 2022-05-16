@@ -131,35 +131,68 @@ namespace PIC_Simulator
 
             if (funcType == "add")
             {
-                if ((short)(memory.memoryb1[register]) > 255)
+                if ((short)(memory.memoryb1[register]) > 255 && carrystatus == 0b_0000_0000)
                 {
                     memory.memoryb1[Memory.STATUS] = (short)(memory.memoryb1[Memory.STATUS] + 0b_0000_0001);
                 }
-                else
+                if ((short) (memory.memoryb1[register]) <=255 && carrystatus == 0b_0000_0001)
                 {
-                    if (carrystatus != 0b_0000_0000)
-                    {
-                        memory.memoryb1[Memory.STATUS] = (short)(memory.memoryb1[Memory.STATUS] - 0b_0000_0001);
-                    }
+                    memory.memoryb1[Memory.STATUS] = (short)(memory.memoryb1[Memory.STATUS] - 0b_0000_0001);
                 }
+
                 memory.memoryb1[register] = (short)(memory.memoryb1[register] & 0b_0000_0000_1111_1111);
             }
             
-            if(funcType == "sub")
+            if (funcType == "sub")
             {
-                if ((short)(memory.memoryb1[register]) >= 0)
+                if ((short)(memory.memoryb1[register]) >= 0 && carrystatus == 0b_0000_0000)
                 {
                     memory.memoryb1[Memory.STATUS] = (short)(memory.memoryb1[Memory.STATUS] + 0b_0000_0001);
                 }
-                else
+                if((short)(memory.memoryb1[register]) < 0 && carrystatus == 0b_0000_0001)
                 {
-                    if (carrystatus != 0b_0000_0000)
-                    {
-                        memory.memoryb1[Memory.STATUS] = (short)(memory.memoryb1[Memory.STATUS] - 0b_0000_0001);
-                    }
+                    memory.memoryb1[Memory.STATUS] = (short)(memory.memoryb1[Memory.STATUS] - 0b_0000_0001);
                 }
+
                 memory.memoryb1[register] = (short)(memory.memoryb1[register] & 0b_0000_0000_1111_1111);
             } 
+
+            if (funcType == "rl")
+            {
+                short regcarry = (short)(memory.memoryb1[register] & 0b_0000_0001_0000_0000);
+                short reglowbit = (short)(memory.memoryb1[register] & 0b_0000_0000_0000_0001);
+                
+                if(reglowbit == 0b_0000_0000_0000_0000 && carrystatus == 0b_0000_0001)
+                {
+                    memory.memoryb1[register] = (short)(memory.memoryb1[register] + 0b_0000_0001);
+                }
+                if(regcarry == 0b_0000_0001_0000_0000 && carrystatus == 0b_0000_0000)
+                {
+                    memory.memoryb1[Memory.STATUS] = (short)(memory.memoryb1[Memory.STATUS] + 0b_0000_0001);
+                }
+                if(regcarry != 0b_0000_0001_0000_0000 && carrystatus == 0b_0000_0001)
+                {
+                    memory.memoryb1[Memory.STATUS] = (short)(memory.memoryb1[Memory.STATUS] - 0b_0000_0001);
+                }
+                
+                memory.memoryb1[register] = (short)(memory.memoryb1[register] & 0b_0000_0000_1111_1111);
+            }
+
+            if (funcType == "rr")
+            {
+                short reglowbit = (short)(memory.memoryb1[register] & 0b_0000_0000_0000_0001);
+
+                if (reglowbit == 0b_0000_0000_0000_0001 && carrystatus == 0b_0000_0000)
+                {
+                    memory.memoryb1[Memory.STATUS] = (short)(memory.memoryb1[Memory.STATUS] + 0b_0000_0001);
+                }
+                if (reglowbit == 0b_0000_0000_0000_0000 && carrystatus == 0b_0000_0001)
+                {
+                    memory.memoryb1[Memory.STATUS] = (short)(memory.memoryb1[Memory.STATUS] - 0b_0000_0001);
+                }
+
+                memory.memoryb1[register] = (short)(memory.memoryb1[register] & 0b_0000_0000_1111_1111);
+            }
         }
 
         public void Decode(short toDecode)
@@ -229,6 +262,12 @@ namespace PIC_Simulator
                     break;
                 case 0x06: //xorwf
                     xorwf(value);
+                    break;
+                case 0x0D: //rlf
+                    rlf(value);
+                    break;
+                case 0x0c: //rrf
+                    rrf(value);
                     break;
                 case 0x01:
                     if (value != 0) //clrf
@@ -592,6 +631,53 @@ namespace PIC_Simulator
             short lowerregvalue = (short) (regvalue & 0b_0000_1111);
 
             memory.memoryb1[destreg] = (short) ((regvalue >> 4) + (lowerregvalue << 4));
+            memory.updateMemView();
+        }
+
+        public void rlf(short value)
+        {
+            short destreg;
+            short freg = (short)(value & 0b_0111_1111);
+            short destvalue = (short)(value & 0b_1000_0000);
+
+            if (destvalue != 0b_1000_0000)
+            {
+                destreg = Memory.W;
+            }
+            else
+            {
+                destreg = freg;
+            }
+
+            memory.memoryb1[destreg] = (short)(memory.memoryb1[freg] << 1);
+
+            checkCarryFlag(destreg, "rl");
+            memory.updateMemView();
+        }
+
+        public void rrf(short value)
+        {
+            short destreg;
+            short freg = (short)(value & 0b_0111_1111);
+            short destvalue = (short)(value & 0b_1000_0000);
+            short startingcarryvalue = (short)(memory.memoryb1[Memory.STATUS] & 0b_0000_0001);
+
+            if (destvalue != 0b_1000_0000)
+            {
+                destreg = Memory.W;
+            }
+            else
+            {
+                destreg = freg;
+            }
+
+            checkCarryFlag(freg, "rr");
+            memory.memoryb1[destreg] = (short)(memory.memoryb1[freg] >> 1);
+            if(startingcarryvalue == 0b_0000_0001)
+            {
+                memory.memoryb1[destreg] = (short)(memory.memoryb1[destreg] + 0b_1000_0000);
+            }
+
             memory.updateMemView();
         }
     }
