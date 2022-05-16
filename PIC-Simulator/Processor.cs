@@ -18,6 +18,7 @@ namespace PIC_Simulator
         ICodeInterface codeInterface;
         public DispatcherTimer Clock = new DispatcherTimer();
         public int quartz = 20;
+        bool isSkip;
 
 
 
@@ -204,6 +205,17 @@ namespace PIC_Simulator
             instruction = (short)(instruction >> 8);
             short value = (short)(toDecode & masklower) ;
 
+            if(isSkip)
+            {
+                nop();
+                isSkip = false;
+                return;
+            }
+
+
+
+            
+
             switch (instruction)
             {
                 case 0x30: //movlw
@@ -293,8 +305,27 @@ namespace PIC_Simulator
                             break;
                     }
                     break;
+                default:
+                    if ((instruction & 0b_000011100) == 0b_010100)
+                    {
+                        bsf(instruction, value);
+                    }
+                    if ((instruction & 0b_000011100) == 0b_010000)
+                    {
+                        bcf(instruction, value);
+                    }
+                    if((instruction & 0b_000011100) == 0b_011000)
+                    {
+                        isSkip = btfsc(instruction,value);
+                    }
+                    if ((instruction & 0b_000011100) == 0b_011100)
+                    {
+                        isSkip = btfsc(instruction, value);
+                    }
+                    break;
             }
-                
+            
+
         }
 
         public void movlw(short value)
@@ -681,6 +712,201 @@ namespace PIC_Simulator
             memory.updateMemView();
         }
     }
+
+        public void bsf(short instruction,short value)
+        {
+            short destreg = (short)(value & 0b_0111_1111);
+            short bitdestvalue = (short)(value & 0b_1000_0000);
+            if(bitdestvalue != 0)
+            {
+                bitdestvalue = (short)(1 + ((instruction & 0b_0011) << 1));
+            }
+            else
+            {
+                bitdestvalue = (short)((instruction & 0b_0011) << 1);
+            }
+
+            switch(bitdestvalue)
+            {
+                case 0:
+                    memory.memoryb1[destreg] = (short)(memory.memoryb1[destreg] | 0b_01);
+                    break;
+                case 1:
+                    memory.memoryb1[destreg] = (short)(memory.memoryb1[destreg] | 0b_010);
+                    break;
+                case 2:
+                    memory.memoryb1[destreg] = (short)(memory.memoryb1[destreg] | 0b_100);
+                    break;
+                case 3:
+                    memory.memoryb1[destreg] = (short)(memory.memoryb1[destreg] | 0b_1000);
+                    break;
+                case 4:
+                    memory.memoryb1[destreg] = (short)(memory.memoryb1[destreg] | 0b_10000);
+                    break;
+                case 5:
+                    memory.memoryb1[destreg] = (short)(memory.memoryb1[destreg] | 0b_100000);
+                    break;
+                case 6:
+                    memory.memoryb1[destreg] = (short)(memory.memoryb1[destreg] | 0b_1000000);
+                    break;
+                case 7:
+                    memory.memoryb1[destreg] = (short)(memory.memoryb1[destreg] | 0b_10000000);
+                    break;
+
+            }
+            memory.updateMemView();
+        }
+
+        public void bcf(short instruction, short value)
+        {
+            short destreg = (short)(value & 0b_0111_1111);
+            short bitdestvalue = (short)(value & 0b_1000_0000);
+            if (bitdestvalue != 0)
+            {
+                bitdestvalue = (short)(1 + ((instruction & 0b_0011) << 1));
+            }
+            else
+            {
+                bitdestvalue = (short)((instruction & 0b_0011) << 1);
+            }
+
+            switch (bitdestvalue)
+            {
+                case 0:
+                    memory.memoryb1[destreg] = (short)(memory.memoryb1[destreg] & 0b_11111110);
+                    break;
+                case 1:
+                    memory.memoryb1[destreg] = (short)(memory.memoryb1[destreg] & 0b_11111101);
+                    break;
+                case 2:
+                    memory.memoryb1[destreg] = (short)(memory.memoryb1[destreg] & 0b_11111011);
+                    break;
+                case 3:
+                    memory.memoryb1[destreg] = (short)(memory.memoryb1[destreg] & 0b_11110111);
+                    break;
+                case 4:
+                    memory.memoryb1[destreg] = (short)(memory.memoryb1[destreg] & 0b_11101111);
+                    break;
+                case 5:
+                    memory.memoryb1[destreg] = (short)(memory.memoryb1[destreg] & 0b_11011111);
+                    break;
+                case 6:
+                    memory.memoryb1[destreg] = (short)(memory.memoryb1[destreg] & 0b_10111111);
+                    break;
+                case 7:
+                    memory.memoryb1[destreg] = (short)(memory.memoryb1[destreg] & 0b_101111111);
+                    break;
+
+            }
+            memory.updateMemView();
+        }
+
+        public bool btfsc(short instruction, short value)
+        {
+            short destreg = (short)(value & 0b_0111_1111);
+            short bitdestvalue = (short)(value & 0b_1000_0000);
+            if (bitdestvalue != 0)
+            {
+                bitdestvalue = (short)(1 + ((instruction & 0b_0011) << 1));
+            }
+            else
+            {
+                bitdestvalue = (short)((instruction & 0b_0011) << 1);
+            }
+
+            short valtest = 0;
+
+            switch (bitdestvalue)
+            {
+                case 0:
+                   valtest = (short)(memory.memoryb1[destreg] & 0b_01);
+                    break;
+                case 1:
+                    valtest = (short)(memory.memoryb1[destreg] & 0b_010);
+                    break;
+                case 2:
+                    valtest = (short)(memory.memoryb1[destreg] & 0b_100);
+                    break;
+                case 3:
+                    valtest = (short)(memory.memoryb1[destreg] & 0b_1000);
+                    break;
+                case 4:
+                    valtest = (short)(memory.memoryb1[destreg] & 0b_10000);
+                    break;
+                case 5:
+                    valtest = (short)(memory.memoryb1[destreg] & 0b_100000);
+                    break;
+                case 6:
+                    valtest = (short)(memory.memoryb1[destreg] & 0b_1000000);
+                    break;
+                case 7:
+                    valtest = (short)(memory.memoryb1[destreg] & 0b_10000000);
+                    break;
+            }
+            if(valtest == 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public bool btfss(short instruction, short value)
+        {
+            short destreg = (short)(value & 0b_0111_1111);
+            short bitdestvalue = (short)(value & 0b_1000_0000);
+            if (bitdestvalue != 0)
+            {
+                bitdestvalue = (short)(1 + ((instruction & 0b_0011) << 1));
+            }
+            else
+            {
+                bitdestvalue = (short)((instruction & 0b_0011) << 1);
+            }
+
+            short valtest = 0;
+
+            switch (bitdestvalue)
+            {
+                case 0:
+                    valtest = (short)(memory.memoryb1[destreg] & 0b_01);
+                    break;
+                case 1:
+                    valtest = (short)(memory.memoryb1[destreg] & 0b_010);
+                    break;
+                case 2:
+                    valtest = (short)(memory.memoryb1[destreg] & 0b_100);
+                    break;
+                case 3:
+                    valtest = (short)(memory.memoryb1[destreg] & 0b_1000);
+                    break;
+                case 4:
+                    valtest = (short)(memory.memoryb1[destreg] & 0b_10000);
+                    break;
+                case 5:
+                    valtest = (short)(memory.memoryb1[destreg] & 0b_100000);
+                    break;
+                case 6:
+                    valtest = (short)(memory.memoryb1[destreg] & 0b_1000000);
+                    break;
+                case 7:
+                    valtest = (short)(memory.memoryb1[destreg] & 0b_10000000);
+                    break;
+            }
+            if (valtest == 0)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+    }
+
+
 }
 
 interface ICodeInterface
