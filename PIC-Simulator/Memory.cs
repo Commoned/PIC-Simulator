@@ -115,6 +115,7 @@ namespace PIC_Simulator
             NotifyPropertyChanged("WReg");
             NotifyPropertyChanged("Status");
             NotifyPropertyChanged("PclView");
+            NotifyPropertyChanged("FSRReg");
         }
 
         public short Pcl
