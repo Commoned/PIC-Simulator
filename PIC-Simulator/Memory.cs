@@ -29,7 +29,8 @@ namespace PIC_Simulator
 
 
         public short[] eeprom = new short[1024];
-        public short[] memoryb1 = new short[128];
+        public short[] reg = new short[128];
+        public Register[] memoryb1 = new Register[128];
         public short[] memoryb2 = new short[128];//Beide Bänke in einem Array maybe
         public short stackpointer = 6;
         public short[] stack = new short[7];
@@ -40,7 +41,7 @@ namespace PIC_Simulator
         }
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
 
-        private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
+        public void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
         {
 
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -48,26 +49,14 @@ namespace PIC_Simulator
         }
 
 
+        
 
-
-
-        public string[] Memoryb1
+        public Register[] Memoryb1
         {
             get {
-                string[] ret = new string[memoryb1.Length];
-                int index = 0;
-                foreach (var item in memoryb1)
-                {
-                    ret[index] = Convert.ToString(item, 16).ToUpper();
-                    index++;
-                }
-                return ret;
+                
+                return memoryb1;
             }
-            set
-            {
-
-            }
-
         }
 
 
@@ -75,7 +64,7 @@ namespace PIC_Simulator
         {
             get
             {
-                string hexnum = string.Format("0x{0:X2}", memoryb1[Memory.W]);
+                string hexnum = string.Format("0x{0:X2}", memoryb1[Memory.W].Value);
                 return hexnum;
             }
         }
@@ -84,7 +73,7 @@ namespace PIC_Simulator
         {
             get
             {
-                string hexnum = string.Format("0x{0:X2}", memoryb1[Memory.FSR]);
+                string hexnum = string.Format("0x{0:X2}", memoryb1[Memory.FSR].Value);
                 return hexnum;
             }
         }
@@ -92,7 +81,7 @@ namespace PIC_Simulator
         {
             get
             {
-                char[] bits = Convert.ToString(memoryb1[Memory.STATUS], 2).PadLeft(8, '0').ToCharArray();
+                char[] bits = Convert.ToString(memoryb1[Memory.STATUS].Value, 2).PadLeft(8, '0').ToCharArray();
                 
                 return bits;
 
@@ -102,7 +91,7 @@ namespace PIC_Simulator
         {
             get
             {
-                string hexnum = string.Format("0x{0:X2}", memoryb1[Memory.PCL]);
+                string hexnum = string.Format("0x{0:X2}", memoryb1[Memory.PCL].Value);
                 return hexnum;
             }
         }
@@ -112,6 +101,8 @@ namespace PIC_Simulator
         public void updateMemView()
         {
             NotifyPropertyChanged("Memoryb1");
+            NotifyPropertyChanged("Value");
+            
             NotifyPropertyChanged("WReg");
             NotifyPropertyChanged("Status");
             NotifyPropertyChanged("PclView");
@@ -119,9 +110,9 @@ namespace PIC_Simulator
 
         public short Pcl
         {
-            get { return memoryb1[0x02]; }
+            get { return memoryb1[0x02].Value; }
             set { 
-                memoryb1[0x02] = value;
+                memoryb1[0x02].Value = value;
                 NotifyPropertyChanged("Pcl");
                 
             }
@@ -151,10 +142,18 @@ namespace PIC_Simulator
 
         public void initMem()
         {
-            memoryb1[2] = 0;
-            memoryb1[3] = 0x18;
-            memoryb1[10] = 0;
-            memoryb1[11] = 0;
+            
+            for(int i=0; i<=127; i++)
+            {
+                memoryb1[i] = new Register(i, 0,this);
+            }
+
+            memoryb1[2].Value = 0;
+
+            
+            memoryb1[3].Value = 0x18;
+            memoryb1[10].Value = 0;
+            memoryb1[11].Value = 0;
             memoryb2[1] = 0xFF;
             memoryb2[3] = 0x18;
             memoryb2[5] = 0x1F;

@@ -77,6 +77,7 @@ namespace PIC_Simulator
         {
             this.CodeStack.SelectedIndex = line;
             this.CodeStack.ScrollIntoView(this.CodeStack.SelectedItem,ScrollIntoViewAlignment.Leading);
+            
         }
 
         

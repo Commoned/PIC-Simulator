@@ -42,7 +42,7 @@
             <Button x:Name="Reset_Button" Click="Reset_Button_Click"  Background="Gray" Width="{Binding ActualWidth, ElementName=Control_Stack}" Height="{Binding ActualWidth, ElementName=Control_Stack}" FontSize="30" FontFamily="Segoe MDL2 Assets" Content="&#xE777;"></Button>        
         </StackPanel>
         <TextBlock FontSize="36" Grid.Row="2" Grid.Column="1" VerticalAlignment="Top" Text="RAM"/>
-        <ScrollViewer Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" Margin="10,50,0,0" VerticalScrollBarVisibility="Auto" Width="360">
+        <ScrollViewer Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" Margin="10,50,0,0" VerticalScrollBarVisibility="Auto" Width="400">
             <ItemsControl  HorizontalAlignment="Left" x:Name="items" ItemsSource="{Binding Memoryb1}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
@@ -52,7 +52,7 @@
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Border Background="SlateGray" BorderBrush="DarkSlateGray" BorderThickness="1">
-                            <TextBlock TextAlignment="Center" Margin="10" Width="20"  Text="{Binding}"></TextBlock>
+                            <TextBlock Height="20" TextAlignment="Center" Margin="10" Width="20"  Text="{Binding Value}"></TextBlock>
                         </Border>
 
                     </DataTemplate>
