@@ -983,14 +983,16 @@ namespace PIC_Simulator
             {
                 destreg = freg;
             }
-            if((short)(memory.memoryb1[freg] + 1) < 0b_1111_1111)
+
+            if((short)(memory.memoryb1[freg] + 1) <= 0b_1111_1111)
             {
                 memory.memoryb1[destreg] = (short)(memory.memoryb1[freg] + 1);
             }
-            if ((short)(memory.memoryb1[freg] + 1) >= 0b_1111_1111)
+            if ((short)(memory.memoryb1[freg] + 1) > 0b_1111_1111)
             {
                 memory.memoryb1[destreg] = (short)(0b_0000_0000);
             }
+
             memory.updateMemView();
 
             if (memory.memoryb1[destreg] == 0)
