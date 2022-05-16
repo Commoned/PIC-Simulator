@@ -121,5 +121,27 @@ namespace PIC_Simulator
         {
             memory.resetMem();
         }
+
+        private void Breakpoint_Click(object sender, RoutedEventArgs e)
+        {
+            var but = (Button)sender;
+            var test = but.Background;
+            if ((string)but.Content == "X")
+            {
+                but.Background = (SolidColorBrush)Resources["RedColor"];
+                but.Content = "O";
+               
+                var item = (sender as FrameworkElement).DataContext;
+                processor.brkpnts.Add(CodeStack.Items.IndexOf(item));
+            }
+            else
+            {
+                but.Background = (SolidColorBrush)Resources["GreenColor"];
+                but.Content = "X";
+
+                var item = (sender as FrameworkElement).DataContext;
+                processor.brkpnts.Remove(CodeStack.Items.IndexOf(item));
+            }
+        }
     }
 }
