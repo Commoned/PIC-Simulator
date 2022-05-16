@@ -178,6 +178,9 @@ namespace PIC_Simulator
                 isSkip = false;
                 return;
             }
+
+
+
             
 
             switch (instruction)
