@@ -57,18 +57,18 @@ namespace PIC_Simulator
         /// <param name="register">Register which is checked</param>
         public void checkZeroFlag(short register)
         {
-            if (memory.memoryb1[0,register] == 0)
+            if (memory.memoryb1[currentBank,register] == 0)
             {
-                memory.memoryb1[0,Memory.STATUS] = (short)(memory.memoryb1[0,Memory.STATUS] + 0b_0000_0100);
+                memory.memoryb1[currentBank,Memory.STATUS] = (short)(memory.memoryb1[currentBank,Memory.STATUS] + 0b_0000_0100);
             }
             else
             {
                 ushort zeroflagmask = 0b_0000_0100;
-                short zerostatus = (short)(memory.memoryb1[0,Memory.STATUS] & zeroflagmask);
+                short zerostatus = (short)(memory.memoryb1[currentBank,Memory.STATUS] & zeroflagmask);
 
                 if(zerostatus != 0b_0000_0000)
                 {
-                    memory.memoryb1[0,Memory.STATUS] = (short)(memory.memoryb1[0,Memory.STATUS] - 0b_0000_0100);
+                    memory.memoryb1[currentBank,Memory.STATUS] = (short)(memory.memoryb1[currentBank,Memory.STATUS] - 0b_0000_0100);
                 }
             }
         }
@@ -84,7 +84,7 @@ namespace PIC_Simulator
         {
             ushort digitcarrymask = 0b_0000_1111;
 
-            short regvalue = (short)(memory.memoryb1[0,register] & digitcarrymask);
+            short regvalue = (short)(memory.memoryb1[currentBank,register] & digitcarrymask);
             short maskedvalue = (short)(value & digitcarrymask);
 
             if(funcType == "add")
@@ -93,15 +93,15 @@ namespace PIC_Simulator
 
                 if (regvalue > 15)
                 {
-                    memory.memoryb1[0,Memory.STATUS] = (short)(memory.memoryb1[0,Memory.STATUS] + 0b_0000_0010);
+                    memory.memoryb1[currentBank,Memory.STATUS] = (short)(memory.memoryb1[currentBank,Memory.STATUS] + 0b_0000_0010);
                 }
                 else
                 {
                     ushort digitcarryflagmask = 0b_0000_0010;
-                    short digitcarrystatus = (short)(memory.memoryb1[0,Memory.STATUS] & digitcarryflagmask);
+                    short digitcarrystatus = (short)(memory.memoryb1[currentBank,Memory.STATUS] & digitcarryflagmask);
                     if (digitcarrystatus != 0b_0000_0000)
                     {
-                        memory.memoryb1[0,Memory.STATUS] = (short)(memory.memoryb1[0,Memory.STATUS] - 0b_0000_0010);
+                        memory.memoryb1[currentBank,Memory.STATUS] = (short)(memory.memoryb1[currentBank,Memory.STATUS] - 0b_0000_0010);
                     }
                 }
             }
@@ -111,15 +111,15 @@ namespace PIC_Simulator
                 regvalue = (short)(maskedvalue - regvalue);
                 if (regvalue <= 15 && regvalue >= 0)
                 {
-                    memory.memoryb1[0,Memory.STATUS] = (short)(memory.memoryb1[0,Memory.STATUS] + 0b_0000_0010);
+                    memory.memoryb1[currentBank,Memory.STATUS] = (short)(memory.memoryb1[currentBank,Memory.STATUS] + 0b_0000_0010);
                 }
                 else
                 {
                     ushort digitcarryflagmask = 0b_0000_0010;
-                    short digitcarrystatus = (short)(memory.memoryb1[0,Memory.STATUS] & digitcarryflagmask);
+                    short digitcarrystatus = (short)(memory.memoryb1[currentBank,Memory.STATUS] & digitcarryflagmask);
                     if (digitcarrystatus != 0b_0000_0000)
                     {
-                        memory.memoryb1[0,Memory.STATUS] = (short)(memory.memoryb1[0,Memory.STATUS] - 0b_0000_0010);
+                        memory.memoryb1[currentBank,Memory.STATUS] = (short)(memory.memoryb1[currentBank,Memory.STATUS] - 0b_0000_0010);
                     }
                 }
             }
@@ -129,71 +129,71 @@ namespace PIC_Simulator
         public void checkCarryFlag(short register, string funcType)
         {
             ushort carryflagmask = 0b_0000_0001;
-            short carrystatus = (short)(memory.memoryb1[0,Memory.STATUS] & carryflagmask);
+            short carrystatus = (short)(memory.memoryb1[currentBank,Memory.STATUS] & carryflagmask);
 
             if (funcType == "add")
             {
-                if ((short)(memory.memoryb1[0,register]) > 255 && carrystatus == 0b_0000_0000)
+                if ((short)(memory.memoryb1[currentBank,register]) > 255 && carrystatus == 0b_0000_0000)
                 {
-                    memory.memoryb1[0,Memory.STATUS] = (short)(memory.memoryb1[0,Memory.STATUS] + 0b_0000_0001);
+                    memory.memoryb1[currentBank,Memory.STATUS] = (short)(memory.memoryb1[currentBank,Memory.STATUS] + 0b_0000_0001);
                 }
-                if ((short) (memory.memoryb1[0,register]) <=255 && carrystatus == 0b_0000_0001)
+                if ((short) (memory.memoryb1[currentBank,register]) <=255 && carrystatus == 0b_0000_0001)
                 {
-                    memory.memoryb1[0,Memory.STATUS] = (short)(memory.memoryb1[0,Memory.STATUS] - 0b_0000_0001);
+                    memory.memoryb1[currentBank,Memory.STATUS] = (short)(memory.memoryb1[currentBank,Memory.STATUS] - 0b_0000_0001);
                 }
 
-                memory.memoryb1[0,register] = (short)(memory.memoryb1[0,register] & 0b_0000_0000_1111_1111);
+                memory.memoryb1[currentBank,register] = (short)(memory.memoryb1[currentBank,register] & 0b_0000_0000_1111_1111);
             }
             
             if (funcType == "sub")
             {
-                if ((short)(memory.memoryb1[0,register]) >= 0 && carrystatus == 0b_0000_0000)
+                if ((short)(memory.memoryb1[currentBank,register]) >= 0 && carrystatus == 0b_0000_0000)
                 {
-                    memory.memoryb1[0,Memory.STATUS] = (short)(memory.memoryb1[0,Memory.STATUS] + 0b_0000_0001);
+                    memory.memoryb1[currentBank,Memory.STATUS] = (short)(memory.memoryb1[currentBank,Memory.STATUS] + 0b_0000_0001);
                 }
-                if((short)(memory.memoryb1[0,register]) < 0 && carrystatus == 0b_0000_0001)
+                if((short)(memory.memoryb1[currentBank,register]) < 0 && carrystatus == 0b_0000_0001)
                 {
-                    memory.memoryb1[0,Memory.STATUS] = (short)(memory.memoryb1[0,Memory.STATUS] - 0b_0000_0001);
+                    memory.memoryb1[currentBank,Memory.STATUS] = (short)(memory.memoryb1[currentBank,Memory.STATUS] - 0b_0000_0001);
                 }
 
-                memory.memoryb1[0,register] = (short)(memory.memoryb1[0,register] & 0b_0000_0000_1111_1111);
+                memory.memoryb1[currentBank,register] = (short)(memory.memoryb1[currentBank,register] & 0b_0000_0000_1111_1111);
             } 
 
             if (funcType == "rl")
             {
-                short regcarry = (short)(memory.memoryb1[0,register] & 0b_0000_0001_0000_0000);
-                short reglowbit = (short)(memory.memoryb1[0,register] & 0b_0000_0000_0000_0001);
+                short regcarry = (short)(memory.memoryb1[currentBank,register] & 0b_0000_0001_0000_0000);
+                short reglowbit = (short)(memory.memoryb1[currentBank,register] & 0b_0000_0000_0000_0001);
                 
                 if(reglowbit == 0b_0000_0000_0000_0000 && carrystatus == 0b_0000_0001)
                 {
-                    memory.memoryb1[0,register] = (short)(memory.memoryb1[0,register] + 0b_0000_0001);
+                    memory.memoryb1[currentBank,register] = (short)(memory.memoryb1[currentBank,register] + 0b_0000_0001);
                 }
                 if(regcarry == 0b_0000_0001_0000_0000 && carrystatus == 0b_0000_0000)
                 {
-                    memory.memoryb1[0,Memory.STATUS] = (short)(memory.memoryb1[0,Memory.STATUS] + 0b_0000_0001);
+                    memory.memoryb1[currentBank,Memory.STATUS] = (short)(memory.memoryb1[currentBank,Memory.STATUS] + 0b_0000_0001);
                 }
                 if(regcarry != 0b_0000_0001_0000_0000 && carrystatus == 0b_0000_0001)
                 {
-                    memory.memoryb1[0,Memory.STATUS] = (short)(memory.memoryb1[0,Memory.STATUS] - 0b_0000_0001);
+                    memory.memoryb1[currentBank,Memory.STATUS] = (short)(memory.memoryb1[currentBank,Memory.STATUS] - 0b_0000_0001);
                 }
                 
-                memory.memoryb1[0,register] = (short)(memory.memoryb1[0,register] & 0b_0000_0000_1111_1111);
+                memory.memoryb1[currentBank,register] = (short)(memory.memoryb1[currentBank,register] & 0b_0000_0000_1111_1111);
             }
 
             if (funcType == "rr")
             {
-                short reglowbit = (short)(memory.memoryb1[0,register] & 0b_0000_0000_0000_0001);
+                short reglowbit = (short)(memory.memoryb1[currentBank,register] & 0b_0000_0000_0000_0001);
 
                 if (reglowbit == 0b_0000_0000_0000_0001 && carrystatus == 0b_0000_0000)
                 {
-                    memory.memoryb1[0,Memory.STATUS] = (short)(memory.memoryb1[0,Memory.STATUS] + 0b_0000_0001);
+                    memory.memoryb1[currentBank,Memory.STATUS] = (short)(memory.memoryb1[currentBank,Memory.STATUS] + 0b_0000_0001);
                 }
                 if (reglowbit == 0b_0000_0000_0000_0000 && carrystatus == 0b_0000_0001)
                 {
-                    memory.memoryb1[0,Memory.STATUS] = (short)(memory.memoryb1[0,Memory.STATUS] - 0b_0000_0001);
+                    memory.memoryb1[currentBank,Memory.STATUS] = (short)(memory.memoryb1[currentBank,Memory.STATUS] - 0b_0000_0001);
                 }
 
-                memory.memoryb1[0,register] = (short)(memory.memoryb1[0,register] & 0b_0000_0000_1111_1111);
+                memory.memoryb1[currentBank,register] = (short)(memory.memoryb1[currentBank,register] & 0b_0000_0000_1111_1111);
             }
         }
 
@@ -202,7 +202,7 @@ namespace PIC_Simulator
             short regval = 0;
             if ((value & 0b_01111111) == 0) // Wenn 0 dann indirekte Adressierung
             {
-                regval = memory.memoryb1[0,Memory.FSR];
+                regval = memory.memoryb1[currentBank,Memory.FSR];
 
                 if ((value & 0b_10000000) != 0)
                 {
@@ -368,7 +368,7 @@ namespace PIC_Simulator
 
         public void movlw(short value)
         {
-            memory.memoryb1[0,Memory.W] = value;
+            memory.memoryb1[currentBank,Memory.W] = value;
             
             memory.updateMemView(); 
         }
@@ -380,7 +380,7 @@ namespace PIC_Simulator
 
             if (destvalue == 0b_1000_0000)
             {
-                memory.memoryb1[0,freg] = memory.memoryb1[0,Memory.W];
+                memory.memoryb1[currentBank,freg] = memory.memoryb1[currentBank,Memory.W];
             }
 
             memory.updateMemView();
@@ -401,7 +401,7 @@ namespace PIC_Simulator
                 destreg = freg;
             }
 
-            memory.memoryb1[0,destreg] = memory.memoryb1[0,freg];
+            memory.memoryb1[currentBank,destreg] = memory.memoryb1[currentBank,freg];
 
             checkZeroFlag(destreg);
             memory.updateMemView();
@@ -410,7 +410,7 @@ namespace PIC_Simulator
         {
             checkDigitCarryFlag(Memory.W, value, "add");
 
-            memory.memoryb1[0,Memory.W] = (short)(memory.memoryb1[0,Memory.W] + value);
+            memory.memoryb1[currentBank,Memory.W] = (short)(memory.memoryb1[currentBank,Memory.W] + value);
 
             checkCarryFlag(Memory.W, "add");
             checkZeroFlag(Memory.W);
@@ -432,9 +432,9 @@ namespace PIC_Simulator
                 destreg = freg;
             }
 
-            checkDigitCarryFlag(destreg, memory.memoryb1[0,freg], "add");
+            checkDigitCarryFlag(destreg, memory.memoryb1[currentBank,freg], "add");
 
-            memory.memoryb1[0,destreg] = (short)(memory.memoryb1[0,Memory.W] + memory.memoryb1[0,freg]);
+            memory.memoryb1[currentBank,destreg] = (short)(memory.memoryb1[currentBank,Memory.W] + memory.memoryb1[currentBank,freg]);
 
             checkCarryFlag(destreg, "add");
             checkZeroFlag(destreg);
@@ -443,7 +443,7 @@ namespace PIC_Simulator
 
         public void andlw(short value)
         {
-            memory.memoryb1[0,Memory.W] = (short)(memory.memoryb1[0,Memory.W] & value);
+            memory.memoryb1[currentBank,Memory.W] = (short)(memory.memoryb1[currentBank,Memory.W] & value);
 
             checkZeroFlag(Memory.W);
             memory.updateMemView();
@@ -464,7 +464,7 @@ namespace PIC_Simulator
                 destreg = freg;
             }
 
-            memory.memoryb1[0,destreg] = (short)(memory.memoryb1[0,Memory.W] & memory.memoryb1[0,freg]);
+            memory.memoryb1[currentBank,destreg] = (short)(memory.memoryb1[currentBank,Memory.W] & memory.memoryb1[currentBank,freg]);
 
 
             checkZeroFlag(destreg);
@@ -473,7 +473,7 @@ namespace PIC_Simulator
 
         public void iorlw(short value)
         {
-            memory.memoryb1[0,Memory.W] = (short) (memory.memoryb1[0,Memory.W] | value);
+            memory.memoryb1[currentBank,Memory.W] = (short) (memory.memoryb1[currentBank,Memory.W] | value);
           
             checkZeroFlag(Memory.W);
             memory.updateMemView();
@@ -494,7 +494,7 @@ namespace PIC_Simulator
                 destreg = freg;
             }
 
-            memory.memoryb1[0,destreg] = (short) (memory.memoryb1[0,Memory.W] | memory.memoryb1[0,freg]);
+            memory.memoryb1[currentBank,destreg] = (short) (memory.memoryb1[currentBank,Memory.W] | memory.memoryb1[currentBank,freg]);
 
             checkZeroFlag(destreg);
             memory.updateMemView();
@@ -504,8 +504,8 @@ namespace PIC_Simulator
         {   
             checkDigitCarryFlag(Memory.W, value, "sub");
             
-            short regvalue = (short)(value - memory.memoryb1[0,Memory.W]);
-            memory.memoryb1[0,Memory.W] = regvalue;
+            short regvalue = (short)(value - memory.memoryb1[currentBank,Memory.W]);
+            memory.memoryb1[currentBank,Memory.W] = regvalue;
             checkCarryFlag(Memory.W, "sub");
             
             checkZeroFlag(Memory.W);
@@ -527,10 +527,10 @@ namespace PIC_Simulator
                 destreg = freg;
             }
 
-            checkDigitCarryFlag(Memory.W, memory.memoryb1[0,freg], "sub");
+            checkDigitCarryFlag(Memory.W, memory.memoryb1[currentBank,freg], "sub");
 
-            short regvalue = (short)(memory.memoryb1[0,freg] - memory.memoryb1[0,Memory.W]);
-            memory.memoryb1[0,destreg] = regvalue;
+            short regvalue = (short)(memory.memoryb1[currentBank,freg] - memory.memoryb1[currentBank,Memory.W]);
+            memory.memoryb1[currentBank,destreg] = regvalue;
             checkCarryFlag(destreg, "sub");
             
             checkZeroFlag(destreg);
@@ -539,7 +539,7 @@ namespace PIC_Simulator
 
         public void xorlw(short value)
         {
-            memory.memoryb1[0,Memory.W] = (short)(memory.memoryb1[0,Memory.W] ^ value);
+            memory.memoryb1[currentBank,Memory.W] = (short)(memory.memoryb1[currentBank,Memory.W] ^ value);
 
             checkZeroFlag(Memory.W);
             memory.updateMemView();   
@@ -560,7 +560,7 @@ namespace PIC_Simulator
                 destreg = freg;
             }
 
-            memory.memoryb1[0,destreg] = (short)(memory.memoryb1[0,Memory.W] ^ memory.memoryb1[0,freg]);
+            memory.memoryb1[currentBank,destreg] = (short)(memory.memoryb1[currentBank,Memory.W] ^ memory.memoryb1[currentBank,freg]);
 
             checkZeroFlag(destreg);
             memory.updateMemView();
@@ -574,15 +574,15 @@ namespace PIC_Simulator
 
         public void retlw(short value)
         {
-            memory.memoryb1[0,Memory.W] = value;
-            memory.memoryb1[0,Memory.PCL] = memory.pop();
+            memory.memoryb1[currentBank,Memory.W] = value;
+            memory.memoryb1[currentBank,Memory.PCL] = memory.pop();
             nop();
             memory.updateMemView();
         }
 
         public void call(short value)
         {
-            memory.push((short)(memory.memoryb1[0,Memory.PCL]));
+            memory.push((short)(memory.memoryb1[currentBank,Memory.PCL]));
             memory.Pcl = value;
             nop();
             memory.updateMemView();
@@ -590,7 +590,7 @@ namespace PIC_Simulator
 
         public void Return()
         {
-            memory.memoryb1[0,Memory.PCL] = memory.pop();
+            memory.memoryb1[currentBank,Memory.PCL] = memory.pop();
             nop();
             memory.updateMemView();
         }
@@ -605,7 +605,7 @@ namespace PIC_Simulator
         {
             short freg = (short)(value & 0b_0111_1111);
 
-            memory.memoryb1[0,freg] = 0b_0000_0000;
+            memory.memoryb1[currentBank,freg] = 0b_0000_0000;
 
             checkZeroFlag(freg);
             memory.updateMemView();
@@ -613,7 +613,7 @@ namespace PIC_Simulator
 
         public void clrw()
         {
-            memory.memoryb1[0,Memory.W] = 0b_0000_0000;
+            memory.memoryb1[currentBank,Memory.W] = 0b_0000_0000;
 
             checkZeroFlag(Memory.W);
             memory.updateMemView();
@@ -634,7 +634,7 @@ namespace PIC_Simulator
                 destreg = freg;
             }
 
-            memory.memoryb1[0,destreg] = (short)(0xFF - memory.memoryb1[0,freg]);
+            memory.memoryb1[currentBank,destreg] = (short)(0xFF - memory.memoryb1[currentBank,freg]);
 
             checkZeroFlag(destreg);
             memory.updateMemView();
@@ -655,7 +655,7 @@ namespace PIC_Simulator
                 destreg = freg;
             }
 
-            memory.memoryb1[0,destreg] = (short)((memory.memoryb1[0,freg] - 1) & 0b_0000_0000_1111_1111);
+            memory.memoryb1[currentBank,destreg] = (short)((memory.memoryb1[currentBank,freg] - 1) & 0b_0000_0000_1111_1111);
             checkZeroFlag(destreg);
             memory.updateMemView();
         }
@@ -675,7 +675,7 @@ namespace PIC_Simulator
                 destreg = freg;
             }
 
-            memory.memoryb1[0,destreg] = (short)(memory.memoryb1[0,freg] + 1);
+            memory.memoryb1[currentBank,destreg] = (short)(memory.memoryb1[currentBank,freg] + 1);
 
             checkZeroFlag(destreg);
             memory.updateMemView();
@@ -696,10 +696,10 @@ namespace PIC_Simulator
                 destreg = freg;
             }
 
-            short regvalue = memory.memoryb1[0,destreg];
+            short regvalue = memory.memoryb1[currentBank,destreg];
             short lowerregvalue = (short) (regvalue & 0b_0000_1111);
 
-            memory.memoryb1[0,destreg] = (short) ((regvalue >> 4) + (lowerregvalue << 4));
+            memory.memoryb1[currentBank,destreg] = (short) ((regvalue >> 4) + (lowerregvalue << 4));
             memory.updateMemView();
         }
 
@@ -718,7 +718,7 @@ namespace PIC_Simulator
                 destreg = freg;
             }
 
-            memory.memoryb1[0,destreg] = (short)(memory.memoryb1[0,freg] << 1);
+            memory.memoryb1[currentBank,destreg] = (short)(memory.memoryb1[currentBank,freg] << 1);
 
             checkCarryFlag(destreg, "rl");
             memory.updateMemView();
@@ -729,7 +729,7 @@ namespace PIC_Simulator
             short destreg;
             short freg = (short)(value & 0b_0111_1111);
             short destvalue = (short)(value & 0b_1000_0000);
-            short startingcarryvalue = (short)(memory.memoryb1[0,Memory.STATUS] & 0b_0000_0001);
+            short startingcarryvalue = (short)(memory.memoryb1[currentBank,Memory.STATUS] & 0b_0000_0001);
 
             if (destvalue != 0b_1000_0000)
             {
@@ -741,10 +741,10 @@ namespace PIC_Simulator
             }
 
             checkCarryFlag(freg, "rr");
-            memory.memoryb1[0,destreg] = (short)(memory.memoryb1[0,freg] >> 1);
+            memory.memoryb1[currentBank,destreg] = (short)(memory.memoryb1[currentBank,freg] >> 1);
             if(startingcarryvalue == 0b_0000_0001)
             {
-                memory.memoryb1[0,destreg] = (short)(memory.memoryb1[0,destreg] + 0b_1000_0000);
+                memory.memoryb1[currentBank,destreg] = (short)(memory.memoryb1[currentBank,destreg] + 0b_1000_0000);
             }
 
             memory.updateMemView();
@@ -766,28 +766,28 @@ namespace PIC_Simulator
             switch(bitdestvalue)
             {
                 case 0:
-                    memory.memoryb1[0,destreg] = (short)(memory.memoryb1[0,destreg] | 0b_01);
+                    memory.memoryb1[currentBank,destreg] = (short)(memory.memoryb1[currentBank,destreg] | 0b_01);
                     break;
                 case 1:
-                    memory.memoryb1[0,destreg] = (short)(memory.memoryb1[0,destreg] | 0b_010);
+                    memory.memoryb1[currentBank,destreg] = (short)(memory.memoryb1[currentBank,destreg] | 0b_010);
                     break;
                 case 2:
-                    memory.memoryb1[0,destreg] = (short)(memory.memoryb1[0,destreg] | 0b_100);
+                    memory.memoryb1[currentBank,destreg] = (short)(memory.memoryb1[currentBank,destreg] | 0b_100);
                     break;
                 case 3:
-                    memory.memoryb1[0,destreg] = (short)(memory.memoryb1[0,destreg] | 0b_1000);
+                    memory.memoryb1[currentBank,destreg] = (short)(memory.memoryb1[currentBank,destreg] | 0b_1000);
                     break;
                 case 4:
-                    memory.memoryb1[0,destreg] = (short)(memory.memoryb1[0,destreg] | 0b_10000);
+                    memory.memoryb1[currentBank,destreg] = (short)(memory.memoryb1[currentBank,destreg] | 0b_10000);
                     break;
                 case 5:
-                    memory.memoryb1[0,destreg] = (short)(memory.memoryb1[0,destreg] | 0b_100000);
+                    memory.memoryb1[currentBank,destreg] = (short)(memory.memoryb1[currentBank,destreg] | 0b_100000);
                     break;
                 case 6:
-                    memory.memoryb1[0,destreg] = (short)(memory.memoryb1[0,destreg] | 0b_1000000);
+                    memory.memoryb1[currentBank,destreg] = (short)(memory.memoryb1[currentBank,destreg] | 0b_1000000);
                     break;
                 case 7:
-                    memory.memoryb1[0,destreg] = (short)(memory.memoryb1[0,destreg] | 0b_10000000);
+                    memory.memoryb1[currentBank,destreg] = (short)(memory.memoryb1[currentBank,destreg] | 0b_10000000);
                     break;
 
             }
@@ -810,28 +810,28 @@ namespace PIC_Simulator
             switch (bitdestvalue)
             {
                 case 0:
-                    memory.memoryb1[0,destreg] = (short)(memory.memoryb1[0,destreg] & 0b_11111110);
+                    memory.memoryb1[currentBank,destreg] = (short)(memory.memoryb1[currentBank,destreg] & 0b_11111110);
                     break;
                 case 1:
-                    memory.memoryb1[0,destreg] = (short)(memory.memoryb1[0,destreg] & 0b_11111101);
+                    memory.memoryb1[currentBank,destreg] = (short)(memory.memoryb1[currentBank,destreg] & 0b_11111101);
                     break;
                 case 2:
-                    memory.memoryb1[0,destreg] = (short)(memory.memoryb1[0,destreg] & 0b_11111011);
+                    memory.memoryb1[currentBank,destreg] = (short)(memory.memoryb1[currentBank,destreg] & 0b_11111011);
                     break;
                 case 3:
-                    memory.memoryb1[0,destreg] = (short)(memory.memoryb1[0,destreg] & 0b_11110111);
+                    memory.memoryb1[currentBank,destreg] = (short)(memory.memoryb1[currentBank,destreg] & 0b_11110111);
                     break;
                 case 4:
-                    memory.memoryb1[0,destreg] = (short)(memory.memoryb1[0,destreg] & 0b_11101111);
+                    memory.memoryb1[currentBank,destreg] = (short)(memory.memoryb1[currentBank,destreg] & 0b_11101111);
                     break;
                 case 5:
-                    memory.memoryb1[0,destreg] = (short)(memory.memoryb1[0,destreg] & 0b_11011111);
+                    memory.memoryb1[currentBank,destreg] = (short)(memory.memoryb1[currentBank,destreg] & 0b_11011111);
                     break;
                 case 6:
-                    memory.memoryb1[0,destreg] = (short)(memory.memoryb1[0,destreg] & 0b_10111111);
+                    memory.memoryb1[currentBank,destreg] = (short)(memory.memoryb1[currentBank,destreg] & 0b_10111111);
                     break;
                 case 7:
-                    memory.memoryb1[0,destreg] = (short)(memory.memoryb1[0,destreg] & 0b_101111111);
+                    memory.memoryb1[currentBank,destreg] = (short)(memory.memoryb1[currentBank,destreg] & 0b_101111111);
                     break;
 
             }
@@ -856,28 +856,28 @@ namespace PIC_Simulator
             switch (bitdestvalue)
             {
                 case 0:
-                   valtest = (short)(memory.memoryb1[0,destreg] & 0b_01);
+                   valtest = (short)(memory.memoryb1[currentBank,destreg] & 0b_01);
                     break;
                 case 1:
-                    valtest = (short)(memory.memoryb1[0,destreg] & 0b_010);
+                    valtest = (short)(memory.memoryb1[currentBank,destreg] & 0b_010);
                     break;
                 case 2:
-                    valtest = (short)(memory.memoryb1[0,destreg] & 0b_100);
+                    valtest = (short)(memory.memoryb1[currentBank,destreg] & 0b_100);
                     break;
                 case 3:
-                    valtest = (short)(memory.memoryb1[0,destreg] & 0b_1000);
+                    valtest = (short)(memory.memoryb1[currentBank,destreg] & 0b_1000);
                     break;
                 case 4:
-                    valtest = (short)(memory.memoryb1[0,destreg] & 0b_10000);
+                    valtest = (short)(memory.memoryb1[currentBank,destreg] & 0b_10000);
                     break;
                 case 5:
-                    valtest = (short)(memory.memoryb1[0,destreg] & 0b_100000);
+                    valtest = (short)(memory.memoryb1[currentBank,destreg] & 0b_100000);
                     break;
                 case 6:
-                    valtest = (short)(memory.memoryb1[0,destreg] & 0b_1000000);
+                    valtest = (short)(memory.memoryb1[currentBank,destreg] & 0b_1000000);
                     break;
                 case 7:
-                    valtest = (short)(memory.memoryb1[0,destreg] & 0b_10000000);
+                    valtest = (short)(memory.memoryb1[currentBank,destreg] & 0b_10000000);
                     break;
             }
             if(valtest == 0)
@@ -908,28 +908,28 @@ namespace PIC_Simulator
             switch (bitdestvalue)
             {
                 case 0:
-                    valtest = (short)(memory.memoryb1[0,destreg] & 0b_01);
+                    valtest = (short)(memory.memoryb1[currentBank,destreg] & 0b_01);
                     break;
                 case 1:
-                    valtest = (short)(memory.memoryb1[0,destreg] & 0b_010);
+                    valtest = (short)(memory.memoryb1[currentBank,destreg] & 0b_010);
                     break;
                 case 2:
-                    valtest = (short)(memory.memoryb1[0,destreg] & 0b_100);
+                    valtest = (short)(memory.memoryb1[currentBank,destreg] & 0b_100);
                     break;
                 case 3:
-                    valtest = (short)(memory.memoryb1[0,destreg] & 0b_1000);
+                    valtest = (short)(memory.memoryb1[currentBank,destreg] & 0b_1000);
                     break;
                 case 4:
-                    valtest = (short)(memory.memoryb1[0,destreg] & 0b_10000);
+                    valtest = (short)(memory.memoryb1[currentBank,destreg] & 0b_10000);
                     break;
                 case 5:
-                    valtest = (short)(memory.memoryb1[0,destreg] & 0b_100000);
+                    valtest = (short)(memory.memoryb1[currentBank,destreg] & 0b_100000);
                     break;
                 case 6:
-                    valtest = (short)(memory.memoryb1[0,destreg] & 0b_1000000);
+                    valtest = (short)(memory.memoryb1[currentBank,destreg] & 0b_1000000);
                     break;
                 case 7:
-                    valtest = (short)(memory.memoryb1[0,destreg] & 0b_10000000);
+                    valtest = (short)(memory.memoryb1[currentBank,destreg] & 0b_10000000);
                     break;
             }
             if (valtest == 0)
@@ -957,10 +957,10 @@ namespace PIC_Simulator
                 destreg = freg;
             }
 
-            memory.memoryb1[0,destreg] = (short)((memory.memoryb1[0,freg] - 1) & 0b_0000_0000_1111_1111);
+            memory.memoryb1[currentBank,destreg] = (short)((memory.memoryb1[currentBank,freg] - 1) & 0b_0000_0000_1111_1111);
             memory.updateMemView();
 
-            if (memory.memoryb1[0,destreg] == 0)
+            if (memory.memoryb1[currentBank,destreg] == 0)
             {
                 return true;
             }
@@ -985,18 +985,18 @@ namespace PIC_Simulator
                 destreg = freg;
             }
 
-            if((short)(memory.memoryb1[0,freg] + 1) <= 0b_1111_1111)
+            if((short)(memory.memoryb1[currentBank,freg] + 1) <= 0b_1111_1111)
             {
-                memory.memoryb1[0,destreg] = (short)(memory.memoryb1[0,freg] + 1);
+                memory.memoryb1[currentBank,destreg] = (short)(memory.memoryb1[currentBank,freg] + 1);
             }
-            if ((short)(memory.memoryb1[0,freg] + 1) > 0b_1111_1111)
+            if ((short)(memory.memoryb1[currentBank,freg] + 1) > 0b_1111_1111)
             {
-                memory.memoryb1[0,destreg] = (short)(0b_0000_0000);
+                memory.memoryb1[currentBank,destreg] = (short)(0b_0000_0000);
             }
 
             memory.updateMemView();
 
-            if (memory.memoryb1[0,destreg] == 0)
+            if (memory.memoryb1[currentBank,destreg] == 0)
             {
                 return true;
             }

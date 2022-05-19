@@ -25,11 +25,11 @@ namespace PIC_Simulator
         public static byte EEADR = 0x09;
         public static byte PCLATH = 0xA;
         public static byte INTCON = 0x0B;
-        public static byte W = 0x10;
+        public static byte W = 0x80;
 
 
         public short[] eeprom = new short[1024];
-        public short[,] memoryb1 = new short[1,128];
+        public short[,] memoryb1 = new short[2,129];
         public short stackpointer = 6;
         public short[] stack = new short[7];
 
@@ -53,12 +53,19 @@ namespace PIC_Simulator
         public string[] Memoryb1
         {
             get {
-                string[] ret = new string[memoryb1.Length];
+                string[] ret = new string[memoryb1.Length/2];
                 int index = 0;
                 foreach (var item in memoryb1)
                 {
-                    ret[index] = Convert.ToString(item, 16).ToUpper();
-                    index++;
+                    if (index <= 128)
+                    {
+                        ret[index] = Convert.ToString(item, 16).ToUpper();
+                        index++;
+                    }
+                    else
+                    {
+                        return ret;
+                    }
                 }
                 return ret;
             }
@@ -74,7 +81,7 @@ namespace PIC_Simulator
         {
             get
             {
-                string hexnum = string.Format("0x{0:X2}", memoryb1[Memory.W]);
+                string hexnum = string.Format("0x{0:X2}", memoryb1[0,Memory.W]);
                 return hexnum;
             }
         }
@@ -83,7 +90,7 @@ namespace PIC_Simulator
         {
             get
             {
-                string hexnum = string.Format("0x{0:X2}", memoryb1[Memory.FSR]);
+                string hexnum = string.Format("0x{0:X2}", memoryb1[0,Memory.FSR]);
                 return hexnum;
             }
         }
@@ -91,7 +98,7 @@ namespace PIC_Simulator
         {
             get
             {
-                char[] bits = Convert.ToString(memoryb1[Memory.STATUS], 2).PadLeft(8, '0').ToCharArray();
+                char[] bits = Convert.ToString(memoryb1[0,Memory.STATUS], 2).PadLeft(8, '0').ToCharArray();
                 
                 return bits;
 
@@ -101,7 +108,7 @@ namespace PIC_Simulator
         {
             get
             {
-                string hexnum = string.Format("0x{0:X2}", memoryb1[Memory.PCL]);
+                string hexnum = string.Format("0x{0:X2}", memoryb1[0,Memory.PCL]);
                 return hexnum;
             }
         }
@@ -119,9 +126,9 @@ namespace PIC_Simulator
 
         public short Pcl
         {
-            get { return memoryb1[0x02]; }
+            get { return memoryb1[0,0x02]; }
             set { 
-                memoryb1[0x02] = value;
+                memoryb1[0,0x02] = value;
                 NotifyPropertyChanged("Pcl");
                 
             }
@@ -151,24 +158,28 @@ namespace PIC_Simulator
 
         public void initMem()
         {
-            memoryb1[2] = 0;
-            memoryb1[3] = 0x18;
-            memoryb1[10] = 0;
-            memoryb1[11] = 0;
-            memoryb2[1] = 0xFF;
-            memoryb2[3] = 0x18;
-            memoryb2[5] = 0x1F;
-            memoryb2[6] = 0xFF;
-            memoryb2[8] = 0x0;
-            memoryb2[0x0A] = 0x0;
-            memoryb2[0x0B] = 0x0;
+            memoryb1[0,2] = 0;
+            memoryb1[0,3] = 0x18;
+            memoryb1[0,10] = 0;
+            memoryb1[0,11] = 0;
+            memoryb1[1,1] = 0xFF;
+            memoryb1[1,3] = 0x18;
+            memoryb1[1,5] = 0x1F;
+            memoryb1[1,6] = 0xFF;
+            memoryb1[1,8] = 0x0;
+            memoryb1[1,0x0A] = 0x0;
+            memoryb1[1,0x0B] = 0x0;
         }
 
         public void resetMem()
         {
-            for(int i = 0; i<memoryb1.Length;i++)
+            for(int i = 0; i<memoryb1.Length/2;i++)
             {
-                memoryb1[i] = 0;
+                memoryb1[0,i] = 0;
+            }
+            for (int i = 0; i < memoryb1.Length / 2; i++)
+            {
+                memoryb1[1, i] = 0;
             }
             initMem();
             // To be continued...
