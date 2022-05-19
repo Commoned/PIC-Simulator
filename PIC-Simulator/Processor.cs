@@ -976,6 +976,8 @@ namespace PIC_Simulator
             short freg = (short)(value & 0b_0111_1111);
             short destvalue = (short)(value & 0b_1000_0000);
 
+            
+
             if (destvalue != 0b_1000_0000)
             {
                 destreg = Memory.W;
@@ -984,26 +986,25 @@ namespace PIC_Simulator
             {
                 destreg = freg;
             }
-
-            if((short)(memory.memoryb1[currentBank,freg] + 1) <= 0b_1111_1111)
-            {
-                memory.memoryb1[currentBank,destreg] = (short)(memory.memoryb1[currentBank,freg] + 1);
-            }
-            if ((short)(memory.memoryb1[currentBank,freg] + 1) > 0b_1111_1111)
-            {
-                memory.memoryb1[currentBank,destreg] = (short)(0b_0000_0000);
-            }
-
-            memory.updateMemView();
-
-            if (memory.memoryb1[currentBank,destreg] == 0)
+            if (memory.memoryb1[currentBank, destreg] == 0)
             {
                 return true;
             }
-            else
+
+            if ((short)(memory.memoryb1[currentBank,freg] + 1) <= 0b_1111_1111)
             {
-                return false;
+                memory.memoryb1[currentBank,destreg] = (short)(memory.memoryb1[currentBank,freg] + 1);
             }
+            
+            if ((short)(memory.memoryb1[currentBank,freg] + 1) > 0b_1111_1111)
+            {
+                memory.memoryb1[currentBank,destreg] = (short)(0b_0000_0000);
+                
+            }
+            memory.updateMemView();
+            return false;
+
+            
         }
     }
 
