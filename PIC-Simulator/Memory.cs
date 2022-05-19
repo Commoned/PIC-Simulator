@@ -29,8 +29,7 @@ namespace PIC_Simulator
 
 
         public short[] eeprom = new short[1024];
-        public short[] memoryb1 = new short[128];
-        public short[] memoryb2 = new short[128];//Beide Bänke in einem Array maybe
+        public short[,] memoryb1 = new short[1,128];
         public short stackpointer = 6;
         public short[] stack = new short[7];
 
