@@ -166,6 +166,10 @@ namespace PIC_Simulator
 
         public void resetMem()
         {
+            for(int i = 0; i<memoryb1.Length;i++)
+            {
+                memoryb1[i] = 0;
+            }
             initMem();
             // To be continued...
         }

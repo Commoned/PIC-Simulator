@@ -119,7 +119,7 @@ namespace PIC_Simulator
 
         private void Reset_Button_Click(object sender, RoutedEventArgs e)
         {
-            memory.initMem();
+            memory.resetMem();
         }
 
         private void TextBlock_PointerPressed(object sender, PointerRoutedEventArgs e)
