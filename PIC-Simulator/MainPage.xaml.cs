@@ -122,6 +122,7 @@ namespace PIC_Simulator
             memory.resetMem();
         }
 
+
         private void Breakpoint_Click(object sender, RoutedEventArgs e)
         {
             var but = (Button)sender;
@@ -142,6 +143,30 @@ namespace PIC_Simulator
                 var item = (sender as FrameworkElement).DataContext;
                 processor.brkpnts.Remove(CodeStack.Items.IndexOf(item));
             }
+
+        private void TextBlock_PointerPressed(object sender, PointerRoutedEventArgs e)
+        {
+            var block = (Border)sender;
+            var text = (TextBlock)block.Child;
+            Pop_Reg.Text = text.Text;
+            Click_Popup.IsOpen = true;
+
+
+            
+            tempSender = sender;
+        }
+
+        private void Pop_Save_Click(object sender, RoutedEventArgs e)
+        {
+            var tempBorder = (Border)tempSender;
+            var text = (TextBlock)tempBorder.Child;
+            var toSave = Pop_Reg.Text;
+
+            text.Text = toSave;
+            
+            memory.updateMemView();
+            Click_Popup.IsOpen = false;
+
         }
     }
 }

@@ -43,7 +43,7 @@
         </StackPanel>
         <TextBlock FontSize="36" Grid.Row="2" Grid.Column="1" VerticalAlignment="Top" Text="RAM"/>
         <ScrollViewer Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" Margin="10,50,0,0" VerticalScrollBarVisibility="Auto" Width="360">
-            <ItemsControl  HorizontalAlignment="Left" x:Name="items" ItemsSource="{Binding Memoryb1}">
+            <ItemsControl  HorizontalAlignment="Left"  x:Name="items" x:DefaultBindMode="TwoWay" ItemsSource="{Binding Memoryb1}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <ItemsWrapGrid MaximumRowsOrColumns="8" Orientation="Horizontal"></ItemsWrapGrid>
@@ -51,8 +51,8 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Border Background="SlateGray" BorderBrush="DarkSlateGray" BorderThickness="1">
-                            <TextBlock TextAlignment="Center" Margin="10" Width="20"  Text="{Binding}"></TextBlock>
+                        <Border PointerPressed="TextBlock_PointerPressed" Background="SlateGray" BorderBrush="DarkSlateGray" BorderThickness="1">
+                            <TextBlock  Tag="memory"  TextAlignment="Center"   Margin="10" Width="20"  Text="{Binding UpdateSourceTrigger=PropertyChanged}"/>
                         </Border>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
