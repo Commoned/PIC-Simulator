@@ -19,7 +19,9 @@ namespace PIC_Simulator
         public DispatcherTimer Clock = new DispatcherTimer();
         public int quartz = 20;
         bool isSkip;
+        public List<int> brkpnts = new List<int>();
         short currentBank=0;
+
 
 
 
@@ -36,6 +38,12 @@ namespace PIC_Simulator
         public void Clock_Tick(object sender, object e)
         {
             codeInterface.selectCode(runlines[memory.Pcl].Linenumber -1);
+            if(brkpnts.Contains(runlines[memory.Pcl].Linenumber - 1))
+            {
+                Clock.Stop();
+                brkpnts.Remove(runlines[memory.Pcl].Linenumber - 1);
+                return;
+            }
             Step();
             
         }
