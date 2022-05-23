@@ -38,8 +38,12 @@ namespace PIC_Simulator
         public string Instruction
         {
             get {
+                if(this.Codeline == 0 && this.instruction ==0)
+                {
+                    return "";
+                }
+                return string.Format("{0:X4}", this.instruction);
                 
-                return Convert.ToString(this.instruction,16).ToUpper(); 
             }
             set { linenumber = Convert.ToInt16(value); }
         }

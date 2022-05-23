@@ -39,6 +39,7 @@ namespace PIC_Simulator
         {
             codeInterface.selectCode(runlines[memory.Pcl].Linenumber - 1);
             codeInterface.portTrigger(memory.memoryb1[1, Memory.TRISA], memory.memoryb1[1, Memory.TRISB]);
+            
             if(brkpnts.Contains(runlines[memory.Pcl].Linenumber - 1))
             {
                 Clock.Stop();

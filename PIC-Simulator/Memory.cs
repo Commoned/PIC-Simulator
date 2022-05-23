@@ -32,8 +32,9 @@ namespace PIC_Simulator
         public short[] eeprom = new short[1024];
         public short[,] memoryb1 = new short[2, 129];
         public ObservableCollection<string> memView = new ObservableCollection<string>();
-        public short stackpointer = 6;
-        public short[] stack = new short[7];
+        
+        public short stackpointer = 7;
+        public short[] stack = new short[8];
 
         public short trisaLatch;
         public short trisbLatch;
@@ -42,6 +43,7 @@ namespace PIC_Simulator
         public double commandcounter = 0.0 ;
         public double quarztakt = 1.0;
 
+        
 
         public Memory()
         {
@@ -50,6 +52,7 @@ namespace PIC_Simulator
             {
                 memView.Add(string.Format("{0:X2}", item));
             }
+            
         }
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
 
@@ -59,7 +62,72 @@ namespace PIC_Simulator
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
         }
-       
+        
+        public string S0
+        {
+            get
+            {
+                return string.Format("{0:X2}", stack[7]);
+            }
+        }
+
+        public string S1
+        {
+            get
+            {
+                return string.Format("{0:X2}", stack[6]);
+            }
+        }
+        public string S2
+        {
+            get
+            {
+                return string.Format("{0:X2}", stack[5]);
+            }
+        }
+        public string S3
+        {
+            get
+            {
+                return string.Format("{0:X2}", stack[4]);
+            }
+        }
+        public string S4
+        {
+            get
+            {
+                return string.Format("{0:X2}", stack[3]);
+            }
+        }
+        public string S5
+        {
+            get
+            {
+                return string.Format("{0:X2}", stack[2]);
+            }
+        }
+        public string S6
+        {
+            get
+            {
+                return string.Format("{0:X2}", stack[1]);
+            }
+        }
+        public string S7
+        {
+            get
+            {
+                return string.Format("{0:X2}", stack[0]);
+            }
+        }
+
+        public string Stackpointer
+        {
+            get
+            {
+                return string.Format("{0:X1}", stackpointer);
+            }
+        }
 
         public ObservableCollection<string> MemView
         {
@@ -86,7 +154,7 @@ namespace PIC_Simulator
                 return hexnum;
             }
         }
-        public char[] Status
+        public char[] Statusbits
         {
             get
             {
@@ -94,6 +162,15 @@ namespace PIC_Simulator
                 
                 return bits;
 
+            }
+        }
+
+        public string Status
+        {
+            get
+            {
+                string hexnum = string.Format("0x{0:X2}", memoryb1[0, STATUS]);
+                return hexnum;
             }
         }
         public string PclView
@@ -115,11 +192,39 @@ namespace PIC_Simulator
             }
         }
 
+        public char[] Optionbits
+        {
+            get
+            {
+                char[] bits = Convert.ToString(memoryb1[1, OPTION], 2).PadLeft(8, '0').ToCharArray();
+
+                return bits;
+            }
+        }
+        public string Intcon
+        {
+            get
+            {
+                string hexnum = string.Format("0x{0:X2}", memoryb1[0, INTCON]);
+                return hexnum;
+            }
+        }
+
+        public char[] Intconbits
+        {
+            get
+            {
+                char[] bits = Convert.ToString(memoryb1[0, INTCON], 2).PadLeft(8, '0').ToCharArray();
+
+                return bits;
+            }
+        }
+
         public string PcllathView
         {
             get
             {
-                string hexnum = string.Format("0x{0:X2}", memoryb1[0, Memory.PCLATH]);
+                string hexnum = string.Format("0x{0:X2}", memoryb1[1, Memory.PCLATH]);
 
                 return hexnum;
             }
@@ -146,13 +251,23 @@ namespace PIC_Simulator
                 i++;
             }
             
+            
             NotifyPropertyChanged("WReg");
             NotifyPropertyChanged("Status");
             NotifyPropertyChanged("PclView");
             NotifyPropertyChanged("FSRReg");
 
-            NotifyPropertyChanged("Option");
+            NotifyPropertyChanged("S0");
+            NotifyPropertyChanged("S1");
+            NotifyPropertyChanged("S2");
+            NotifyPropertyChanged("S3");
+            NotifyPropertyChanged("S4");
+            NotifyPropertyChanged("S5");
+            NotifyPropertyChanged("S6");
+            NotifyPropertyChanged("S7");
+            NotifyPropertyChanged("Stackpointer");
 
+            NotifyPropertyChanged("Option");
             NotifyPropertyChanged("PcllathView");
             NotifyPropertyChanged("runtimecounter");
 
@@ -181,14 +296,20 @@ namespace PIC_Simulator
             else
             {
                 stack[stackpointer] = value;
-                stackpointer = 6;
+                stackpointer = 7;
             }
         }
 
         public short pop()
         {
             stackpointer++;
-            return stack[stackpointer];
+            if(stackpointer == 8)
+            {
+                stackpointer = 0;
+            }
+            var retWert = stack[stackpointer];
+            stack[stackpointer] = 0;
+            return retWert;
         }
 
         public void initMem()
@@ -353,6 +474,12 @@ namespace PIC_Simulator
                 memoryb1[1, i] = 0;
             }
             commandcounter = 0;
+            for(int i = 0; i<8;i++)
+            {
+                stack[i] = 0;
+                
+            }
+            stackpointer = 7;
             initMem();
             // To be continued...
         }
