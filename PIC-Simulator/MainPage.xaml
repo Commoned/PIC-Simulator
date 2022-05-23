@@ -104,8 +104,13 @@
                 <TextBlock x:Name="s6" Text="{Binding S6}" TextAlignment="Center" Margin="-150,-150,0,0" Width="50" Height="50"></TextBlock>
                 
                 <TextBlock x:Name="s7" Text="{Binding S7}" TextAlignment="Center" Margin="-150,-250,0,0" Width="50" Height="50"></TextBlock>
-                
-                <TextBlock x:Name="Stackheader" Text="STACK" Width="50" Height="25" Margin="0,-250,0,0" TextAlignment="Center"></TextBlock>
+                <StackPanel Margin="0,-250,0,0">
+                    <TextBlock x:Name="Stackheader" Text="STACK" Width="50" Height="25" Margin="0,100,0,0" TextAlignment="Center"></TextBlock>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Margin="105,0,0,0" Text="SP:" TextAlignment="Center"></TextBlock>
+                        <TextBlock  Margin="5,0,0,0" Text="{Binding Stackpointer}"></TextBlock>
+                    </StackPanel>
+                </StackPanel>
                 <Ellipse  Width="250" Height="250" StrokeThickness="3" Margin="0,-240,0,0" Stroke="Slategray"></Ellipse>
             </ItemsControl>
             

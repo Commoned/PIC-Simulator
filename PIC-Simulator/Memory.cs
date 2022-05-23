@@ -121,6 +121,14 @@ namespace PIC_Simulator
             }
         }
 
+        public string Stackpointer
+        {
+            get
+            {
+                return string.Format("{0:X1}", stackpointer);
+            }
+        }
+
         public ObservableCollection<string> MemView
         {
             get
@@ -257,6 +265,7 @@ namespace PIC_Simulator
             NotifyPropertyChanged("S5");
             NotifyPropertyChanged("S6");
             NotifyPropertyChanged("S7");
+            NotifyPropertyChanged("Stackpointer");
 
             NotifyPropertyChanged("Option");
             NotifyPropertyChanged("PcllathView");
@@ -294,6 +303,10 @@ namespace PIC_Simulator
         public short pop()
         {
             stackpointer++;
+            if(stackpointer == 8)
+            {
+                stackpointer = 0;
+            }
             var retWert = stack[stackpointer];
             stack[stackpointer] = 0;
             return retWert;
@@ -461,6 +474,12 @@ namespace PIC_Simulator
                 memoryb1[1, i] = 0;
             }
             commandcounter = 0;
+            for(int i = 0; i<8;i++)
+            {
+                stack[i] = 0;
+                
+            }
+            stackpointer = 7;
             initMem();
             // To be continued...
         }
