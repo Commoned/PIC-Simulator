@@ -33,6 +33,8 @@ namespace PIC_Simulator
         public short stackpointer = 6;
         public short[] stack = new short[7];
         public short pc = 0;
+        public double commandcounter = 0.0 ;
+        public double quarztakt = 1.0;
 
         public Memory()
         {
@@ -113,8 +115,23 @@ namespace PIC_Simulator
                 return hexnum;
             }
         }
-
+        public string PcllathView
+        {
+            get
+            {
+                string hexnum = string.Format("0x{0:X2}", memoryb1[0, Memory.PCLATH]);
+                return hexnum;
+            }
+        }
         
+        public string runtimecounter
+        {
+            get
+            {
+                string num = string.Format("\u0009 {0:F4} \u00b5s", (commandcounter * quarztakt));
+                return num;
+            }
+        }
 
         public void updateMemView()
         {
@@ -123,6 +140,8 @@ namespace PIC_Simulator
             NotifyPropertyChanged("Status");
             NotifyPropertyChanged("PclView");
             NotifyPropertyChanged("FSRReg");
+            NotifyPropertyChanged("PcllathView");
+            NotifyPropertyChanged("runtimecounter");
         }
 
         public short Pcl
@@ -182,6 +201,7 @@ namespace PIC_Simulator
             {
                 memoryb1[1, i] = 0;
             }
+            commandcounter = 0;
             initMem();
             // To be continued...
         }

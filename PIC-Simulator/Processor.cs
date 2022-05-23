@@ -52,6 +52,7 @@ namespace PIC_Simulator
         {
             Line line = runlines[memory.Pcl];
             memory.Pcl++;
+            memory.commandcounter++;
             this.Decode(line.instruction);
             line = null;
         }
