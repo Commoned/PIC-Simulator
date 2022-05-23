@@ -24,53 +24,54 @@ namespace PIC_Simulator
     /// <summary>
     /// Eine leere Seite, die eigenständig verwendet oder zu der innerhalb eines Rahmens navigiert werden kann.
     /// </summary>
-    public sealed partial class MainPage : Page , ICodeInterface
+    public sealed partial class MainPage : Page, ICodeInterface
     {
         Memory memory;
         Processor processor;
         private FileReader filereader;
-        
+        bool autoCheck;
+
         public MainPage()
         {
             this.DataContext = this;
             memory = new Memory();
-            processor = new Processor(this,memory);
+            processor = new Processor(this, memory);
             filereader = new FileReader();
             DataContext = memory;
-            
+
             this.InitializeComponent();
             CodeStack.ItemsSource = processor.lines;
-            
-            
+
+
         }
 
-       
 
-        
+
+
 
         private async void openButton_Click(object sender, RoutedEventArgs e)
         {
             processor.lines.Clear();
             processor.runlines.Clear();
             await filereader.GetLines();
-            
+
             processor.lines = filereader.lines;
             CodeStack.ItemsSource = null;
             Thread.Sleep(200);
             CodeStack.ItemsSource = processor.lines;
-            foreach(Line line in processor.lines)
+            foreach (Line line in processor.lines)
             {
-                if(line.executable)
+                if (line.executable)
                 {
                     processor.runlines.Add(line);
                 }
             }
             memory.initMem();
-            
+
             Start_Button.IsEnabled = true;
 
-           
-            
+
+
         }
 
         public void selectCode(int line)
@@ -79,7 +80,62 @@ namespace PIC_Simulator
             this.CodeStack.ScrollIntoView(this.CodeStack.SelectedItem,ScrollIntoViewAlignment.Leading);
         }
 
-        
+        public void portTrigger(short trisa, short trisb)
+        {
+            CheckBox[] raboxes = {ra0, ra1, ra2, ra3, ra4, ra5, ra6, ra7};
+            CheckBox[] rbboxes = { rb0, rb1, rb2, rb3, rb4, rb5, rb6, rb7 };
+
+            autoCheck = true;
+
+            for (int i = 0; i < raboxes.Length; i++)
+            {
+                if(memory.checkBit(memory.memoryb1[1,Memory.TRISA],i))
+                {
+                    raboxes[i].IsEnabled = true;
+                }
+                else
+                {
+                    raboxes[i].IsEnabled=false;
+                }
+            }
+            for (int i = 0; i < rbboxes.Length; i++)
+            {
+                if (memory.checkBit(memory.memoryb1[1, Memory.TRISB], i))
+                {
+                    rbboxes[i].IsEnabled = true;
+                }
+                else
+                {
+                    rbboxes[i].IsEnabled = false;
+                }
+            }
+            for (int i = 0; i < raboxes.Length; i++)
+            {
+                if (memory.checkBit(memory.memoryb1[0, Memory.PORTA], i))
+                {
+                    raboxes[i].IsChecked = true;
+                }
+                else
+                {
+                    raboxes[i].IsChecked = false;
+                }
+            }
+            for (int i = 0; i < rbboxes.Length; i++)
+            {
+                if (memory.checkBit(memory.memoryb1[0, Memory.PORTB], i))
+                {
+                    rbboxes[i].IsChecked = true;
+                }
+                else
+                {
+                    rbboxes[i].IsChecked = false;
+                }
+            }
+
+            autoCheck = false;
+        }
+
+
 
         private void settingsButton_Click(object sender, RoutedEventArgs e)
         {
@@ -92,8 +148,8 @@ namespace PIC_Simulator
         }
 
         private void Start_Button_Click(object sender, RoutedEventArgs e)
-        {   
-            if(!processor.isRunning)
+        {
+            if (!processor.isRunning)
             {
                 Start_Button.Background = (SolidColorBrush)Resources["RedColor"];
                 Start_Button.Content = "\uE71A";
@@ -106,15 +162,15 @@ namespace PIC_Simulator
                 Start_Button.Background = (SolidColorBrush)Resources["GreenColor"];
                 Start_Button.Content = "\uE768";
                 processor.Clock.Stop();
-                processor.isRunning =false;
+                processor.isRunning = false;
             }
-            
+
         }
 
         private void Skip_Button_Click(object sender, RoutedEventArgs e)
         {
             processor.Clock.Stop();
-            processor.Clock_Tick(this,this);
+            processor.Clock_Tick(this, this);
         }
 
         private void Reset_Button_Click(object sender, RoutedEventArgs e)
@@ -143,6 +199,84 @@ namespace PIC_Simulator
                 var item = (sender as FrameworkElement).DataContext;
                 processor.brkpnts.Remove(CodeStack.Items.IndexOf(item));
             }
+    
         }
-    }
+        
+        private void CheckBoxRA_Checked(object sender, RoutedEventArgs e)
+        {
+            if(autoCheck)
+            {
+                return;
+            }
+            var box = (CheckBox)sender;
+            switch(box.Content)
+            {
+                case "0":
+                    memory.memoryb1[0, Memory.PORTA] = (short)(memory.memoryb1[0, Memory.PORTA] ^ 0b_01);
+                    break;
+                case "1":
+                    memory.memoryb1[0, Memory.PORTA] = (short)(memory.memoryb1[0, Memory.PORTA] ^ 0b_010);
+                    break;
+                case "2":
+                    memory.memoryb1[0, Memory.PORTA] = (short)(memory.memoryb1[0, Memory.PORTA] ^ 0b_0100);
+                    break;
+                case "3":
+                    memory.memoryb1[0, Memory.PORTA] = (short)(memory.memoryb1[0, Memory.PORTA] ^ 0b_01000);
+                    break;
+                case "4":
+                    memory.memoryb1[0, Memory.PORTA] = (short)(memory.memoryb1[0, Memory.PORTA] ^ 0b_010000);
+                    break;
+                case "5":
+                    memory.memoryb1[0, Memory.PORTA] = (short)(memory.memoryb1[0, Memory.PORTA] ^ 0b_0100000);
+                    break;
+                case "6":
+                    memory.memoryb1[0, Memory.PORTA] = (short)(memory.memoryb1[0, Memory.PORTA] ^ 0b_01000000);
+                    break;
+                case "7":
+                    memory.memoryb1[0, Memory.PORTA] = (short)(memory.memoryb1[0, Memory.PORTA] ^ 0b_010000000);
+                    break;
+
+            }
+            memory.updateMemView();
+        }
+        private void CheckBoxRB_Checked(object sender, RoutedEventArgs e)
+        {
+            if (autoCheck)
+            {
+                return;
+            }
+            var box = (CheckBox)sender;
+            switch (box.Content)
+            {
+                case "0":
+                    memory.memoryb1[0, Memory.PORTB] = (short)(memory.memoryb1[0, Memory.PORTB] ^ 0b_01);
+                    break;
+                case "1":
+                    memory.memoryb1[0, Memory.PORTB] = (short)(memory.memoryb1[0, Memory.PORTB] ^ 0b_010);
+                    break;
+                case "2":
+                    memory.memoryb1[0, Memory.PORTB] = (short)(memory.memoryb1[0, Memory.PORTB] ^ 0b_0100);
+                    break;
+                case "3":
+                    memory.memoryb1[0, Memory.PORTB] = (short)(memory.memoryb1[0, Memory.PORTB] ^ 0b_01000);
+                    break;
+                case "4":
+                    memory.memoryb1[0, Memory.PORTB] = (short)(memory.memoryb1[0, Memory.PORTB] ^ 0b_010000);
+                    break;
+                case "5":
+                    memory.memoryb1[0, Memory.PORTB] = (short)(memory.memoryb1[0, Memory.PORTB] ^ 0b_0100000);
+                    break;
+                case "6":
+                    memory.memoryb1[0, Memory.PORTB] = (short)(memory.memoryb1[0, Memory.PORTB] ^ 0b_01000000);
+                    break;
+                case "7":
+                    memory.memoryb1[0, Memory.PORTB] = (short)(memory.memoryb1[0, Memory.PORTB] ^ 0b_010000000);
+                    break;
+
+            }
+            memory.updateMemView();
+
+        }
+        
+    } 
 }

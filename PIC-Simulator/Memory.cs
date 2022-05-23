@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -29,16 +30,26 @@ namespace PIC_Simulator
 
 
         public short[] eeprom = new short[1024];
-        public short[,] memoryb1 = new short[2,129];
+        public short[,] memoryb1 = new short[2, 129];
+        public ObservableCollection<string> memView = new ObservableCollection<string>();
         public short stackpointer = 6;
         public short[] stack = new short[7];
+
+        public short trisaLatch;
+        public short trisbLatch;
+
         public short pc = 0;
         public double commandcounter = 0.0 ;
         public double quarztakt = 1.0;
 
+
         public Memory()
         {
             initMem();
+            foreach(var item in memoryb1)
+            {
+                memView.Add(string.Format("{0:X2}", item));
+            }
         }
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
 
@@ -48,43 +59,21 @@ namespace PIC_Simulator
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
         }
+       
 
-
-
-
-
-        public string[] Memoryb1
+        public ObservableCollection<string> MemView
         {
-            get {
-                string[] ret = new string[memoryb1.Length/2];
-                int index = 0;
-                foreach (var item in memoryb1)
-                {
-                    if (index <= 128)
-                    {
-                        ret[index] = Convert.ToString(item, 16).ToUpper();
-                        index++;
-                    }
-                    else
-                    {
-                        return ret;
-                    }
-                }
-                return ret;
-            }
-            set
+            get
             {
-
+                return memView;
             }
-
         }
-
 
         public string WReg
         {
             get
             {
-                string hexnum = string.Format("0x{0:X2}", memoryb1[0,Memory.W]);
+                string hexnum = string.Format("0x{0:X2}", memoryb1[0,W]);
                 return hexnum;
             }
         }
@@ -93,7 +82,7 @@ namespace PIC_Simulator
         {
             get
             {
-                string hexnum = string.Format("0x{0:X2}", memoryb1[0,Memory.FSR]);
+                string hexnum = string.Format("0x{0:X2}", memoryb1[0,FSR]);
                 return hexnum;
             }
         }
@@ -101,7 +90,7 @@ namespace PIC_Simulator
         {
             get
             {
-                char[] bits = Convert.ToString(memoryb1[0,Memory.STATUS], 2).PadLeft(8, '0').ToCharArray();
+                char[] bits = Convert.ToString(memoryb1[0,STATUS], 2).PadLeft(8, '0').ToCharArray();
                 
                 return bits;
 
@@ -111,15 +100,24 @@ namespace PIC_Simulator
         {
             get
             {
-                string hexnum = string.Format("0x{0:X2}", memoryb1[0,Memory.PCL]);
+                string hexnum = string.Format("0x{0:X2}", memoryb1[0,PCL]);
                 return hexnum;
             }
         }
+
+
+        public string Option
+        {
+            get
+            {
+                string hexnum = string.Format("0x{0:X2}", memoryb1[1, OPTION]);
+
         public string PcllathView
         {
             get
             {
                 string hexnum = string.Format("0x{0:X2}", memoryb1[0, Memory.PCLATH]);
+
                 return hexnum;
             }
         }
@@ -135,14 +133,29 @@ namespace PIC_Simulator
 
         public void updateMemView()
         {
-            NotifyPropertyChanged("Memoryb1");
+            int i = 0;
+            foreach(var item in memoryb1)
+            {
+                if (i <= 128 && memView[i]!= string.Format("{0:X2}", memoryb1[0,i]))
+                {
+                    memView[i] = string.Format("{0:X2}", memoryb1[0, i]);
+                }
+                i++;
+            }
+            
             NotifyPropertyChanged("WReg");
             NotifyPropertyChanged("Status");
             NotifyPropertyChanged("PclView");
             NotifyPropertyChanged("FSRReg");
+
+            NotifyPropertyChanged("Option");
+
             NotifyPropertyChanged("PcllathView");
             NotifyPropertyChanged("runtimecounter");
+
         }
+
+        
 
         public short Pcl
         {
@@ -150,7 +163,6 @@ namespace PIC_Simulator
             set { 
                 memoryb1[0,0x02] = value;
                 NotifyPropertyChanged("Pcl");
-                
             }
         }
 
@@ -189,6 +201,142 @@ namespace PIC_Simulator
             memoryb1[1,8] = 0x0;
             memoryb1[1,0x0A] = 0x0;
             memoryb1[1,0x0B] = 0x0;
+            memoryb1[1, TRISA] = 0xFF;
+            memoryb1[1, TRISB] = 0xFF;
+        }
+
+        public bool checkBit(short toCheck, int bitnum)
+        {
+            if ((toCheck & 0b_01) == 0 && bitnum == 0)
+            {
+                return false;
+            }
+            if ((toCheck & 0b_01) != 0 && bitnum == 0)
+            {
+                return true;
+            }
+            if ((toCheck & 0b_010) == 0 && bitnum == 1)
+            {
+                return false;
+            }
+            if ((toCheck & 0b_010) != 0 && bitnum == 1)
+            {
+                return true;
+            }
+            if ((toCheck & 0b_0100) == 0 && bitnum == 2)
+            {
+                return false;
+            }
+            if ((toCheck & 0b_0100) != 0 && bitnum == 2)
+            {
+                return true;
+            }
+            if ((toCheck & 0b_01000) == 0 && bitnum == 3)
+            {
+                return false;
+            }
+            if ((toCheck & 0b_01000) != 0 && bitnum == 3)
+            {
+                return true;
+            }
+            if ((toCheck & 0b_010000) == 0 && bitnum == 4)
+            {
+                return false;
+            }
+            if ((toCheck & 0b_010000) != 0 && bitnum == 4)
+            {
+                return true;
+            }
+            if ((toCheck & 0b_0100000) == 0 && bitnum == 5)
+            {
+                return false;
+            }
+            if ((toCheck & 0b_0100000) != 0 && bitnum == 5)
+            {
+                return true;
+            }
+            if ((toCheck & 0b_01000000) == 0 && bitnum == 6)
+            {
+                return false;
+            }
+            if ((toCheck & 0b_01000000) != 0 && bitnum == 6)
+            {
+                return true;
+            }
+            if ((toCheck & 0b_010000000) == 0 && bitnum == 7)
+            {
+                return false;
+            }
+            if ((toCheck & 0b_010000000) != 0 && bitnum == 7)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public short setBit(short reg, int bit)// sets specific bit in value and returns it
+        {
+            switch (bit)
+            {
+                case 0:
+                   reg = (short)(reg | 0b_01);
+                    break;
+                case 1:
+                    reg = (short)(reg | 0b_010);
+                    break;
+                case 2:
+                    reg = (short)(reg | 0b_100);
+                    break;
+                case 3:
+                    reg = (short)(reg | 0b_1000);
+                    break;
+                case 4:
+                    reg = (short)(reg | 0b_10000);
+                    break;
+                case 5:
+                    reg = (short)(reg | 0b_100000);
+                    break;
+                case 6:
+                    reg = (short)(reg | 0b_1000000);
+                    break;
+                case 7:
+                    reg = (short)(reg | 0b_10000000);
+                    break;
+            }
+            return reg;
+        }
+        public short clrBit(short reg, int bit) // clears specific bit in value and returns it
+        {
+            
+            switch (bit)
+            {
+                case 0:
+                    reg = (short)(reg & 0b_11111110);
+                    break;
+                case 1:
+                    reg = (short)(reg & 0b_11111101);
+                    break;
+                case 2:
+                    reg = (short)(reg & 0b_11111011);
+                    break;
+                case 3:
+                    reg = (short)(reg & 0b_11110111);
+                    break;
+                case 4:
+                    reg = (short)(reg & 0b_11101111);
+                    break;
+                case 5:
+                    reg = (short)(reg & 0b_11011111);
+                    break;
+                case 6:
+                    reg = (short)(reg & 0b_10111111);
+                    break;
+                case 7:
+                    reg = (short)(reg & 0b_101111111);
+                    break;
+
+            }
+            return reg;
         }
 
         public void resetMem()

@@ -20,7 +20,7 @@ namespace PIC_Simulator
         public int quartz = 20;
         bool isSkip;
         public List<int> brkpnts = new List<int>();
-        short currentBank=0;
+        short currentBank = 0;
 
 
 
@@ -30,30 +30,57 @@ namespace PIC_Simulator
             this.codeInterface = codeInterface;
             Clock.Tick += Clock_Tick;
             
-            this.Clock.Interval = new TimeSpan(0,0,0,0,1);
+            this.Clock.Interval = new TimeSpan(quartz);
             
             this.memory = memory;
         }
 
         public void Clock_Tick(object sender, object e)
         {
-            codeInterface.selectCode(runlines[memory.Pcl].Linenumber -1);
+            codeInterface.selectCode(runlines[memory.Pcl].Linenumber - 1);
+            codeInterface.portTrigger(memory.memoryb1[1, Memory.TRISA], memory.memoryb1[1, Memory.TRISB]);
             if(brkpnts.Contains(runlines[memory.Pcl].Linenumber - 1))
             {
                 Clock.Stop();
-                brkpnts.Remove(runlines[memory.Pcl].Linenumber - 1);
+                
                 return;
             }
             Step();
             
         }
 
+        public void mirrorRegs()
+        {
+            if(currentBank == 0)
+            {
+                memory.memoryb1[1, Memory.STATUS] = memory.memoryb1[0, Memory.STATUS];
+            }
+            else
+            {
+                memory.memoryb1[0, Memory.STATUS] = memory.memoryb1[1, Memory.STATUS];
+            }
+        }
+
         public void Step()
         {
+            mirrorRegs();
             Line line = runlines[memory.Pcl];
+            
             memory.Pcl++;
+
+            if((memory.memoryb1[0, Memory.STATUS] & 0b_0100000) == 0b_100000)
+            {
+                currentBank = 1;
+            }
+            else
+            {
+                currentBank = 0;
+            }
+
             memory.commandcounter++;
+
             this.Decode(line.instruction);
+            
             line = null;
         }
 
@@ -68,7 +95,7 @@ namespace PIC_Simulator
         {
             if (memory.memoryb1[currentBank,register] == 0)
             {
-                memory.memoryb1[currentBank,Memory.STATUS] = (short)(memory.memoryb1[currentBank,Memory.STATUS] + 0b_0000_0100);
+                memory.memoryb1[currentBank,Memory.STATUS] = (short)(memory.memoryb1[currentBank,Memory.STATUS] | 0b_0000_0100);
             }
             else
             {
@@ -77,7 +104,7 @@ namespace PIC_Simulator
 
                 if(zerostatus != 0b_0000_0000)
                 {
-                    memory.memoryb1[currentBank,Memory.STATUS] = (short)(memory.memoryb1[currentBank,Memory.STATUS] - 0b_0000_0100);
+                    memory.memoryb1[currentBank,Memory.STATUS] = (short)(memory.memoryb1[currentBank,Memory.STATUS] & 0b_1111_1011);
                 }
             }
         }
@@ -102,7 +129,7 @@ namespace PIC_Simulator
 
                 if (regvalue > 15)
                 {
-                    memory.memoryb1[currentBank,Memory.STATUS] = (short)(memory.memoryb1[currentBank,Memory.STATUS] + 0b_0000_0010);
+                    memory.memoryb1[currentBank,Memory.STATUS] = (short)(memory.memoryb1[currentBank,Memory.STATUS] | 0b_0000_0010);
                 }
                 else
                 {
@@ -110,7 +137,7 @@ namespace PIC_Simulator
                     short digitcarrystatus = (short)(memory.memoryb1[currentBank,Memory.STATUS] & digitcarryflagmask);
                     if (digitcarrystatus != 0b_0000_0000)
                     {
-                        memory.memoryb1[currentBank,Memory.STATUS] = (short)(memory.memoryb1[currentBank,Memory.STATUS] - 0b_0000_0010);
+                        memory.memoryb1[currentBank,Memory.STATUS] = (short)(memory.memoryb1[currentBank,Memory.STATUS] & 0b_1111_1101);
                     }
                 }
             }
@@ -120,7 +147,7 @@ namespace PIC_Simulator
                 regvalue = (short)(maskedvalue - regvalue);
                 if (regvalue <= 15 && regvalue >= 0)
                 {
-                    memory.memoryb1[currentBank,Memory.STATUS] = (short)(memory.memoryb1[currentBank,Memory.STATUS] + 0b_0000_0010);
+                    memory.memoryb1[currentBank,Memory.STATUS] = (short)(memory.memoryb1[currentBank,Memory.STATUS] | 0b_0000_0010);
                 }
                 else
                 {
@@ -128,7 +155,7 @@ namespace PIC_Simulator
                     short digitcarrystatus = (short)(memory.memoryb1[currentBank,Memory.STATUS] & digitcarryflagmask);
                     if (digitcarrystatus != 0b_0000_0000)
                     {
-                        memory.memoryb1[currentBank,Memory.STATUS] = (short)(memory.memoryb1[currentBank,Memory.STATUS] - 0b_0000_0010);
+                        memory.memoryb1[currentBank,Memory.STATUS] = (short)(memory.memoryb1[currentBank,Memory.STATUS] & 0b_1111_1101);
                     }
                 }
             }
@@ -144,11 +171,11 @@ namespace PIC_Simulator
             {
                 if ((short)(memory.memoryb1[currentBank,register]) > 255 && carrystatus == 0b_0000_0000)
                 {
-                    memory.memoryb1[currentBank,Memory.STATUS] = (short)(memory.memoryb1[currentBank,Memory.STATUS] + 0b_0000_0001);
+                    memory.memoryb1[currentBank,Memory.STATUS] = (short)(memory.memoryb1[currentBank,Memory.STATUS] | 0b_0000_0001);
                 }
                 if ((short) (memory.memoryb1[currentBank,register]) <=255 && carrystatus == 0b_0000_0001)
                 {
-                    memory.memoryb1[currentBank,Memory.STATUS] = (short)(memory.memoryb1[currentBank,Memory.STATUS] - 0b_0000_0001);
+                    memory.memoryb1[currentBank,Memory.STATUS] = (short)(memory.memoryb1[currentBank,Memory.STATUS] & 0b_1111_1110);
                 }
 
                 memory.memoryb1[currentBank,register] = (short)(memory.memoryb1[currentBank,register] & 0b_0000_0000_1111_1111);
@@ -158,11 +185,11 @@ namespace PIC_Simulator
             {
                 if ((short)(memory.memoryb1[currentBank,register]) >= 0 && carrystatus == 0b_0000_0000)
                 {
-                    memory.memoryb1[currentBank,Memory.STATUS] = (short)(memory.memoryb1[currentBank,Memory.STATUS] + 0b_0000_0001);
+                    memory.memoryb1[currentBank,Memory.STATUS] = (short)(memory.memoryb1[currentBank,Memory.STATUS] | 0b_0000_0001);
                 }
                 if((short)(memory.memoryb1[currentBank,register]) < 0 && carrystatus == 0b_0000_0001)
                 {
-                    memory.memoryb1[currentBank,Memory.STATUS] = (short)(memory.memoryb1[currentBank,Memory.STATUS] - 0b_0000_0001);
+                    memory.memoryb1[currentBank,Memory.STATUS] = (short)(memory.memoryb1[currentBank,Memory.STATUS] & 0b_1111_1110);
                 }
 
                 memory.memoryb1[currentBank,register] = (short)(memory.memoryb1[currentBank,register] & 0b_0000_0000_1111_1111);
@@ -175,15 +202,15 @@ namespace PIC_Simulator
                 
                 if(reglowbit == 0b_0000_0000_0000_0000 && carrystatus == 0b_0000_0001)
                 {
-                    memory.memoryb1[currentBank,register] = (short)(memory.memoryb1[currentBank,register] + 0b_0000_0001);
+                    memory.memoryb1[currentBank,register] = (short)(memory.memoryb1[currentBank,register] | 0b_0000_0001);
                 }
                 if(regcarry == 0b_0000_0001_0000_0000 && carrystatus == 0b_0000_0000)
                 {
-                    memory.memoryb1[currentBank,Memory.STATUS] = (short)(memory.memoryb1[currentBank,Memory.STATUS] + 0b_0000_0001);
+                    memory.memoryb1[currentBank,Memory.STATUS] = (short)(memory.memoryb1[currentBank,Memory.STATUS] | 0b_0000_0001);
                 }
                 if(regcarry != 0b_0000_0001_0000_0000 && carrystatus == 0b_0000_0001)
                 {
-                    memory.memoryb1[currentBank,Memory.STATUS] = (short)(memory.memoryb1[currentBank,Memory.STATUS] - 0b_0000_0001);
+                    memory.memoryb1[currentBank,Memory.STATUS] = (short)(memory.memoryb1[currentBank,Memory.STATUS] & 0b_1111_1110);
                 }
                 
                 memory.memoryb1[currentBank,register] = (short)(memory.memoryb1[currentBank,register] & 0b_0000_0000_1111_1111);
@@ -195,15 +222,95 @@ namespace PIC_Simulator
 
                 if (reglowbit == 0b_0000_0000_0000_0001 && carrystatus == 0b_0000_0000)
                 {
-                    memory.memoryb1[currentBank,Memory.STATUS] = (short)(memory.memoryb1[currentBank,Memory.STATUS] + 0b_0000_0001);
+                    memory.memoryb1[currentBank,Memory.STATUS] = (short)(memory.memoryb1[currentBank,Memory.STATUS] | 0b_0000_0001);
                 }
                 if (reglowbit == 0b_0000_0000_0000_0000 && carrystatus == 0b_0000_0001)
                 {
-                    memory.memoryb1[currentBank,Memory.STATUS] = (short)(memory.memoryb1[currentBank,Memory.STATUS] - 0b_0000_0001);
+                    memory.memoryb1[currentBank,Memory.STATUS] = (short)(memory.memoryb1[currentBank,Memory.STATUS] & 0b_1111_1110);
                 }
 
                 memory.memoryb1[currentBank,register] = (short)(memory.memoryb1[currentBank,register] & 0b_0000_0000_1111_1111);
             }
+        }
+        /// <summary>
+        /// handles Data Latch for PORTA and PORTB manipulation
+        /// </summary>
+        /// <param name="bank"></param> 0 or 1 
+        /// <param name="destination"></param> detination Register (PORTA or PORTB / TRISA or TRISB)
+        /// <param name="value"></param> value to insert to Register
+        /// <returns></returns>
+        public short handleDataLatch(short bank,short destination, short value)
+        {
+            char[] bitmask;
+            char[] valarray = Convert.ToString(value,2).PadLeft(16,'0').ToCharArray();
+            char[] returnval = new char[16] {'0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', };
+            char[] trisval = new char[16] { '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', };
+            if (bank == 0 && destination == Memory.PORTA)
+            {
+                bitmask = Convert.ToString(memory.memoryb1[1, Memory.TRISA],2).PadLeft(16, '0').ToCharArray();
+                for(int i = bitmask.Length-1; i>=0; i--)
+                {
+                    if(bitmask[i] == '0')
+                    {
+                        returnval[i] = valarray[i];
+                    }
+                    else
+                    {
+                        trisval[i] = valarray[i];
+                    }
+                }
+                memory.trisaLatch = (short)(memory.trisaLatch | short.Parse(string.Join("", trisval)));
+                return short.Parse(string.Join("",returnval));
+            }
+            if (bank == 0 && destination == Memory.PORTB)
+            {
+                bitmask = Convert.ToString(memory.memoryb1[1, Memory.TRISB],2).PadLeft(16, '0').ToCharArray();
+                for (int i = bitmask.Length - 1; i >= 0; i--)
+                {
+                    if (bitmask[i] == '0')
+                    {
+                        returnval[i] = valarray[i];
+                    }
+                    else
+                    {
+                        trisval[i] = valarray[i];
+                    }
+                }
+                memory.trisbLatch = (short)(memory.trisbLatch | short.Parse(string.Join("", trisval)));
+                return short.Parse(string.Join("", returnval));
+            }
+
+            if(bank == 1 && destination == Memory.TRISA)
+            {
+                bitmask = Convert.ToString(value, 2).PadLeft(16, '0').ToCharArray();
+                trisval = Convert.ToString(memory.trisaLatch, 2).PadLeft(16, '0').ToCharArray();
+                returnval = Convert.ToString(memory.memoryb1[0,Memory.PORTA],2).PadLeft(16, '0').ToCharArray();
+                for (int i = bitmask.Length - 1; i >= 0; i--)
+                {
+                    if (bitmask[i] == '0')
+                    {
+                        returnval[i] = trisval[i];
+                    }
+                }
+                string test = string.Join("", returnval);
+                memory.memoryb1[0,Memory.PORTA] = (short)(int.Parse(string.Join("", returnval)));
+            }
+            if (bank == 1 && destination == Memory.TRISB)
+            {
+                bitmask = Convert.ToString(value,2).PadLeft(16, '0').ToCharArray();
+                trisval = Convert.ToString(memory.trisbLatch,2).PadLeft(16, '0').ToCharArray();
+                returnval = Convert.ToString(memory.memoryb1[0, Memory.PORTB], 2).PadLeft(16, '0').ToCharArray();
+                for (int i = bitmask.Length - 1; i >= 0; i--)
+                {
+                    if (bitmask[i] == '0')
+                    {
+                        returnval[i] = trisval[i];
+                    }
+                }
+                string test = string.Join("", returnval);
+                memory.memoryb1[0, Memory.PORTB] = (short)(int.Parse(string.Join("", returnval)));
+            }
+            return 0;
         }
 
         public short checkIndirect(short value)
@@ -322,9 +429,11 @@ namespace PIC_Simulator
                     xorwf(value);
                     break;
                 case 0x0D: //rlf
+                    value = checkIndirect(value);
                     rlf(value);
                     break;
                 case 0x0c: //rrf
+                    value = checkIndirect(value);
                     rrf(value);
                     break;
                 case 0x0F: //incfsz
@@ -362,18 +471,22 @@ namespace PIC_Simulator
                 default:
                     if ((instruction & 0b_000011100) == 0b_010100)
                     {
+                        value = checkIndirect(value);
                         bsf(instruction, value);
                     }
                     if ((instruction & 0b_000011100) == 0b_010000)
                     {
+                        value = checkIndirect(value);
                         bcf(instruction, value);
                     }
                     if((instruction & 0b_000011100) == 0b_011000)
                     {
+                        value = checkIndirect(value);
                         isSkip = btfsc(instruction,value);
                     }
                     if ((instruction & 0b_000011100) == 0b_011100)
                     {
+                        value = checkIndirect(value);
                         isSkip = btfss(instruction, value);
                     }
                     break;
@@ -384,7 +497,7 @@ namespace PIC_Simulator
 
         public void movlw(short value)
         {
-            memory.memoryb1[currentBank,Memory.W] = value;
+            memory.memoryb1[0,Memory.W] = value;
             
             memory.updateMemView(); 
         }
@@ -393,11 +506,24 @@ namespace PIC_Simulator
         {
             short freg = (short)(value & 0b_0111_1111);
             short destvalue = (short)(value & 0b_1000_0000);
+            
+            
+            if(currentBank == 0 && (freg == Memory.PORTA || freg == Memory.PORTB))
+            {
+                value = handleDataLatch(currentBank,freg, memory.memoryb1[0,Memory.W]);
+            }
+            if (currentBank == 1 && (freg == Memory.TRISA || freg == Memory.TRISB))
+            {
+                _ = handleDataLatch(currentBank,freg, memory.memoryb1[0,Memory.W]);
+            }
 
             if (destvalue == 0b_1000_0000)
             {
-                memory.memoryb1[currentBank,freg] = memory.memoryb1[currentBank,Memory.W];
+                memory.memoryb1[currentBank,freg] = (short)(memory.memoryb1[0,Memory.W] );
             }
+
+            
+            
 
             memory.updateMemView();
         }
@@ -408,6 +534,8 @@ namespace PIC_Simulator
             short freg = (short)(value & 0b_0111_1111);
             short destvalue = (short)(value & 0b_1000_0000);
 
+            
+
             if (destvalue != 0b_1000_0000)
             {
                 destreg = Memory.W;
@@ -415,6 +543,15 @@ namespace PIC_Simulator
             else
             {
                 destreg = freg;
+            }
+
+            if (currentBank == 0 && (freg == Memory.PORTA || freg == Memory.PORTB))
+            {
+                value = handleDataLatch(currentBank, destreg, memory.memoryb1[currentBank, freg]);
+            }
+            if (currentBank == 1 && (freg == Memory.TRISA || freg == Memory.TRISB))
+            {
+                _ = handleDataLatch(currentBank, destreg, memory.memoryb1[currentBank, freg]);
             }
 
             memory.memoryb1[currentBank,destreg] = memory.memoryb1[currentBank,freg];
@@ -427,7 +564,7 @@ namespace PIC_Simulator
         {
             checkDigitCarryFlag(Memory.W, value, "add");
 
-            memory.memoryb1[currentBank,Memory.W] = (short)(memory.memoryb1[currentBank,Memory.W] + value);
+            memory.memoryb1[0,Memory.W] = (short)(memory.memoryb1[0,Memory.W] + value);
 
             checkCarryFlag(Memory.W, "add");
             checkZeroFlag(Memory.W);
@@ -451,7 +588,7 @@ namespace PIC_Simulator
 
             checkDigitCarryFlag(destreg, memory.memoryb1[currentBank,freg], "add");
 
-            memory.memoryb1[currentBank,destreg] = (short)(memory.memoryb1[currentBank,Memory.W] + memory.memoryb1[currentBank,freg]);
+            memory.memoryb1[currentBank,destreg] = (short)(memory.memoryb1[0,Memory.W] + memory.memoryb1[currentBank,freg]);
 
             checkCarryFlag(destreg, "add");
             checkZeroFlag(destreg);
@@ -460,7 +597,7 @@ namespace PIC_Simulator
 
         public void andlw(short value)
         {
-            memory.memoryb1[currentBank,Memory.W] = (short)(memory.memoryb1[currentBank,Memory.W] & value);
+            memory.memoryb1[0,Memory.W] = (short)(memory.memoryb1[0,Memory.W] & value);
 
             checkZeroFlag(Memory.W);
             memory.updateMemView();
@@ -481,7 +618,7 @@ namespace PIC_Simulator
                 destreg = freg;
             }
 
-            memory.memoryb1[currentBank,destreg] = (short)(memory.memoryb1[currentBank,Memory.W] & memory.memoryb1[currentBank,freg]);
+            memory.memoryb1[currentBank,destreg] = (short)(memory.memoryb1[0,Memory.W] & memory.memoryb1[currentBank,freg]);
 
 
             checkZeroFlag(destreg);
@@ -490,7 +627,7 @@ namespace PIC_Simulator
 
         public void iorlw(short value)
         {
-            memory.memoryb1[currentBank,Memory.W] = (short) (memory.memoryb1[currentBank,Memory.W] | value);
+            memory.memoryb1[0,Memory.W] = (short) (memory.memoryb1[0,Memory.W] | value);
           
             checkZeroFlag(Memory.W);
             memory.updateMemView();
@@ -511,7 +648,7 @@ namespace PIC_Simulator
                 destreg = freg;
             }
 
-            memory.memoryb1[currentBank,destreg] = (short) (memory.memoryb1[currentBank,Memory.W] | memory.memoryb1[currentBank,freg]);
+            memory.memoryb1[currentBank,destreg] = (short) (memory.memoryb1[0,Memory.W] | memory.memoryb1[currentBank,freg]);
 
             checkZeroFlag(destreg);
             memory.updateMemView();
@@ -521,8 +658,8 @@ namespace PIC_Simulator
         {   
             checkDigitCarryFlag(Memory.W, value, "sub");
             
-            short regvalue = (short)(value - memory.memoryb1[currentBank,Memory.W]);
-            memory.memoryb1[currentBank,Memory.W] = regvalue;
+            short regvalue = (short)(value - memory.memoryb1[0,Memory.W]);
+            memory.memoryb1[0,Memory.W] = regvalue;
             checkCarryFlag(Memory.W, "sub");
             
             checkZeroFlag(Memory.W);
@@ -546,7 +683,7 @@ namespace PIC_Simulator
 
             checkDigitCarryFlag(Memory.W, memory.memoryb1[currentBank,freg], "sub");
 
-            short regvalue = (short)(memory.memoryb1[currentBank,freg] - memory.memoryb1[currentBank,Memory.W]);
+            short regvalue = (short)(memory.memoryb1[currentBank,freg] - memory.memoryb1[0,Memory.W]);
             memory.memoryb1[currentBank,destreg] = regvalue;
             checkCarryFlag(destreg, "sub");
             
@@ -556,7 +693,7 @@ namespace PIC_Simulator
 
         public void xorlw(short value)
         {
-            memory.memoryb1[currentBank,Memory.W] = (short)(memory.memoryb1[currentBank,Memory.W] ^ value);
+            memory.memoryb1[0,Memory.W] = (short)(memory.memoryb1[0,Memory.W] ^ value);
 
             checkZeroFlag(Memory.W);
             memory.updateMemView();   
@@ -577,7 +714,7 @@ namespace PIC_Simulator
                 destreg = freg;
             }
 
-            memory.memoryb1[currentBank,destreg] = (short)(memory.memoryb1[currentBank,Memory.W] ^ memory.memoryb1[currentBank,freg]);
+            memory.memoryb1[currentBank,destreg] = (short)(memory.memoryb1[0,Memory.W] ^ memory.memoryb1[currentBank,freg]);
 
             checkZeroFlag(destreg);
             memory.updateMemView();
@@ -591,7 +728,7 @@ namespace PIC_Simulator
 
         public void retlw(short value)
         {
-            memory.memoryb1[currentBank,Memory.W] = value;
+            memory.memoryb1[0,Memory.W] = value;
             memory.memoryb1[currentBank,Memory.PCL] = memory.pop();
             nop();
             memory.updateMemView();
@@ -633,6 +770,15 @@ namespace PIC_Simulator
         {
             short freg = (short)(value & 0b_0111_1111);
 
+            if (currentBank == 0 && (freg == Memory.PORTA || freg == Memory.PORTB))
+            {
+                value = handleDataLatch(currentBank, freg, 0);
+            }
+            if (currentBank == 1 && (freg == Memory.TRISA || freg == Memory.TRISB))
+            {
+                _ = handleDataLatch(currentBank, freg, 0);
+            }
+
             memory.memoryb1[currentBank,freg] = 0b_0000_0000;
 
             checkZeroFlag(freg);
@@ -641,7 +787,7 @@ namespace PIC_Simulator
 
         public void clrw()
         {
-            memory.memoryb1[currentBank,Memory.W] = 0b_0000_0000;
+            memory.memoryb1[0,Memory.W] = 0b_0000_0000;
 
             checkZeroFlag(Memory.W);
             memory.updateMemView();
@@ -782,7 +928,8 @@ namespace PIC_Simulator
         {
             short destreg = (short)(value & 0b_0111_1111);
             short bitdestvalue = (short)(value & 0b_1000_0000);
-            if(bitdestvalue != 0)
+            
+            if (bitdestvalue != 0)
             {
                 bitdestvalue = (short)(1 + ((instruction & 0b_0011) << 1));
             }
@@ -790,11 +937,27 @@ namespace PIC_Simulator
             {
                 bitdestvalue = (short)((instruction & 0b_0011) << 1);
             }
+            if(destreg == Memory.PORTA) // Für DATA LATCH
+            {
+                if(memory.checkBit(memory.memoryb1[1,Memory.TRISA],bitdestvalue))
+                {
+                    memory.trisaLatch = memory.setBit(memory.trisaLatch, bitdestvalue);
+                    return;
+                }
+            }
+            if (destreg == Memory.PORTB)
+            {
+                if (memory.checkBit(memory.memoryb1[1, Memory.TRISB], bitdestvalue))
+                {
+                    memory.trisbLatch = memory.setBit(memory.trisbLatch, bitdestvalue);
+                    return;
+                }
+            }
 
-            switch(bitdestvalue)
+            switch (bitdestvalue)
             {
                 case 0:
-                    memory.memoryb1[currentBank,destreg] = (short)(memory.memoryb1[currentBank,destreg] | 0b_01);
+                   memory.memoryb1[currentBank, destreg] = (short)(memory.memoryb1[currentBank, destreg] | 0b_01);
                     break;
                 case 1:
                     memory.memoryb1[currentBank,destreg] = (short)(memory.memoryb1[currentBank,destreg] | 0b_010);
@@ -817,7 +980,6 @@ namespace PIC_Simulator
                 case 7:
                     memory.memoryb1[currentBank,destreg] = (short)(memory.memoryb1[currentBank,destreg] | 0b_10000000);
                     break;
-
             }
             memory.updateMemView();
         }
@@ -834,6 +996,52 @@ namespace PIC_Simulator
             {
                 bitdestvalue = (short)((instruction & 0b_0011) << 1);
             }
+            
+            if (destreg == Memory.PORTA) // Für DATA LATCH
+            {
+                if (currentBank == 1) // zieht aus trisaLatch, da PORT Pin auf ausgang gesetzt wird
+                {
+                    if (memory.checkBit(memory.trisaLatch, bitdestvalue))
+                    {
+                        memory.trisaLatch = memory.setBit(memory.memoryb1[memory.trisaLatch, Memory.PORTA], bitdestvalue);
+                    }
+                    else
+                    {
+                        memory.trisaLatch = memory.clrBit(memory.memoryb1[memory.trisaLatch, Memory.PORTA], bitdestvalue);
+                    }
+                }
+                else
+                {
+                    if (memory.checkBit(memory.memoryb1[1, Memory.TRISA], bitdestvalue))
+                    {
+                        memory.trisaLatch = memory.clrBit(memory.trisaLatch, bitdestvalue);
+                        return;
+                    }
+                }
+            }
+            if (destreg == Memory.PORTB)
+            {
+                if (currentBank == 1)
+                {
+                    if (memory.checkBit(memory.trisbLatch, bitdestvalue))
+                    {
+                        memory.trisbLatch = memory.setBit(memory.memoryb1[memory.trisbLatch, Memory.PORTB], bitdestvalue);
+                    }
+                    else
+                    {
+                        memory.trisbLatch = memory.clrBit(memory.memoryb1[memory.trisbLatch, Memory.PORTB], bitdestvalue);
+                    }
+                }
+                else
+                {
+                    if (memory.checkBit(memory.memoryb1[1, Memory.TRISB], bitdestvalue))
+                    {
+                        memory.trisbLatch = memory.clrBit(memory.trisbLatch, bitdestvalue);
+                        return;
+                    }
+                }
+            }
+            
 
             switch (bitdestvalue)
             {
@@ -863,6 +1071,7 @@ namespace PIC_Simulator
                     break;
 
             }
+            mirrorRegs();
             memory.updateMemView();
         }
 
@@ -1042,4 +1251,5 @@ namespace PIC_Simulator
 interface ICodeInterface
 {
     void selectCode(int line);
+    void portTrigger(short trisa, short trisb);
 }
