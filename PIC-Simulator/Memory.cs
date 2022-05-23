@@ -111,6 +111,9 @@ namespace PIC_Simulator
             get
             {
                 string hexnum = string.Format("0x{0:X2}", memoryb1[1, OPTION]);
+                return hexnum;
+            }
+        }
 
         public string PcllathView
         {
