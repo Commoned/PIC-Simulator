@@ -366,7 +366,7 @@ namespace PIC_Simulator
                     }
                     if ((instruction & 0b_000011100) == 0b_011100)
                     {
-                        isSkip = btfsc(instruction, value);
+                        isSkip = btfss(instruction, value);
                     }
                     break;
             }

@@ -51,7 +51,7 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Border PointerPressed="TextBlock_PointerPressed" Background="SlateGray" BorderBrush="DarkSlateGray" BorderThickness="1">
+                        <Border Background="SlateGray" BorderBrush="DarkSlateGray" BorderThickness="1">
                             <TextBlock  Tag="memory"  TextAlignment="Center"   Margin="10" Width="20"  Text="{Binding UpdateSourceTrigger=PropertyChanged}"/>
                         </Border>
                     </DataTemplate>
