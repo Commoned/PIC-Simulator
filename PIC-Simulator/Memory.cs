@@ -256,7 +256,10 @@ namespace PIC_Simulator
             NotifyPropertyChanged("Status");
             NotifyPropertyChanged("PclView");
             NotifyPropertyChanged("FSRReg");
-
+            NotifyPropertyChanged("Status");
+            NotifyPropertyChanged("Statusbits");
+            NotifyPropertyChanged("Intcon");
+            NotifyPropertyChanged("Intconbits");
             NotifyPropertyChanged("S0");
             NotifyPropertyChanged("S1");
             NotifyPropertyChanged("S2");
@@ -268,6 +271,7 @@ namespace PIC_Simulator
             NotifyPropertyChanged("Stackpointer");
 
             NotifyPropertyChanged("Option");
+            NotifyPropertyChanged("Optionbits");
             NotifyPropertyChanged("PcllathView");
             NotifyPropertyChanged("runtimecounter");
 

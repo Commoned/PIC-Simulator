@@ -21,8 +21,8 @@ namespace PIC_Simulator
         bool isSkip;
         public List<int> brkpnts = new List<int>();
         short currentBank = 0;
-
-
+        bool countTMR0 = false;
+        int tmrcount=0;
 
 
         public Processor(ICodeInterface codeInterface,Memory memory)
@@ -39,7 +39,7 @@ namespace PIC_Simulator
         {
             codeInterface.selectCode(runlines[memory.Pcl].Linenumber - 1);
             codeInterface.portTrigger(memory.memoryb1[1, Memory.TRISA], memory.memoryb1[1, Memory.TRISB]);
-            
+            checkTMR0();
             if(brkpnts.Contains(runlines[memory.Pcl].Linenumber - 1))
             {
                 Clock.Stop();
@@ -47,6 +47,35 @@ namespace PIC_Simulator
                 return;
             }
             Step();
+            
+        }
+
+        public void checkTMR0()
+        {
+            if(!memory.checkBit(memory.memoryb1[1,Memory.OPTION],5))
+            {
+                countTMR0 = true;
+                if (tmrcount == 3)
+                {
+                    tmrcount = 0;
+                    memory.memoryb1[0, Memory.TMR0]++;
+                    if (memory.memoryb1[0, Memory.TMR0] >= 0x100)
+                    {
+                        memory.memoryb1[0, Memory.TMR0] = 0;
+                        checkZeroFlag(Memory.TMR0);
+                    }
+                }
+                else
+                {
+
+
+                    tmrcount++;
+                }
+            }
+            else
+            {
+                countTMR0 = false;
+            }
             
         }
 
