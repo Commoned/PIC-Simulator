@@ -78,7 +78,9 @@ namespace PIC_Simulator
         {
             this.CodeStack.SelectedIndex = line;
             this.CodeStack.ScrollIntoView(this.CodeStack.SelectedItem,ScrollIntoViewAlignment.Leading);
+            
         }
+
 
         public void portTrigger(short trisa, short trisb)
         {
@@ -193,8 +195,13 @@ namespace PIC_Simulator
             }
             else
             {
-                but.Background = (SolidColorBrush)Resources["GreenColor"];
+                but.Background = (SolidColorBrush)Resources["GrayColor"];
                 but.Content = "X";
+                Start_Button.Background = (SolidColorBrush)Resources["GreenColor"];
+                Start_Button.Content = "\uE768";
+                processor.Clock.Stop();
+                processor.isRunning = false;
+
 
                 var item = (sender as FrameworkElement).DataContext;
                 processor.brkpnts.Remove(CodeStack.Items.IndexOf(item));

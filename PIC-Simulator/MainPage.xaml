@@ -11,6 +11,7 @@
         <SolidColorBrush x:Key="RedColor" Color="Red" />
         <SolidColorBrush x:Key="GreenColor" Color="Green" />
         <SolidColorBrush x:Key="BlueColor" Color="LightBlue" />
+        <SolidColorBrush x:Key="GrayColor" Color="DimGray" />
     </Page.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -86,39 +87,112 @@
                 <CheckBox x:Name="rb1" Content="1" Checked="CheckBoxRB_Checked" Unchecked="CheckBoxRB_Checked"></CheckBox>
                 <CheckBox x:Name="rb0" Content="0" Checked="CheckBoxRB_Checked" Unchecked="CheckBoxRB_Checked"></CheckBox>
             </StackPanel>
-
+            <ItemsControl Width="250" Height="250" VerticalAlignment="Top" >
+                
+                <TextBlock x:Name="s0" Text="{Binding S0}" TextAlignment="Center" Margin="-50,0,0,0" Width="50" Height="50"></TextBlock>
+                
+                <TextBlock x:Name="s1" Text="{Binding S1}" TextAlignment="Center" Margin="50,-50,0,0" Width="50" Height="50"></TextBlock>
+                
+                <TextBlock x:Name="s2" Text="{Binding S2}" TextAlignment="Center" Margin="150,0,0,0" Width="50" Height="50"></TextBlock>
+                
+                <TextBlock x:Name="s3" Text="{Binding S3}" TextAlignment="Center" Margin="150,0,0,0" Width="50" Height="50"></TextBlock>
+                
+                <TextBlock x:Name="s4" Text="{Binding S4}" TextAlignment="Center" Margin="50,0,0,0" Width="50" Height="50"></TextBlock>
+                
+                <TextBlock x:Name="s5" Text="{Binding S5}" TextAlignment="Center" Margin="-50,-50,0,0" Width="50" Height="50"></TextBlock>
+                
+                <TextBlock x:Name="s6" Text="{Binding S6}" TextAlignment="Center" Margin="-150,-150,0,0" Width="50" Height="50"></TextBlock>
+                
+                <TextBlock x:Name="s7" Text="{Binding S7}" TextAlignment="Center" Margin="-150,-250,0,0" Width="50" Height="50"></TextBlock>
+                
+                <TextBlock x:Name="Stackheader" Text="STACK" Width="50" Height="25" Margin="0,-250,0,0" TextAlignment="Center"></TextBlock>
+                <Ellipse  Width="250" Height="250" StrokeThickness="3" Margin="0,-240,0,0" Stroke="Slategray"></Ellipse>
+            </ItemsControl>
+            
+            
+            
+            
         </StackPanel>
+        
         <TextBlock Text="Spezialfunktionsregister" Grid.Row="3" Grid.Column="1" />
-        <StackPanel Margin="5,15,0,0" Grid.Row="3" Grid.Column="1">
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Margin="0,0,5,0">WReg:</TextBlock>
-                <TextBlock Text="{Binding Path=WReg}"></TextBlock>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Margin="0,0,5,0">FSR:</TextBlock>
-                <TextBlock Text="{Binding FSRReg}"></TextBlock>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Margin="0,0,5,0">PCL:</TextBlock>
-                <TextBlock Text="{Binding PclView}"></TextBlock>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Margin="0,0,5,0">PCLATH:</TextBlock>
-                <TextBlock Text="{Binding PcllathView}"></TextBlock>
-            </StackPanel>
-            <StackPanel Orientation="Vertical">
-                <TextBlock Margin="0,0,5,0">STATUS:</TextBlock>
+        <StackPanel Margin="5,20,20,0" Grid.Row="3" Grid.Column="1">
+            <Border BorderBrush="SlateGray" BorderThickness="2">
+                <StackPanel>
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock Width="30" Margin="0,0,5,0">IRP</TextBlock>
-                    <TextBlock Width="30" Margin="0,0,5,0">RP1</TextBlock>
-                    <TextBlock Width="30" Margin="0,0,5,0">RP0</TextBlock>
-                    <TextBlock Width="30" Margin="0,0,5,0">TO</TextBlock>
-                    <TextBlock Width="30" Margin="0,0,5,0">PD</TextBlock>
-                    <TextBlock Width="30" Margin="0,0,5,0">Z</TextBlock>
-                    <TextBlock Width="30" Margin="0,0,5,0">DC</TextBlock>
-                    <TextBlock Width="30" Margin="0,0,5,0">C</TextBlock>
+                    <TextBlock Margin="0,0,5,0">WReg:</TextBlock>
+                    <TextBlock Text="{Binding Path=WReg}"></TextBlock>
                 </StackPanel>
-                <ItemsControl ItemsSource="{Binding Status}">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Margin="0,0,5,0">FSR:</TextBlock>
+                    <TextBlock Text="{Binding FSRReg}"></TextBlock>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Margin="0,0,5,0">PCL:</TextBlock>
+                    <TextBlock Text="{Binding PclView}"></TextBlock>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Margin="0,0,5,0">PCLATH:</TextBlock>
+                    <TextBlock Text="{Binding PcllathView}"></TextBlock>
+                </StackPanel>
+            </StackPanel>
+            </Border>
+            <Border BorderThickness="2" BorderBrush="SlateGray">
+                <StackPanel Orientation="Vertical">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Margin="0,0,5,0">STATUS:</TextBlock>
+                        <TextBlock Margin="0,0,5,0" Text="{Binding Status}"></TextBlock>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Width="30" Margin="0,0,5,0">IRP</TextBlock>
+                        <TextBlock Width="30" Margin="0,0,5,0">RP1</TextBlock>
+                        <TextBlock Width="30" Margin="0,0,5,0">RP0</TextBlock>
+                        <TextBlock Width="30" Margin="0,0,5,0">TO</TextBlock>
+                        <TextBlock Width="30" Margin="0,0,5,0">PD</TextBlock>
+                        <TextBlock Width="30" Margin="0,0,5,0">Z</TextBlock>
+                        <TextBlock Width="30" Margin="0,0,5,0">DC</TextBlock>
+                        <TextBlock Width="30" Margin="0,0,5,0">C</TextBlock>
+                    </StackPanel>
+                    <ItemsControl ItemsSource="{Binding Statusbits}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal"></StackPanel>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Width="30" Margin="0,0,5,0" Text="{Binding}"></TextBlock>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Margin="0,0,5,0"></TextBlock>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+            <Border BorderThickness="2" BorderBrush="SlateGray">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Margin="0,0,5,0">Runtimecounter:</TextBlock>
+                    <TextBlock Text="{Binding runtimecounter}"></TextBlock>
+                </StackPanel>
+            </Border>
+
+            <Border BorderThickness="2" BorderBrush="SlateGray">
+                <StackPanel Orientation="Vertical">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Margin="0,0,5,0">Option:</TextBlock>
+                    <TextBlock Text="{Binding Option}"></TextBlock>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Width="30" Margin="0,0,5,0">RBP</TextBlock>
+                    <TextBlock Width="30" Margin="0,0,5,0">IntEdg</TextBlock>
+                    <TextBlock Width="30" Margin="0,0,5,0">T0CS</TextBlock>
+                    <TextBlock Width="30" Margin="0,0,5,0">T0SE</TextBlock>
+                    <TextBlock Width="30" Margin="0,0,5,0">PSA</TextBlock>
+                    <TextBlock Width="30" Margin="0,0,5,0">PS2</TextBlock>
+                    <TextBlock Width="30" Margin="0,0,5,0">PS1</TextBlock>
+                    <TextBlock Width="30" Margin="0,0,5,0">PS0</TextBlock>
+                </StackPanel>
+                <ItemsControl ItemsSource="{Binding Optionbits}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <StackPanel Orientation="Horizontal"></StackPanel>
@@ -130,27 +204,46 @@
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Margin="0,0,5,0"></TextBlock>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Margin="0,0,5,0">Runtimecounter:</TextBlock>
-                    <TextBlock Text="{Binding runtimecounter}"></TextBlock>
-                </StackPanel>
             </StackPanel>
-
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Margin="0,0,5,0">Option:</TextBlock>
-                <TextBlock Text="{Binding Option}"></TextBlock>
-            </StackPanel>
+            </Border>
+            <Border BorderThickness="2" BorderBrush="SlateGray">
+                <StackPanel Orientation="Vertical">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Margin="0,0,5,0">INTCON:</TextBlock>
+                        <TextBlock Text="{Binding Intcon}"></TextBlock>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Width="30" Margin="0,0,5,0">GIE</TextBlock>
+                        <TextBlock Width="30" Margin="0,0,5,0">EEIE</TextBlock>
+                        <TextBlock Width="30" Margin="0,0,5,0">T0IE</TextBlock>
+                        <TextBlock Width="30" Margin="0,0,5,0">INTE</TextBlock>
+                        <TextBlock Width="30" Margin="0,0,5,0">RBIE</TextBlock>
+                        <TextBlock Width="30" Margin="0,0,5,0">T0IF</TextBlock>
+                        <TextBlock Width="30" Margin="0,0,5,0">INTF</TextBlock>
+                        <TextBlock Width="30" Margin="0,0,5,0">RBIF</TextBlock>
+                    </StackPanel>
+                    <ItemsControl ItemsSource="{Binding Intconbits}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal"></StackPanel>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Width="30" Margin="0,0,5,0" Text="{Binding}"></TextBlock>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </Border>
 
         </StackPanel>
 
-        <ListView FontSize="12" x:Name="CodeStack" Grid.Row="3" Grid.Column="2" Margin="10,-150,0,0" >
+        <ListView FontSize="12" x:Name="CodeStack" Grid.Row="3" Grid.Column="2" Margin="10,-100,0,0" >
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <StackPanel  Padding="0"  Orientation="Horizontal" >
-                        <Button Content="X" Click="Breakpoint_Click"></Button>
+                        <Button Background="DimGray" Content="X" Click="Breakpoint_Click"></Button>
                         <TextBlock Margin="0,0,10,0" Width="20" Text="{Binding Linenumber}"/>
                         <TextBlock Margin="0,0,10,0" Width="20" Text="{Binding Codeline}"/>
                         <TextBlock Margin="0,0,10,0" Width="40" Text="{Binding Instruction}"/>
@@ -162,8 +255,6 @@
 
 
         <TextBlock x:Name="pic_title" Grid.Row="1" Grid.Column="1" FontFamily="Comic Sans MS" FontSize="50">PIC-Simulator</TextBlock>
-            
-
             <Popup   x:Name="StandardPopup">
             <Border BorderBrush="{StaticResource ApplicationForegroundThemeBrush}" 
             Background="{StaticResource ApplicationPageBackgroundThemeBrush}"
