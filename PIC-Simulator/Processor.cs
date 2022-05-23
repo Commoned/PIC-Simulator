@@ -414,6 +414,7 @@ namespace PIC_Simulator
             checkZeroFlag(destreg);
             memory.updateMemView();
         }
+        
         public void addlw(short value)
         {
             checkDigitCarryFlag(Memory.W, value, "add");
@@ -598,7 +599,7 @@ namespace PIC_Simulator
 
         public void Return()
         {
-            memory.memoryb1[currentBank,Memory.PCL] = memory.pop();
+            memory.Pcl = memory.pop();
             nop();
             memory.updateMemView();
         }
@@ -606,6 +607,7 @@ namespace PIC_Simulator
         public void Goto(short value)
         {
             memory.Pcl = value;
+            nop();
             memory.updateMemView();
         }
        
