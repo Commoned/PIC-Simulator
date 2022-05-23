@@ -228,7 +228,13 @@ namespace PIC_Simulator
                 memory.memoryb1[currentBank,register] = (short)(memory.memoryb1[currentBank,register] & 0b_0000_0000_1111_1111);
             }
         }
-
+        /// <summary>
+        /// handles Data Latch for PORTA and PORTB manipulation
+        /// </summary>
+        /// <param name="bank"></param> 0 or 1 
+        /// <param name="destination"></param> detination Register (PORTA or PORTB / TRISA or TRISB)
+        /// <param name="value"></param> value to insert to Register
+        /// <returns></returns>
         public short handleDataLatch(short bank,short destination, short value)
         {
             char[] bitmask;
@@ -483,7 +489,7 @@ namespace PIC_Simulator
         {
             short freg = (short)(value & 0b_0111_1111);
             short destvalue = (short)(value & 0b_1000_0000);
-            short latchmask = (short)(0b_1111_1111);
+            
             
             if(currentBank == 0 && (freg == Memory.PORTA || freg == Memory.PORTB))
             {
@@ -511,6 +517,8 @@ namespace PIC_Simulator
             short freg = (short)(value & 0b_0111_1111);
             short destvalue = (short)(value & 0b_1000_0000);
 
+            
+
             if (destvalue != 0b_1000_0000)
             {
                 destreg = Memory.W;
@@ -518,6 +526,15 @@ namespace PIC_Simulator
             else
             {
                 destreg = freg;
+            }
+
+            if (currentBank == 0 && (freg == Memory.PORTA || freg == Memory.PORTB))
+            {
+                value = handleDataLatch(currentBank, destreg, memory.memoryb1[currentBank, freg]);
+            }
+            if (currentBank == 1 && (freg == Memory.TRISA || freg == Memory.TRISB))
+            {
+                _ = handleDataLatch(currentBank, destreg, memory.memoryb1[currentBank, freg]);
             }
 
             memory.memoryb1[currentBank,destreg] = memory.memoryb1[currentBank,freg];
@@ -723,6 +740,15 @@ namespace PIC_Simulator
         public void clrf(short value)
         {
             short freg = (short)(value & 0b_0111_1111);
+
+            if (currentBank == 0 && (freg == Memory.PORTA || freg == Memory.PORTB))
+            {
+                value = handleDataLatch(currentBank, freg, 0);
+            }
+            if (currentBank == 1 && (freg == Memory.TRISA || freg == Memory.TRISB))
+            {
+                _ = handleDataLatch(currentBank, freg, 0);
+            }
 
             memory.memoryb1[currentBank,freg] = 0b_0000_0000;
 
