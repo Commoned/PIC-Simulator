@@ -120,7 +120,7 @@ namespace PIC_Simulator
                 }
                 i++;
             }
-            NotifyPropertyChanged("Memoryb1");
+            
             NotifyPropertyChanged("WReg");
             NotifyPropertyChanged("Status");
             NotifyPropertyChanged("PclView");

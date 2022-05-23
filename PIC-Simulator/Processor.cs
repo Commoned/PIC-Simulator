@@ -418,9 +418,11 @@ namespace PIC_Simulator
                     xorwf(value);
                     break;
                 case 0x0D: //rlf
+                    value = checkIndirect(value);
                     rlf(value);
                     break;
                 case 0x0c: //rrf
+                    value = checkIndirect(value);
                     rrf(value);
                     break;
                 case 0x0F: //incfsz
@@ -458,19 +460,23 @@ namespace PIC_Simulator
                 default:
                     if ((instruction & 0b_000011100) == 0b_010100)
                     {
+                        value = checkIndirect(value);
                         bsf(instruction, value);
                     }
                     if ((instruction & 0b_000011100) == 0b_010000)
                     {
+                        value = checkIndirect(value);
                         bcf(instruction, value);
                     }
                     if((instruction & 0b_000011100) == 0b_011000)
                     {
+                        value = checkIndirect(value);
                         isSkip = btfsc(instruction,value);
                     }
                     if ((instruction & 0b_000011100) == 0b_011100)
                     {
-                        isSkip = btfsc(instruction, value);
+                        value = checkIndirect(value);
+                        isSkip = btfss(instruction, value);
                     }
                     break;
             }
