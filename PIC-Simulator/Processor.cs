@@ -277,10 +277,17 @@ namespace PIC_Simulator
                     addwf(value);
                     break;
                 case 0x28: //goto
-                    Goto(value);
+                case 0x29:
+                case 0x2A:
+                case 0x2B:
+                case 0x2C:
+                case 0x2D:
+                case 0x2E:
+                case 0x2F:
+                    Goto(value, instruction);
                     break;
                 case 0x20: //call
-                    call(value);
+                    call(value, instruction);
                     break;
                 case 0x34: //retlw
                     retlw(value);
@@ -589,10 +596,15 @@ namespace PIC_Simulator
             memory.updateMemView();
         }
 
-        public void call(short value)
+        public void call(short value, short instruction)
         {
-            memory.push((short)(memory.memoryb1[currentBank,Memory.PCL]));
-            memory.Pcl = value;
+            short pc = (short)(value ^ ((short)(instruction & 0b_0000_0111) << 8));
+            short pclath = (short)(memory.memoryb1[currentBank, Memory.PCLATH] & 0b_0001_1000);
+            pc = (short)(pc ^ (pclath << 8));
+
+            memory.push((short)(pc));
+            //memory.push((short)(memory.memoryb1[currentBank, Memory.PCL]));
+            memory.Pcl = pc;
             nop();
             memory.updateMemView();
         }
@@ -604,9 +616,14 @@ namespace PIC_Simulator
             memory.updateMemView();
         }
 
-        public void Goto(short value)
+        public void Goto(short value, short instruction)
         {
-            memory.Pcl = value;
+            short pc = (short) (value ^ ((short)(instruction & 0b_0000_0111) << 8));
+            short pclath = (short)(memory.memoryb1[currentBank, Memory.PCLATH] & 0b_0001_1000);
+            pc = (short)(pc ^ (pclath << 8));
+
+            memory.Pcl = pc;
+            //memory.Pcl = value;
             nop();
             memory.updateMemView();
         }

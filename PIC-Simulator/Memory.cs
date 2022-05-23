@@ -32,6 +32,7 @@ namespace PIC_Simulator
         public short[,] memoryb1 = new short[2,129];
         public short stackpointer = 6;
         public short[] stack = new short[7];
+        public short pc = 0;
 
         public Memory()
         {
