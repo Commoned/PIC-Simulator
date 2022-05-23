@@ -199,8 +199,7 @@ namespace PIC_Simulator
                 var item = (sender as FrameworkElement).DataContext;
                 processor.brkpnts.Remove(CodeStack.Items.IndexOf(item));
             }
-
-            
+    
         }
         
         private void CheckBoxRA_Checked(object sender, RoutedEventArgs e)
@@ -276,6 +275,7 @@ namespace PIC_Simulator
 
             }
             memory.updateMemView();
+
         }
         
     } 
