@@ -77,7 +77,7 @@ namespace PIC_Simulator
         public void selectCode(int line)
         {
             this.CodeStack.SelectedIndex = line;
-            this.CodeStack.ScrollIntoView(this.CodeStack.SelectedItem, ScrollIntoViewAlignment.Leading);
+            this.CodeStack.ScrollIntoView(this.CodeStack.SelectedItem,ScrollIntoViewAlignment.Leading);
         }
 
         public void portTrigger(short trisa, short trisb)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -29,7 +30,8 @@ namespace PIC_Simulator
 
 
         public short[] eeprom = new short[1024];
-        public short[,] memoryb1 = new short[2,129];
+        public short[,] memoryb1 = new short[2, 129];
+        public ObservableCollection<string> memView = new ObservableCollection<string>();
         public short stackpointer = 6;
         public short[] stack = new short[7];
         public short trisaLatch;
@@ -38,6 +40,10 @@ namespace PIC_Simulator
         public Memory()
         {
             initMem();
+            foreach(var item in memoryb1)
+            {
+                memView.Add(string.Format("{0:X2}", item));
+            }
         }
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
 
@@ -47,33 +53,15 @@ namespace PIC_Simulator
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
         }
+       
 
-        public string[] Memoryb1
+        public ObservableCollection<string> MemView
         {
-            get {
-                string[] ret = new string[memoryb1.Length/2];
-                int index = 0;
-                foreach (var item in memoryb1)
-                {
-                    if (index <= 128)
-                    {
-                        ret[index] = string.Format("{0:X2}", item);
-                        index++;
-                    }
-                    else
-                    {
-                        return ret;
-                    }
-                }
-                return ret;
-            }
-            set
+            get
             {
-
+                return memView;
             }
-
         }
-
 
         public string WReg
         {
@@ -123,6 +111,15 @@ namespace PIC_Simulator
 
         public void updateMemView()
         {
+            int i = 0;
+            foreach(var item in memoryb1)
+            {
+                if (i <= 128 && memView[i]!= string.Format("{0:X2}", memoryb1[0,i]))
+                {
+                    memView[i] = string.Format("{0:X2}", memoryb1[0, i]);
+                }
+                i++;
+            }
             NotifyPropertyChanged("Memoryb1");
             NotifyPropertyChanged("WReg");
             NotifyPropertyChanged("Status");
@@ -250,101 +247,69 @@ namespace PIC_Simulator
             return false;
         }
 
-        public void setBit(short reg, int bit)
+        public short setBit(short reg, int bit)// sets specific bit in value and returns it
         {
-            short tempTris =0;
-            if(reg == 0)
-            {
-                tempTris = trisaLatch;
-            }
-            else
-            {
-                tempTris = trisbLatch;
-            }
             switch (bit)
             {
                 case 0:
-                   tempTris = (short)(tempTris | 0b_01);
+                   reg = (short)(reg | 0b_01);
                     break;
                 case 1:
-                    tempTris = (short)(tempTris | 0b_010);
+                    reg = (short)(reg | 0b_010);
                     break;
                 case 2:
-                    tempTris = (short)(tempTris | 0b_100);
+                    reg = (short)(reg | 0b_100);
                     break;
                 case 3:
-                    tempTris = (short)(tempTris | 0b_1000);
+                    reg = (short)(reg | 0b_1000);
                     break;
                 case 4:
-                    tempTris = (short)(tempTris | 0b_10000);
+                    reg = (short)(reg | 0b_10000);
                     break;
                 case 5:
-                    tempTris = (short)(tempTris | 0b_100000);
+                    reg = (short)(reg | 0b_100000);
                     break;
                 case 6:
-                    tempTris = (short)(tempTris | 0b_1000000);
+                    reg = (short)(reg | 0b_1000000);
                     break;
                 case 7:
-                    tempTris = (short)(tempTris | 0b_10000000);
+                    reg = (short)(reg | 0b_10000000);
                     break;
             }
-            if(reg==0)
-            {
-                trisaLatch = tempTris;
-            }
-            else{
-                trisbLatch = tempTris;
-            }
-
-
+            return reg;
         }
-        public void clrBit(short reg, int bit)
+        public short clrBit(short reg, int bit) // clears specific bit in value and returns it
         {
-            short tempTris = 0;
-            if (reg == 0)
-            {
-                tempTris = trisaLatch;
-            }
-            else
-            {
-                tempTris = trisbLatch;
-            }
+            
             switch (bit)
             {
                 case 0:
-                    tempTris = (short)(tempTris & 0b_11111110);
+                    reg = (short)(reg & 0b_11111110);
                     break;
                 case 1:
-                    tempTris = (short)(tempTris & 0b_11111101);
+                    reg = (short)(reg & 0b_11111101);
                     break;
                 case 2:
-                    tempTris = (short)(tempTris & 0b_11111011);
+                    reg = (short)(reg & 0b_11111011);
                     break;
                 case 3:
-                    tempTris = (short)(tempTris & 0b_11110111);
+                    reg = (short)(reg & 0b_11110111);
                     break;
                 case 4:
-                    tempTris = (short)(tempTris & 0b_11101111);
+                    reg = (short)(reg & 0b_11101111);
                     break;
                 case 5:
-                    tempTris = (short)(tempTris & 0b_11011111);
+                    reg = (short)(reg & 0b_11011111);
                     break;
                 case 6:
-                    tempTris = (short)(tempTris & 0b_10111111);
+                    reg = (short)(reg & 0b_10111111);
                     break;
                 case 7:
-                    tempTris = (short)(tempTris & 0b_101111111);
+                    reg = (short)(reg & 0b_101111111);
                     break;
 
             }
-            if (reg == 0)
-            {
-                trisaLatch = tempTris;
-            }
-            else
-            {
-                trisbLatch = tempTris;
-            }
+            return reg;
         }
 
         public void resetMem()
