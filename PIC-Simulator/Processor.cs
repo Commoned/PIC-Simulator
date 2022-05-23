@@ -740,8 +740,8 @@ namespace PIC_Simulator
             short pclath = (short)(memory.memoryb1[currentBank, Memory.PCLATH] & 0b_0001_1000);
             pc = (short)(pc ^ (pclath << 8));
 
-            memory.push((short)(pc));
-            //memory.push((short)(memory.memoryb1[currentBank, Memory.PCL]));
+            //memory.push((short)(pc));
+            memory.push((short)(memory.memoryb1[currentBank, Memory.PCL]));
             memory.Pcl = pc;
             nop();
             memory.updateMemView();
