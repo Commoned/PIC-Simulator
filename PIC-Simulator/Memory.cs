@@ -59,7 +59,7 @@ namespace PIC_Simulator
                 {
                     if (index <= 128)
                     {
-                        ret[index] = Convert.ToString(item, 16).ToUpper();
+                        ret[index] = string.Format("{0:X2}", item);
                         index++;
                     }
                     else
