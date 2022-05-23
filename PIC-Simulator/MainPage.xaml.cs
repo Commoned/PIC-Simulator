@@ -29,6 +29,7 @@ namespace PIC_Simulator
         Memory memory;
         Processor processor;
         private FileReader filereader;
+        bool autoCheck;
 
         public MainPage()
         {
@@ -77,6 +78,61 @@ namespace PIC_Simulator
         {
             this.CodeStack.SelectedIndex = line;
             this.CodeStack.ScrollIntoView(this.CodeStack.SelectedItem, ScrollIntoViewAlignment.Leading);
+        }
+
+        public void portTrigger(short trisa, short trisb)
+        {
+            CheckBox[] raboxes = {ra0, ra1, ra2, ra3, ra4, ra5, ra6, ra7};
+            CheckBox[] rbboxes = { rb0, rb1, rb2, rb3, rb4, rb5, rb6, rb7 };
+
+            autoCheck = true;
+
+            for (int i = 0; i < raboxes.Length; i++)
+            {
+                if(memory.checkBit(memory.memoryb1[1,Memory.TRISA],i))
+                {
+                    raboxes[i].IsEnabled = true;
+                }
+                else
+                {
+                    raboxes[i].IsEnabled=false;
+                }
+            }
+            for (int i = 0; i < rbboxes.Length; i++)
+            {
+                if (memory.checkBit(memory.memoryb1[1, Memory.TRISB], i))
+                {
+                    rbboxes[i].IsEnabled = true;
+                }
+                else
+                {
+                    rbboxes[i].IsEnabled = false;
+                }
+            }
+            for (int i = 0; i < raboxes.Length; i++)
+            {
+                if (memory.checkBit(memory.memoryb1[0, Memory.PORTA], i))
+                {
+                    raboxes[i].IsChecked = true;
+                }
+                else
+                {
+                    raboxes[i].IsChecked = false;
+                }
+            }
+            for (int i = 0; i < rbboxes.Length; i++)
+            {
+                if (memory.checkBit(memory.memoryb1[0, Memory.PORTB], i))
+                {
+                    rbboxes[i].IsChecked = true;
+                }
+                else
+                {
+                    rbboxes[i].IsChecked = false;
+                }
+            }
+
+            autoCheck = false;
         }
 
 
@@ -146,9 +202,13 @@ namespace PIC_Simulator
 
             
         }
-
+        
         private void CheckBoxRA_Checked(object sender, RoutedEventArgs e)
         {
+            if(autoCheck)
+            {
+                return;
+            }
             var box = (CheckBox)sender;
             switch(box.Content)
             {
@@ -182,6 +242,10 @@ namespace PIC_Simulator
         }
         private void CheckBoxRB_Checked(object sender, RoutedEventArgs e)
         {
+            if (autoCheck)
+            {
+                return;
+            }
             var box = (CheckBox)sender;
             switch (box.Content)
             {
@@ -213,5 +277,6 @@ namespace PIC_Simulator
             }
             memory.updateMemView();
         }
+        
     } 
 }

@@ -66,25 +66,25 @@
         <StackPanel Margin="10,0,0,0" Orientation="Horizontal" Grid.Row="2" Grid.Column="2">
             <StackPanel>
                 <TextBlock Text="RA" FontSize="30"/>
-                <CheckBox Content="7" Checked="CheckBoxRA_Checked" Unchecked="CheckBoxRA_Checked"></CheckBox>
-                <CheckBox Content="6" Checked="CheckBoxRA_Checked" Unchecked="CheckBoxRA_Checked"></CheckBox>
-                <CheckBox Content="5" Checked="CheckBoxRA_Checked" Unchecked="CheckBoxRA_Checked"></CheckBox>
-                <CheckBox Content="4" Checked="CheckBoxRA_Checked" Unchecked="CheckBoxRA_Checked"></CheckBox>
-                <CheckBox Content="3" Checked="CheckBoxRA_Checked" Unchecked="CheckBoxRA_Checked"></CheckBox>
-                <CheckBox Content="2" Checked="CheckBoxRA_Checked" Unchecked="CheckBoxRA_Checked"></CheckBox>
-                <CheckBox Content="1" Checked="CheckBoxRA_Checked" Unchecked="CheckBoxRA_Checked"></CheckBox>
-                <CheckBox Content="0" Checked="CheckBoxRA_Checked" Unchecked="CheckBoxRA_Checked"></CheckBox>
+                <CheckBox x:Name="ra7" Content="7" Checked="CheckBoxRA_Checked" Unchecked="CheckBoxRA_Checked" ></CheckBox>
+                <CheckBox x:Name="ra6" Content="6" Checked="CheckBoxRA_Checked" Unchecked="CheckBoxRA_Checked"></CheckBox>
+                <CheckBox x:Name="ra5" Content="5" Checked="CheckBoxRA_Checked" Unchecked="CheckBoxRA_Checked"></CheckBox>
+                <CheckBox x:Name="ra4" Content="4" Checked="CheckBoxRA_Checked" Unchecked="CheckBoxRA_Checked"></CheckBox>
+                <CheckBox x:Name="ra3" Content="3" Checked="CheckBoxRA_Checked" Unchecked="CheckBoxRA_Checked"></CheckBox>
+                <CheckBox x:Name="ra2" Content="2" Checked="CheckBoxRA_Checked" Unchecked="CheckBoxRA_Checked"></CheckBox>
+                <CheckBox x:Name="ra1" Content="1" Checked="CheckBoxRA_Checked" Unchecked="CheckBoxRA_Checked"></CheckBox>
+                <CheckBox x:Name="ra0" Content="0" Checked="CheckBoxRA_Checked" Unchecked="CheckBoxRA_Checked"></CheckBox>
             </StackPanel>
             <StackPanel>
                 <TextBlock Text="RB" FontSize="30"/>
-                <CheckBox Content="7" Checked="CheckBoxRB_Checked" Unchecked="CheckBoxRB_Checked"></CheckBox>
-                <CheckBox Content="6" Checked="CheckBoxRB_Checked" Unchecked="CheckBoxRB_Checked"></CheckBox>
-                <CheckBox Content="5" Checked="CheckBoxRB_Checked" Unchecked="CheckBoxRB_Checked"></CheckBox>
-                <CheckBox Content="4" Checked="CheckBoxRB_Checked" Unchecked="CheckBoxRB_Checked"></CheckBox>
-                <CheckBox Content="3" Checked="CheckBoxRB_Checked" Unchecked="CheckBoxRB_Checked"></CheckBox>
-                <CheckBox Content="2" Checked="CheckBoxRB_Checked" Unchecked="CheckBoxRB_Checked"></CheckBox>
-                <CheckBox Content="1" Checked="CheckBoxRB_Checked" Unchecked="CheckBoxRB_Checked"></CheckBox>
-                <CheckBox Content="0" Checked="CheckBoxRB_Checked" Unchecked="CheckBoxRB_Checked"></CheckBox>
+                <CheckBox x:Name="rb7" Content="7"  Width="94"></CheckBox>
+                <CheckBox x:Name="rb6" Content="6" Checked="CheckBoxRB_Checked" Unchecked="CheckBoxRB_Checked"></CheckBox>
+                <CheckBox x:Name="rb5" Content="5" Checked="CheckBoxRB_Checked" Unchecked="CheckBoxRB_Checked"></CheckBox>
+                <CheckBox x:Name="rb4" Content="4" Checked="CheckBoxRB_Checked" Unchecked="CheckBoxRB_Checked"></CheckBox>
+                <CheckBox x:Name="rb3" Content="3" Checked="CheckBoxRB_Checked" Unchecked="CheckBoxRB_Checked"></CheckBox>
+                <CheckBox x:Name="rb2" Content="2" Checked="CheckBoxRB_Checked" Unchecked="CheckBoxRB_Checked"></CheckBox>
+                <CheckBox x:Name="rb1" Content="1" Checked="CheckBoxRB_Checked" Unchecked="CheckBoxRB_Checked"></CheckBox>
+                <CheckBox x:Name="rb0" Content="0" Checked="CheckBoxRB_Checked" Unchecked="CheckBoxRB_Checked"></CheckBox>
             </StackPanel>
 
         </StackPanel>
@@ -126,6 +126,11 @@
             <StackPanel Orientation="Horizontal">
                 <TextBlock Margin="0,0,5,0">Pcl:</TextBlock>
                 <TextBlock Text="{Binding PclView}"></TextBlock>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Margin="0,0,5,0">Option:</TextBlock>
+                <TextBlock Text="{Binding Option}"></TextBlock>
             </StackPanel>
 
         </StackPanel>
