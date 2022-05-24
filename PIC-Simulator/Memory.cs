@@ -143,6 +143,10 @@ namespace PIC_Simulator
             {
                 return memView;
             }
+            set
+            {
+                this.memView = value;
+            }
         }
 
         public string WReg
@@ -280,6 +284,7 @@ namespace PIC_Simulator
                 NotifyPropertyChanged(s);
             }
             
+
 
         }
 
