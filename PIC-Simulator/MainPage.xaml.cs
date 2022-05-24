@@ -30,6 +30,7 @@ namespace PIC_Simulator
         Processor processor;
         private FileReader filereader;
         bool autoCheck;
+        TextBlock tempTB;
 
         public MainPage()
         {
@@ -38,6 +39,8 @@ namespace PIC_Simulator
             processor = new Processor(this, memory);
             filereader = new FileReader();
             DataContext = memory;
+
+            
 
             this.InitializeComponent();
             CodeStack.ItemsSource = processor.lines;
@@ -284,6 +287,29 @@ namespace PIC_Simulator
             memory.updateMemView();
 
         }
-        
+
+        private void Border_PointerPressed(object sender, PointerRoutedEventArgs e)
+        {
+            RegeditPopup.IsOpen = true;
+            Border border = (Border)sender;
+            
+            tempTB = (TextBlock)border.Child;
+
+            
+            
+
+            RegVal.Text = tempTB.Text;
+            
+
+
+        }
+
+        private void RegSave_Click(object sender, RoutedEventArgs e)
+        {
+            RegeditPopup.IsOpen = false;
+            
+            memory.memoryb1[0, short.Parse(RegNum.Text, System.Globalization.NumberStyles.HexNumber)] = short.Parse(RegVal.Text, System.Globalization.NumberStyles.HexNumber);
+            memory.updateMemView();
+        }
     } 
 }

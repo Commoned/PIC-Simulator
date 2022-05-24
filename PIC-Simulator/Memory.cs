@@ -135,6 +135,10 @@ namespace PIC_Simulator
             {
                 return memView;
             }
+            set
+            {
+                this.memView = value;
+            }
         }
 
         public string WReg
@@ -254,6 +258,7 @@ namespace PIC_Simulator
             
             NotifyPropertyChanged("WReg");
             NotifyPropertyChanged("Status");
+            NotifyPropertyChanged("Statusbits");
             NotifyPropertyChanged("PclView");
             NotifyPropertyChanged("FSRReg");
 
@@ -268,8 +273,11 @@ namespace PIC_Simulator
             NotifyPropertyChanged("Stackpointer");
 
             NotifyPropertyChanged("Option");
+            NotifyPropertyChanged("Optionbits");
             NotifyPropertyChanged("PcllathView");
             NotifyPropertyChanged("runtimecounter");
+            NotifyPropertyChanged("Intcon");
+            NotifyPropertyChanged("Intconbits");
 
         }
 
