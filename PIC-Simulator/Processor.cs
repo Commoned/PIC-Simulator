@@ -136,7 +136,7 @@ namespace PIC_Simulator
 
             if (memory.checkBit(memory.memoryb1[1,Memory.OPTION],5) && trigger)
             {
-                if(memory.checkBit(memory.memoryb1[1,Memory.OPTION],3))
+                if(!memory.checkBit(memory.memoryb1[1,Memory.OPTION],3)) // mit/ohne Vorteiler
                 {
                     if (memory.vt != 0)
                     {
