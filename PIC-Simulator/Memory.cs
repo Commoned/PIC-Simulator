@@ -43,6 +43,7 @@ namespace PIC_Simulator
         public double commandcounter = 0.0 ;
         public double quarztakt = 1.0;
 
+        public short vt=0xFF;
         
 
         public Memory()
@@ -58,7 +59,7 @@ namespace PIC_Simulator
 
         private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
         {
-
+            
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
         }
@@ -121,6 +122,13 @@ namespace PIC_Simulator
             }
         }
 
+        public string Vt
+        {
+            get
+            {
+                return string.Format("0x{0:X2}", vt);
+            }
+        }
         public string Stackpointer
         {
             get
@@ -209,7 +217,7 @@ namespace PIC_Simulator
         {
             get
             {
-                string hexnum = string.Format("0x{0:X2}", memoryb1[0, INTCON]);
+                string hexnum = string.Format("0x{0:X2}", memoryb1[1, INTCON]);
                 return hexnum;
             }
         }
@@ -218,7 +226,7 @@ namespace PIC_Simulator
         {
             get
             {
-                char[] bits = Convert.ToString(memoryb1[0, INTCON], 2).PadLeft(8, '0').ToCharArray();
+                char[] bits = Convert.ToString(memoryb1[1, INTCON], 2).PadLeft(8, '0').ToCharArray();
 
                 return bits;
             }
@@ -254,30 +262,29 @@ namespace PIC_Simulator
                 }
                 i++;
             }
+            string[] toNotify = {
+                "WReg",
+                "Status",
+                "PclView",
+                "FSRReg",
+                "Status",
+                "Statusbits",
+                "Intcon",
+                "Intconbits",
+                "S0", "S1", "S2", "S3", "S4", "S5", "S6", "S7",
+                "Stackpointer",
+                "Option",
+                "Optionbits",
+                "PcllathView",
+                "runtimecounter",
+                "Vt",
+            };
+            foreach(string s in toNotify)
+            {
+                NotifyPropertyChanged(s);
+            }
             
-            
-            NotifyPropertyChanged("WReg");
-            NotifyPropertyChanged("Status");
-            NotifyPropertyChanged("Statusbits");
-            NotifyPropertyChanged("PclView");
-            NotifyPropertyChanged("FSRReg");
 
-            NotifyPropertyChanged("S0");
-            NotifyPropertyChanged("S1");
-            NotifyPropertyChanged("S2");
-            NotifyPropertyChanged("S3");
-            NotifyPropertyChanged("S4");
-            NotifyPropertyChanged("S5");
-            NotifyPropertyChanged("S6");
-            NotifyPropertyChanged("S7");
-            NotifyPropertyChanged("Stackpointer");
-
-            NotifyPropertyChanged("Option");
-            NotifyPropertyChanged("Optionbits");
-            NotifyPropertyChanged("PcllathView");
-            NotifyPropertyChanged("runtimecounter");
-            NotifyPropertyChanged("Intcon");
-            NotifyPropertyChanged("Intconbits");
 
         }
 
@@ -488,6 +495,7 @@ namespace PIC_Simulator
                 
             }
             stackpointer = 7;
+            vt = 0;
             initMem();
             // To be continued...
         }

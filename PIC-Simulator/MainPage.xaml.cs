@@ -73,14 +73,14 @@ namespace PIC_Simulator
 
             Start_Button.IsEnabled = true;
 
-
+            selectCode(processor.runlines[memory.Pcl].Linenumber - 1);
 
         }
 
         public void selectCode(int line)
         {
             this.CodeStack.SelectedIndex = line;
-            this.CodeStack.ScrollIntoView(this.CodeStack.SelectedItem,ScrollIntoViewAlignment.Leading);
+            this.CodeStack.ScrollIntoView(this.CodeStack.SelectedItem,ScrollIntoViewAlignment.Default);
             
         }
 
@@ -181,6 +181,8 @@ namespace PIC_Simulator
         private void Reset_Button_Click(object sender, RoutedEventArgs e)
         {
             memory.resetMem();
+            
+            selectCode(processor.runlines[memory.Pcl].Linenumber - 1);
         }
 
 
