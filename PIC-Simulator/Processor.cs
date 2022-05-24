@@ -17,13 +17,13 @@ namespace PIC_Simulator
         public bool isRunning = false;
         ICodeInterface codeInterface;
         public DispatcherTimer Clock = new DispatcherTimer();
-        public int quartz = 20;
+        public int quartz = 1;
         bool isSkip;
         public List<int> brkpnts = new List<int>();
         short currentBank = 0;
         bool countTMR0 = false;
-        int tmrcount=0;
-
+        public int tmrcount=0;
+        
 
         public Processor(ICodeInterface codeInterface,Memory memory)
         {
@@ -37,25 +37,56 @@ namespace PIC_Simulator
 
         public void Clock_Tick(object sender, object e)
         {
-            codeInterface.selectCode(runlines[memory.Pcl].Linenumber - 1);
+            //codeInterface.selectCode(runlines[memory.Pcl].Linenumber - 1);
             codeInterface.portTrigger(memory.memoryb1[1, Memory.TRISA], memory.memoryb1[1, Memory.TRISB]);
-            checkTMR0();
-            if(brkpnts.Contains(runlines[memory.Pcl].Linenumber - 1))
+            
+            if (brkpnts.Contains(runlines[memory.Pcl].Linenumber - 1))
             {
                 Clock.Stop();
                 
                 return;
             }
+            
             Step();
             
+            codeInterface.selectCode(runlines[memory.Pcl].Linenumber - 1);
         }
 
         public void checkTMR0()
         {
+            short prescalerval = 0;
             if(!memory.checkBit(memory.memoryb1[1,Memory.OPTION],5))
             {
                 countTMR0 = true;
-                if (tmrcount == 3)
+                switch(memory.memoryb1[1,Memory.OPTION] & 0b_0111)
+                {
+                    case 0:
+                        prescalerval = 2;
+                        break;
+                    case 1:
+                        prescalerval = 4;
+                        break;
+                    case 2:
+                        prescalerval = 8;
+                        break;
+                    case 3:
+                        prescalerval = 16;
+                        break;
+                    case 4:
+                        prescalerval = 32;
+                        break;
+                    case 5:
+                        prescalerval = 64;
+                        break;
+                    case 6:
+                        prescalerval = 128;
+                        break;
+                    case 7:
+                        prescalerval = 256;
+                        break;
+                }
+                
+                if (tmrcount == prescalerval-1)
                 {
                     tmrcount = 0;
                     memory.memoryb1[0, Memory.TMR0]++;
@@ -67,8 +98,6 @@ namespace PIC_Simulator
                 }
                 else
                 {
-
-
                     tmrcount++;
                 }
             }
@@ -97,8 +126,8 @@ namespace PIC_Simulator
             Line line = runlines[memory.Pcl];
             
             memory.Pcl++;
-
-            if((memory.memoryb1[0, Memory.STATUS] & 0b_0100000) == 0b_100000)
+            checkTMR0();
+            if ((memory.memoryb1[0, Memory.STATUS] & 0b_0100000) == 0b_100000)
             {
                 currentBank = 1;
             }
@@ -108,7 +137,7 @@ namespace PIC_Simulator
             }
 
             memory.commandcounter++;
-
+            
             this.Decode(line.instruction);
             
             line = null;
@@ -761,6 +790,7 @@ namespace PIC_Simulator
             memory.memoryb1[0,Memory.W] = value;
             memory.memoryb1[currentBank,Memory.PCL] = memory.pop();
             nop();
+            checkTMR0();
             memory.updateMemView();
         }
 
@@ -774,6 +804,7 @@ namespace PIC_Simulator
             memory.push((short)(memory.memoryb1[currentBank, Memory.PCL]));
             memory.Pcl = pc;
             nop();
+            checkTMR0();
             memory.updateMemView();
         }
 
@@ -781,6 +812,7 @@ namespace PIC_Simulator
         {
             memory.Pcl = memory.pop();
             nop();
+            checkTMR0();
             memory.updateMemView();
         }
 
@@ -793,6 +825,7 @@ namespace PIC_Simulator
             memory.Pcl = pc;
             //memory.Pcl = value;
             nop();
+            
             memory.updateMemView();
         }
        
@@ -878,8 +911,11 @@ namespace PIC_Simulator
             {
                 destreg = freg;
             }
-
-            memory.memoryb1[currentBank,destreg] = (short)(memory.memoryb1[currentBank,freg] + 1);
+            
+            if((memory.memoryb1[currentBank,destreg] = (short)(memory.memoryb1[currentBank,freg] + 1)) >= 0x100)
+            {
+                memory.memoryb1[currentBank, destreg] = 0;
+            }
 
             checkZeroFlag(destreg);
             memory.updateMemView();

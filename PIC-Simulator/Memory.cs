@@ -484,6 +484,7 @@ namespace PIC_Simulator
                 
             }
             stackpointer = 7;
+            
             initMem();
             // To be continued...
         }
