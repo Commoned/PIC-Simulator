@@ -31,6 +31,7 @@ namespace PIC_Simulator
         private FileReader filereader;
         bool autoCheck;
         TextBlock tempTB;
+        ThumbConverter converter;
 
         public MainPage()
         {
@@ -144,12 +145,14 @@ namespace PIC_Simulator
 
         private void settingsButton_Click(object sender, RoutedEventArgs e)
         {
-            if (!StandardPopup.IsOpen) { StandardPopup.IsOpen = true; }
+            if (!QuartzPopup.IsOpen) { QuartzPopup.IsOpen = true; }
+            Quarzslider.Value = memory.quarztakt;
+            Freq.Text = string.Format("{0:n}", (1 / (memory.quarztakt) * 4)) + " MHz";
         }
 
         private void settings_close_Click(object sender, RoutedEventArgs e)
         {
-            if (StandardPopup.IsOpen) { StandardPopup.IsOpen = false; }
+            if (QuartzPopup.IsOpen) { QuartzPopup.IsOpen = false; }
         }
 
         private void Start_Button_Click(object sender, RoutedEventArgs e)
@@ -313,5 +316,28 @@ namespace PIC_Simulator
             memory.memoryb1[0, short.Parse(RegNum.Text, System.Globalization.NumberStyles.HexNumber)] = short.Parse(RegVal.Text, System.Globalization.NumberStyles.HexNumber);
             memory.updateMemView();
         }
-    } 
+
+        private void Quarzslider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
+        {
+            
+            memory.quarztakt = Quarzslider.Value;
+            // umrechnen quarztakt in MHz
+
+
+            Freq.Text = string.Format("{0:n}",(1/(memory.quarztakt)*4))+" MHz";
+        }
+    }
+    public class ThumbConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            string val = string.Format("{0:n}",value);
+            return val+" \u00B5s";
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }
