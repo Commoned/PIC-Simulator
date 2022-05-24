@@ -284,7 +284,6 @@ namespace PIC_Simulator
                 case "7":
                     memory.memoryb1[0, Memory.PORTB] = (short)(memory.memoryb1[0, Memory.PORTB] ^ 0b_010000000);
                     break;
-
             }
             memory.updateMemView();
 

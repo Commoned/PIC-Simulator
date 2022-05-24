@@ -78,7 +78,7 @@
             </StackPanel>
             <StackPanel>
                 <TextBlock Text="RB" FontSize="30"/>
-                <CheckBox x:Name="rb7" Content="7"  Width="94"></CheckBox>
+                <CheckBox x:Name="rb7" Content="7" Checked="CheckBoxRB_Checked" Unchecked="CheckBoxRB_Checked" Width="94"></CheckBox>
                 <CheckBox x:Name="rb6" Content="6" Checked="CheckBoxRB_Checked" Unchecked="CheckBoxRB_Checked"></CheckBox>
                 <CheckBox x:Name="rb5" Content="5" Checked="CheckBoxRB_Checked" Unchecked="CheckBoxRB_Checked"></CheckBox>
                 <CheckBox x:Name="rb4" Content="4" Checked="CheckBoxRB_Checked" Unchecked="CheckBoxRB_Checked"></CheckBox>
