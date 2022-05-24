@@ -178,7 +178,7 @@ namespace PIC_Simulator
         private void Reset_Button_Click(object sender, RoutedEventArgs e)
         {
             memory.resetMem();
-            processor.tmrcount = 0;
+            
             selectCode(processor.runlines[memory.Pcl].Linenumber - 1);
         }
 

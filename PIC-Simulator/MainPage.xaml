@@ -122,24 +122,32 @@
         <TextBlock Text="Spezialfunktionsregister" Grid.Row="3" Grid.Column="1" />
         <StackPanel Margin="5,20,20,0" Grid.Row="3" Grid.Column="1">
             <Border BorderBrush="SlateGray" BorderThickness="2">
-                <StackPanel>
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock Margin="0,0,5,0">WReg:</TextBlock>
-                    <TextBlock Text="{Binding Path=WReg}"></TextBlock>
+                    <StackPanel Width="175">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Margin="0,0,5,0">WReg:</TextBlock>
+                            <TextBlock Text="{Binding Path=WReg}"></TextBlock>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Margin="0,0,5,0">FSR:</TextBlock>
+                            <TextBlock Text="{Binding FSRReg}"></TextBlock>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Margin="0,0,5,0">PCL:</TextBlock>
+                            <TextBlock Text="{Binding PclView}"></TextBlock>
+                            </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Margin="0,0,5,0">PCLATH:</TextBlock>
+                            <TextBlock Text="{Binding PcllathView}"></TextBlock>
+                        </StackPanel>
+                    </StackPanel>
+                    <StackPanel Width="175">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Margin="0,0,5,0">VT:</TextBlock>
+                            <TextBlock Text="{Binding Vt}"></TextBlock>
+                        </StackPanel>
+                    </StackPanel>
                 </StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Margin="0,0,5,0">FSR:</TextBlock>
-                    <TextBlock Text="{Binding FSRReg}"></TextBlock>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Margin="0,0,5,0">PCL:</TextBlock>
-                    <TextBlock Text="{Binding PclView}"></TextBlock>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Margin="0,0,5,0">PCLATH:</TextBlock>
-                    <TextBlock Text="{Binding PcllathView}"></TextBlock>
-                </StackPanel>
-            </StackPanel>
             </Border>
             <Border BorderThickness="2" BorderBrush="SlateGray">
                 <StackPanel Orientation="Vertical">
