@@ -1115,7 +1115,7 @@ namespace PIC_Simulator
                 destreg = freg;
             }
 
-            short regvalue = memory.memoryb1[currentBank,destreg];
+            short regvalue = memory.memoryb1[currentBank,freg];
             short lowerregvalue = (short) (regvalue & 0b_0000_1111);
 
             memory.memoryb1[currentBank,destreg] = (short) ((regvalue >> 4) + (lowerregvalue << 4));

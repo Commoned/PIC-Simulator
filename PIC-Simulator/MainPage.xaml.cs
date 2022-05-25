@@ -49,10 +49,6 @@ namespace PIC_Simulator
 
         }
 
-
-
-
-
         private async void openButton_Click(object sender, RoutedEventArgs e)
         {
             processor.lines.Clear();
