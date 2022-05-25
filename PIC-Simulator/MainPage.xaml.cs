@@ -313,7 +313,14 @@ namespace PIC_Simulator
             RegeditPopup.IsOpen = false;
             try
             {
-                memory.memoryb1[0, short.Parse(RegNum.Text, System.Globalization.NumberStyles.HexNumber)] = short.Parse(RegVal.Text, System.Globalization.NumberStyles.HexNumber);
+                if (memory.checkBit(short.Parse(RegNum.Text, System.Globalization.NumberStyles.HexNumber), 7))
+                {
+                    memory.memoryb1[1, short.Parse(RegNum.Text, System.Globalization.NumberStyles.HexNumber) & 0b_1000000] = short.Parse(RegVal.Text, System.Globalization.NumberStyles.HexNumber);
+                }
+                else
+                {
+                    memory.memoryb1[0, short.Parse(RegNum.Text, System.Globalization.NumberStyles.HexNumber)] = short.Parse(RegVal.Text, System.Globalization.NumberStyles.HexNumber);
+                }
             }
             catch (Exception ex)
             {

@@ -26,11 +26,11 @@ namespace PIC_Simulator
         public static byte EEADR = 0x09;
         public static byte PCLATH = 0xA;
         public static byte INTCON = 0x0B;
-        public static byte W = 0x80;
+        public static byte W = 0x7F;
 
 
         public short[] eeprom = new short[1024];
-        public short[,] memoryb1 = new short[2, 129];
+        public short[,] memoryb1 = new short[2, 128];
         public ObservableCollection<string> memView = new ObservableCollection<string>();
         
         public short stackpointer = 7;
@@ -256,9 +256,13 @@ namespace PIC_Simulator
             int i = 0;
             foreach(var item in memoryb1)
             {
-                if (i <= 128 && memView[i]!= string.Format("{0:X2}", memoryb1[0,i]))
+                if (i <= 127 && memView[i]!= string.Format("{0:X2}", memoryb1[0,i]))
                 {
                     memView[i] = string.Format("{0:X2}", memoryb1[0, i]);
+                }
+                if (i > 127 && memView[i] != string.Format("{0:X2}", memoryb1[1, i/2]))
+                {
+                    memView[i] = string.Format("{0:X2}", memoryb1[1, i/2]);
                 }
                 i++;
             }
