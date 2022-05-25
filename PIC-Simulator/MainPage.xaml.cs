@@ -308,9 +308,21 @@ namespace PIC_Simulator
         private void RegSave_Click(object sender, RoutedEventArgs e)
         {
             RegeditPopup.IsOpen = false;
-            
-            memory.memoryb1[0, short.Parse(RegNum.Text, System.Globalization.NumberStyles.HexNumber)] = short.Parse(RegVal.Text, System.Globalization.NumberStyles.HexNumber);
+            try
+            {
+                memory.memoryb1[0, short.Parse(RegNum.Text, System.Globalization.NumberStyles.HexNumber)] = short.Parse(RegVal.Text, System.Globalization.NumberStyles.HexNumber);
+            }
+            catch (Exception ex)
+            {
+                RegeditPopup.IsOpen = true;
+            }
             memory.updateMemView();
         }
-    } 
-}
+        private void RegClose_Click(object sender, RoutedEventArgs e)
+        {
+            RegeditPopup.IsOpen = false;
+            
+        }
+    }
+} 
+

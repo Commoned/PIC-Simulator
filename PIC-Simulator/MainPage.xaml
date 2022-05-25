@@ -285,8 +285,10 @@
                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                     <TextBox x:Name="RegVal" Text="Wert" FontSize="24.667" HorizontalAlignment="Center"/>
                     <TextBox x:Name="RegNum" Text="Register" FontSize="24.667" HorizontalAlignment="Center"/>
-
-                    <Button x:Name="RegSave" Content="Save" Click="RegSave_Click"></Button>
+                    <StackPanel Orientation="Horizontal">
+                        <Button x:Name="RegSave" Content="Save" Click="RegSave_Click"></Button>
+                        <Button x:Name="RegClose" Content="Close" Click="RegClose_Click"></Button>
+                    </StackPanel>
                 </StackPanel>
             </Border>
             
