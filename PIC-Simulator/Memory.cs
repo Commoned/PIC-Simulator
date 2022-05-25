@@ -26,11 +26,11 @@ namespace PIC_Simulator
         public static byte EEADR = 0x09;
         public static byte PCLATH = 0xA;
         public static byte INTCON = 0x0B;
-        public static byte W = 0x7F;
+        public static byte W = 0x80;
 
 
         public short[] eeprom = new short[1024];
-        public short[,] memoryb1 = new short[2, 128];
+        public short[,] memoryb1 = new short[2, 129];
         public ObservableCollection<string> memView = new ObservableCollection<string>();
         
         public short stackpointer = 7;
@@ -49,11 +49,16 @@ namespace PIC_Simulator
         public Memory()
         {
             initMem();
-            foreach(var item in memoryb1)
-            {
-                memView.Add(string.Format("{0:X2}", item));
-            }
             
+            for(int i = 0; i <= 127; i++)
+            {
+                memView.Add(string.Format("{0:X2}", memoryb1[0,i]));
+            }
+            for (int i = 0; i <= 127; i++)
+            {
+                memView.Add(string.Format("{0:X2}", memoryb1[1, i]));
+            }
+
         }
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
 
@@ -253,18 +258,29 @@ namespace PIC_Simulator
 
         public void updateMemView()
         {
-            int i = 0;
+            /*
             foreach(var item in memoryb1)
             {
+                if (i == 256) continue;
                 if (i <= 127 && memView[i]!= string.Format("{0:X2}", memoryb1[0,i]))
                 {
                     memView[i] = string.Format("{0:X2}", memoryb1[0, i]);
                 }
-                if (i > 127 && memView[i] != string.Format("{0:X2}", memoryb1[1, i/2]))
+                
+                if (i > 128 && memView[i] != string.Format("{0:X2}", memoryb1[1, i/2]))
                 {
                     memView[i] = string.Format("{0:X2}", memoryb1[1, i/2]);
                 }
                 i++;
+            }*/
+
+            for(int i=0; i<=127;i++)
+            {
+                memView[i] = string.Format("{0:X2}", memoryb1[0, i]);
+            }
+            for (int i = 0; i <= 127; i++)
+            {
+                memView[i+128] = string.Format("{0:X2}", memoryb1[1, i]);
             }
             string[] toNotify = {
                 "WReg",

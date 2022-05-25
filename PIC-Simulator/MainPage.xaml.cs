@@ -58,7 +58,7 @@ namespace PIC_Simulator
             processor.lines.Clear();
             processor.runlines.Clear();
             await filereader.GetLines();
-
+            
             processor.lines = filereader.lines;
             CodeStack.ItemsSource = null;
             Thread.Sleep(200);
@@ -315,7 +315,8 @@ namespace PIC_Simulator
             {
                 if (memory.checkBit(short.Parse(RegNum.Text, System.Globalization.NumberStyles.HexNumber), 7))
                 {
-                    memory.memoryb1[1, short.Parse(RegNum.Text, System.Globalization.NumberStyles.HexNumber) & 0b_1000000] = short.Parse(RegVal.Text, System.Globalization.NumberStyles.HexNumber);
+                    
+                    memory.memoryb1[1, short.Parse(RegNum.Text, System.Globalization.NumberStyles.HexNumber) & 0b_01111111] = short.Parse(RegVal.Text, System.Globalization.NumberStyles.HexNumber);
                 }
                 else
                 {
