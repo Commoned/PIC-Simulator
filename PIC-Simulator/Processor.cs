@@ -22,8 +22,10 @@ namespace PIC_Simulator
         public List<int> brkpnts = new List<int>();
         short currentBank = 0;
         bool countTMR0 = false;
-        int precycle = 0;
-        
+        int precycletmr0 = 0;
+        int precycleint = 0;
+        int precyclerbint = 0;
+
         public Processor(ICodeInterface codeInterface,Memory memory)
         {
             this.codeInterface = codeInterface;
@@ -45,9 +47,7 @@ namespace PIC_Simulator
                 
                 return;
             }
-            
             Step();
-            
             codeInterface.selectCode(runlines[memory.Pcl].Linenumber - 1);
         }
 
@@ -104,7 +104,7 @@ namespace PIC_Simulator
                         if (memory.memoryb1[0, Memory.TMR0] >= 0x100)
                         {
                             memory.memoryb1[0, Memory.TMR0] = 0;
-                            memory.memoryb1[1, Memory.INTCON] = memory.setBit(memory.memoryb1[1, Memory.INTCON], 2);
+                            memory.memoryb1[0, Memory.INTCON] = memory.setBit(memory.memoryb1[0, Memory.INTCON], 2);
                         }
                     }
                 }
@@ -114,7 +114,7 @@ namespace PIC_Simulator
                     if (memory.memoryb1[0, Memory.TMR0] >= 0x100)
                     {
                         memory.memoryb1[0, Memory.TMR0] = 0;
-                        memory.memoryb1[1, Memory.INTCON] = memory.setBit(memory.memoryb1[1, Memory.INTCON], 2);
+                        memory.memoryb1[0, Memory.INTCON] = memory.setBit(memory.memoryb1[0, Memory.INTCON], 2);
                     }
                 }
                 
@@ -125,11 +125,11 @@ namespace PIC_Simulator
             }
             bool trigger = false;
             
-            if(precycle == 0 && memory.checkBit(memory.memoryb1[0, Memory.PORTA], 4) && !memory.checkBit(memory.memoryb1[1, Memory.OPTION], 4))
+            if(precycletmr0 == 0 && memory.checkBit(memory.memoryb1[0, Memory.PORTA], 4) && !memory.checkBit(memory.memoryb1[1, Memory.OPTION], 4))
             {
                 trigger = true;
             }
-            if (precycle == 1 && !memory.checkBit(memory.memoryb1[0, Memory.PORTA], 4) && memory.checkBit(memory.memoryb1[1, Memory.OPTION], 4))
+            if (precycletmr0 == 1 && !memory.checkBit(memory.memoryb1[0, Memory.PORTA], 4) && memory.checkBit(memory.memoryb1[1, Memory.OPTION], 4))
             {
                 trigger = true;
             }
@@ -150,7 +150,7 @@ namespace PIC_Simulator
                         if (memory.memoryb1[0, Memory.TMR0] >= 0x100)
                         {
                             memory.memoryb1[0, Memory.TMR0] = 0;
-                            memory.memoryb1[1, Memory.INTCON] = memory.setBit(memory.memoryb1[1, Memory.INTCON], 2);
+                            memory.memoryb1[0, Memory.INTCON] = memory.setBit(memory.memoryb1[0, Memory.INTCON], 2);
                         }
                     }
                 }
@@ -160,19 +160,66 @@ namespace PIC_Simulator
                     if (memory.memoryb1[0, Memory.TMR0] >= 0x100)
                     {
                         memory.memoryb1[0, Memory.TMR0] = 0;
-                        memory.memoryb1[1, Memory.INTCON] = memory.setBit(memory.memoryb1[1, Memory.INTCON], 2);
+                        memory.memoryb1[0, Memory.INTCON] = memory.setBit(memory.memoryb1[0, Memory.INTCON], 2);
                     }
                 }
             }
             if (memory.checkBit(memory.memoryb1[0, Memory.PORTA], 4))
             {
-                precycle = 1;
+                precycletmr0 = 1;
             }
             else
             {
-                precycle = 0;
+                precycletmr0 = 0;
             }
             memory.updateMemView();
+        }
+
+        public void checkINT()
+        {
+            if(memory.checkBit(memory.memoryb1[1,Memory.TRISB],0))
+            {
+                bool trigger = false;
+
+                if (precycleint == 0 && memory.checkBit(memory.memoryb1[0, Memory.PORTB], 0) && memory.checkBit(memory.memoryb1[1, Memory.OPTION], 6))
+                {
+                    memory.memoryb1[0, Memory.INTCON] = memory.setBit(memory.memoryb1[0, Memory.INTCON],1);
+                }
+                if (precycleint == 1 && !memory.checkBit(memory.memoryb1[0, Memory.PORTB], 0) && !memory.checkBit(memory.memoryb1[1, Memory.OPTION], 6))
+                {
+                    memory.memoryb1[0, Memory.INTCON] = memory.setBit(memory.memoryb1[0, Memory.INTCON], 1);
+                }
+            }
+
+            if (memory.checkBit(memory.memoryb1[0, Memory.PORTB], 0))
+            {
+                precycleint = 1;
+            }
+            else
+            {
+                precycleint = 0;
+            }
+        }
+
+        public void checkRBINT()
+        {
+            if(((precyclerbint & 0b_10000000) != (memory.memoryb1[0, Memory.PORTB] & 0b_10000000)) && memory.checkBit(memory.memoryb1[1,Memory.TRISB],7)) // RB7 changed?
+            {
+                memory.memoryb1[0, Memory.INTCON] = memory.setBit(memory.memoryb1[0, Memory.INTCON], 0);
+            }
+            if (((precyclerbint & 0b_1000000) != (memory.memoryb1[0, Memory.PORTB] & 0b_1000000)) && memory.checkBit(memory.memoryb1[1, Memory.TRISB], 6)) // RB6 changed?
+            {
+                memory.memoryb1[0, Memory.INTCON] = memory.setBit(memory.memoryb1[0, Memory.INTCON], 0);
+            }
+            if (((precyclerbint & 0b_100000) != (memory.memoryb1[0, Memory.PORTB] & 0b_100000)) && memory.checkBit(memory.memoryb1[1, Memory.TRISB], 5)) // RB5 changed?
+            {
+                memory.memoryb1[0, Memory.INTCON] = memory.setBit(memory.memoryb1[0, Memory.INTCON], 0);
+            }
+            if (((precyclerbint & 0b_10000) != (memory.memoryb1[0, Memory.PORTB] & 0b_100000)) && memory.checkBit(memory.memoryb1[1, Memory.TRISB], 4)) // RB5 changed?
+            {
+                memory.memoryb1[0, Memory.INTCON] = memory.setBit(memory.memoryb1[0, Memory.INTCON], 0);
+            }
+            precyclerbint = memory.memoryb1[0,Memory.PORTB] & 0b_1110000;
         }
 
         public void mirrorRegs()
@@ -180,16 +227,22 @@ namespace PIC_Simulator
             if(currentBank == 0)
             {
                 memory.memoryb1[1, Memory.STATUS] = memory.memoryb1[0, Memory.STATUS];
+                memory.memoryb1[1, Memory.INTCON] = memory.memoryb1[0, Memory.INTCON];
             }
             else
             {
                 memory.memoryb1[0, Memory.STATUS] = memory.memoryb1[1, Memory.STATUS];
+                memory.memoryb1[0, Memory.INTCON] = memory.memoryb1[1, Memory.INTCON];
             }
         }
 
         public void Step()
         {
             mirrorRegs();
+            if(checkInterrupt())
+            {
+                return;
+            }
             Line line = runlines[memory.Pcl];
             
             memory.Pcl++;
@@ -207,8 +260,43 @@ namespace PIC_Simulator
             
             this.Decode(line.instruction);
             checkTMR0();
-
+            checkINT();
+            checkRBINT();
             line = null;
+        }
+
+        public bool checkInterrupt()
+        {
+            if(memory.checkBit(memory.memoryb1[0,Memory.INTCON],7))
+            {
+                if(memory.checkBit(memory.memoryb1[0, Memory.INTCON], 3) && memory.checkBit(memory.memoryb1[0, Memory.INTCON], 0))
+                {
+                    executeInterrupt();
+                    return true;
+                }
+                if (memory.checkBit(memory.memoryb1[0, Memory.INTCON], 4) && memory.checkBit(memory.memoryb1[0, Memory.INTCON], 1))
+                {
+                    executeInterrupt();
+                    return true;
+                }
+                if (memory.checkBit(memory.memoryb1[0, Memory.INTCON], 5) && memory.checkBit(memory.memoryb1[0, Memory.INTCON], 2))
+                {
+                    executeInterrupt();
+                    return true;
+                }
+                return false;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public void executeInterrupt()
+        {
+            memory.push(memory.Pcl);
+            memory.memoryb1[0, Memory.INTCON] = memory.clrBit(memory.memoryb1[0, Memory.INTCON],7);
+            memory.Pcl = 0x0004;
         }
 
 
@@ -568,7 +656,8 @@ namespace PIC_Simulator
                     break;
                 case 0x0B: //decfsz
                     isSkip = decfsz(value);
-                    break;  
+                    break;
+                
                 case 0x01:
                     if (value != 0) //clrf
                     {
@@ -588,6 +677,9 @@ namespace PIC_Simulator
                             break;
                         case 0x00:
                             nop();
+                            break;
+                        case 0x09: //retfie
+                            retfie();
                             break;
                         default:
                             value = checkIndirect(value);
@@ -885,6 +977,15 @@ namespace PIC_Simulator
 
         public void Return()
         {
+            memory.Pcl = memory.pop();
+            nop();
+            checkTMR0();
+            memory.updateMemView();
+        }
+
+        public void retfie()
+        {
+            memory.memoryb1[0, Memory.INTCON] = memory.setBit(memory.memoryb1[0, Memory.INTCON], 7);
             memory.Pcl = memory.pop();
             nop();
             checkTMR0();

@@ -287,7 +287,6 @@ namespace PIC_Simulator
                 case "7":
                     memory.memoryb1[0, Memory.PORTB] = (short)(memory.memoryb1[0, Memory.PORTB] ^ 0b_010000000);
                     break;
-
             }
             memory.updateMemView();
 
@@ -312,10 +311,26 @@ namespace PIC_Simulator
         private void RegSave_Click(object sender, RoutedEventArgs e)
         {
             RegeditPopup.IsOpen = false;
-            
-            memory.memoryb1[0, short.Parse(RegNum.Text, System.Globalization.NumberStyles.HexNumber)] = short.Parse(RegVal.Text, System.Globalization.NumberStyles.HexNumber);
+            try
+            {
+                memory.memoryb1[0, short.Parse(RegNum.Text, System.Globalization.NumberStyles.HexNumber)] = short.Parse(RegVal.Text, System.Globalization.NumberStyles.HexNumber);
+            }
+            catch (Exception ex)
+            {
+                RegeditPopup.IsOpen = true;
+            }
             memory.updateMemView();
         }
+
+        private void RegClose_Click(object sender, RoutedEventArgs e)
+        {
+            RegeditPopup.IsOpen = false;
+            
+        }
+    
+ 
+
+
 
         private void Quarzslider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
         {
@@ -341,3 +356,4 @@ namespace PIC_Simulator
         }
     }
 }
+

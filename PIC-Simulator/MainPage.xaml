@@ -79,7 +79,7 @@
             </StackPanel>
             <StackPanel>
                 <TextBlock Text="RB" FontSize="30"/>
-                <CheckBox x:Name="rb7" Content="7"  Width="94"></CheckBox>
+                <CheckBox x:Name="rb7" Content="7" Checked="CheckBoxRB_Checked" Unchecked="CheckBoxRB_Checked" Width="94"></CheckBox>
                 <CheckBox x:Name="rb6" Content="6" Checked="CheckBoxRB_Checked" Unchecked="CheckBoxRB_Checked"></CheckBox>
                 <CheckBox x:Name="rb5" Content="5" Checked="CheckBoxRB_Checked" Unchecked="CheckBoxRB_Checked"></CheckBox>
                 <CheckBox x:Name="rb4" Content="4" Checked="CheckBoxRB_Checked" Unchecked="CheckBoxRB_Checked"></CheckBox>
@@ -288,8 +288,10 @@
                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                     <TextBox x:Name="RegVal" Text="Wert" FontSize="24.667" HorizontalAlignment="Center"/>
                     <TextBox x:Name="RegNum" Text="Register" FontSize="24.667" HorizontalAlignment="Center"/>
-
-                    <Button x:Name="RegSave" Content="Save" Click="RegSave_Click"></Button>
+                    <StackPanel Orientation="Horizontal">
+                        <Button x:Name="RegSave" Content="Save" Click="RegSave_Click"></Button>
+                        <Button x:Name="RegClose" Content="Close" Click="RegClose_Click"></Button>
+                    </StackPanel>
                 </StackPanel>
             </Border>
             
