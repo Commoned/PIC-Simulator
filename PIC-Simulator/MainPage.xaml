@@ -12,6 +12,7 @@
         <SolidColorBrush x:Key="GreenColor" Color="Green" />
         <SolidColorBrush x:Key="BlueColor" Color="LightBlue" />
         <SolidColorBrush x:Key="GrayColor" Color="DimGray" />
+        <local:ThumbConverter x:Key="ThumbConverter" />
     </Page.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -268,12 +269,14 @@
 
 
         <TextBlock x:Name="pic_title" Grid.Row="1" Grid.Column="1" FontFamily="Comic Sans MS" FontSize="50">PIC-Simulator</TextBlock>
-            <Popup   x:Name="StandardPopup">
+            <Popup   x:Name="QuartzPopup">
             <Border BorderBrush="{StaticResource ApplicationForegroundThemeBrush}" 
             Background="{StaticResource ApplicationPageBackgroundThemeBrush}"
             BorderThickness="2" Margin="10,10" Width="500" Height="500">
                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <TextBlock Text="Simple Popup" FontSize="24.667" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Quarzfrequenz" FontSize="24.667" HorizontalAlignment="Center"/>
+                    <TextBlock x:Name="Freq" Text="4,0MHz" FontSize="24.667" HorizontalAlignment="Center"/>
+                    <Slider x:Name="Quarzslider" ThumbToolTipValueConverter="{StaticResource ThumbConverter}" Maximum="20" StepFrequency="0.1" ValueChanged="Quarzslider_ValueChanged"></Slider>
                     <Button Content="Close" Click="settings_close_Click" HorizontalAlignment="Center"/>
                 </StackPanel>
             </Border>
