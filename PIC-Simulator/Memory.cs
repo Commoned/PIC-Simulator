@@ -378,6 +378,7 @@ namespace PIC_Simulator
 
         public void initMem()
         {
+            programmcounter = 0;
             memoryb1[0,2] = 0;
             memoryb1[0,3] = 0x18;
             memoryb1[0,10] = 0;
