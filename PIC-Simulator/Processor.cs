@@ -37,9 +37,9 @@ namespace PIC_Simulator
 
         public void Clock_Tick(object sender, object e)
         {
-            codeInterface.selectCode(runlines[memory.Pcl].Linenumber - 1);
+            codeInterface.selectCode(runlines[memory.programmcounter].Linenumber - 1);
             codeInterface.portTrigger(memory.memoryb1[1, Memory.TRISA], memory.memoryb1[1, Memory.TRISB]);
-            if(brkpnts.Contains(runlines[memory.Pcl].Linenumber - 1))
+            if(brkpnts.Contains(runlines[memory.programmcounter].Linenumber - 1))
             {
                 Clock.Stop();
                 
@@ -64,9 +64,10 @@ namespace PIC_Simulator
         public void Step()
         {
             mirrorRegs();
-            Line line = runlines[memory.Pcl];
+            Line line = runlines[memory.programmcounter];
             
-            memory.Pcl++;
+            //memory.Pcl++;
+            memory.increasePc();
 
             if((memory.memoryb1[0, Memory.STATUS] & 0b_0100000) == 0b_100000)
             {
@@ -507,7 +508,6 @@ namespace PIC_Simulator
             short freg = (short)(value & 0b_0111_1111);
             short destvalue = (short)(value & 0b_1000_0000);
             
-            
             if(currentBank == 0 && (freg == Memory.PORTA || freg == Memory.PORTB))
             {
                 value = handleDataLatch(currentBank,freg, memory.memoryb1[0,Memory.W]);
@@ -522,9 +522,6 @@ namespace PIC_Simulator
                 memory.memoryb1[currentBank,freg] = (short)(memory.memoryb1[0,Memory.W] );
             }
 
-            
-            
-
             memory.updateMemView();
         }
 
@@ -532,9 +529,7 @@ namespace PIC_Simulator
         {
             short destreg;
             short freg = (short)(value & 0b_0111_1111);
-            short destvalue = (short)(value & 0b_1000_0000);
-
-            
+            short destvalue = (short)(value & 0b_1000_0000);            
 
             if (destvalue != 0b_1000_0000)
             {
@@ -618,8 +613,7 @@ namespace PIC_Simulator
                 destreg = freg;
             }
 
-            memory.memoryb1[currentBank,destreg] = (short)(memory.memoryb1[0,Memory.W] & memory.memoryb1[currentBank,freg]);
-
+            memory.memoryb1[currentBank, destreg] = (short)(memory.memoryb1[0, Memory.W] & memory.memoryb1[currentBank, freg]);
 
             checkZeroFlag(destreg);
             memory.updateMemView();
@@ -729,7 +723,8 @@ namespace PIC_Simulator
         public void retlw(short value)
         {
             memory.memoryb1[0,Memory.W] = value;
-            memory.memoryb1[currentBank,Memory.PCL] = memory.pop();
+            //memory.memoryb1[currentBank, Memory.PCL] = memory.pop();
+            memory.setPc(memory.pop());
             nop();
             memory.updateMemView();
         }
@@ -742,14 +737,16 @@ namespace PIC_Simulator
 
             //memory.push((short)(pc));
             memory.push((short)(memory.memoryb1[currentBank, Memory.PCL]));
-            memory.Pcl = pc;
+            //memory.Pcl = pc;
+            memory.setPc(pc);
             nop();
             memory.updateMemView();
         }
 
         public void Return()
         {
-            memory.Pcl = memory.pop();
+            //memory.Pcl = memory.pop();
+            memory.setPc(memory.pop());
             nop();
             memory.updateMemView();
         }
@@ -760,8 +757,8 @@ namespace PIC_Simulator
             short pclath = (short)(memory.memoryb1[currentBank, Memory.PCLATH] & 0b_0001_1000);
             pc = (short)(pc ^ (pclath << 8));
 
-            memory.Pcl = pc;
-            //memory.Pcl = value;
+            //memory.Pcl = pc;
+            memory.setPc(pc);
             nop();
             memory.updateMemView();
         }
@@ -1244,8 +1241,6 @@ namespace PIC_Simulator
             
         }
     }
-
-
 }
 
 interface ICodeInterface

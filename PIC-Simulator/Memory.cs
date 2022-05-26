@@ -38,7 +38,7 @@ namespace PIC_Simulator
         public short trisaLatch;
         public short trisbLatch;
 
-        public short pc = 0;
+        public short programmcounter = 0;
         public double commandcounter = 0.0 ;
         public double quarztakt = 1.0;
 
@@ -67,6 +67,35 @@ namespace PIC_Simulator
             {
                 return memView;
             }
+        }
+
+        public void increasePc()
+        {
+            if(Pcl == programmcounter)
+            {
+                if (programmcounter >= 0x3FF)
+                {
+                    programmcounter = 0;
+                }
+                else
+                {
+                    programmcounter++;
+                }
+                Pcl = (short)(programmcounter & 0b_0000_0000_1111_1111);
+            }
+            else
+            {
+                short pclath = (short) (memoryb1[0, PCLATH] << 8);
+                short pcl = Pcl;
+                programmcounter = (short)(pcl & pclath);
+            }
+            
+        }
+
+        public void setPc(short value)
+        {
+            programmcounter = value;
+            Pcl = (short)(programmcounter & 0b_0000_0000_1111_1111);
         }
 
         public string WReg
