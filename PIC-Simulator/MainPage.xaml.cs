@@ -30,6 +30,8 @@ namespace PIC_Simulator
         Processor processor;
         private FileReader filereader;
         bool autoCheck;
+        TextBlock tempTB;
+        ThumbConverter converter;
 
         public MainPage()
         {
@@ -39,22 +41,20 @@ namespace PIC_Simulator
             filereader = new FileReader();
             DataContext = memory;
 
+            
+
             this.InitializeComponent();
             CodeStack.ItemsSource = processor.lines;
 
 
         }
 
-
-
-
-
         private async void openButton_Click(object sender, RoutedEventArgs e)
         {
             processor.lines.Clear();
             processor.runlines.Clear();
             await filereader.GetLines();
-
+            
             processor.lines = filereader.lines;
             CodeStack.ItemsSource = null;
             Thread.Sleep(200);
@@ -70,15 +70,17 @@ namespace PIC_Simulator
 
             Start_Button.IsEnabled = true;
 
-
+            selectCode(processor.runlines[memory.Pcl].Linenumber - 1);
 
         }
 
         public void selectCode(int line)
         {
             this.CodeStack.SelectedIndex = line;
-            this.CodeStack.ScrollIntoView(this.CodeStack.SelectedItem,ScrollIntoViewAlignment.Leading);
+            this.CodeStack.ScrollIntoView(this.CodeStack.SelectedItem,ScrollIntoViewAlignment.Default);
+            
         }
+
 
         public void portTrigger(short trisa, short trisb)
         {
@@ -139,12 +141,14 @@ namespace PIC_Simulator
 
         private void settingsButton_Click(object sender, RoutedEventArgs e)
         {
-            if (!StandardPopup.IsOpen) { StandardPopup.IsOpen = true; }
+            if (!QuartzPopup.IsOpen) { QuartzPopup.IsOpen = true; }
+            Quarzslider.Value = memory.quarztakt;
+            Freq.Text = string.Format("{0:n}", (1 / (memory.quarztakt) * 4)) + " MHz";
         }
 
         private void settings_close_Click(object sender, RoutedEventArgs e)
         {
-            if (StandardPopup.IsOpen) { StandardPopup.IsOpen = false; }
+            if (QuartzPopup.IsOpen) { QuartzPopup.IsOpen = false; }
         }
 
         private void Start_Button_Click(object sender, RoutedEventArgs e)
@@ -176,6 +180,8 @@ namespace PIC_Simulator
         private void Reset_Button_Click(object sender, RoutedEventArgs e)
         {
             memory.resetMem();
+            
+            selectCode(processor.runlines[memory.Pcl].Linenumber - 1);
         }
 
 
@@ -193,8 +199,13 @@ namespace PIC_Simulator
             }
             else
             {
-                but.Background = (SolidColorBrush)Resources["GreenColor"];
+                but.Background = (SolidColorBrush)Resources["GrayColor"];
                 but.Content = "X";
+                Start_Button.Background = (SolidColorBrush)Resources["GreenColor"];
+                Start_Button.Content = "\uE768";
+                processor.Clock.Stop();
+                processor.isRunning = false;
+
 
                 var item = (sender as FrameworkElement).DataContext;
                 processor.brkpnts.Remove(CodeStack.Items.IndexOf(item));
@@ -272,11 +283,81 @@ namespace PIC_Simulator
                 case "7":
                     memory.memoryb1[0, Memory.PORTB] = (short)(memory.memoryb1[0, Memory.PORTB] ^ 0b_010000000);
                     break;
-
             }
             memory.updateMemView();
 
         }
-        
-    } 
+
+        private void Border_PointerPressed(object sender, PointerRoutedEventArgs e)
+        {
+            RegeditPopup.IsOpen = true;
+            Border border = (Border)sender;
+            
+            tempTB = (TextBlock)border.Child;
+
+            
+            
+
+            RegVal.Text = tempTB.Text;
+            
+
+
+        }
+
+        private void RegSave_Click(object sender, RoutedEventArgs e)
+        {
+            RegeditPopup.IsOpen = false;
+            try
+            {
+                if (memory.checkBit(short.Parse(RegNum.Text, System.Globalization.NumberStyles.HexNumber), 7))
+                {
+                    
+                    memory.memoryb1[1, short.Parse(RegNum.Text, System.Globalization.NumberStyles.HexNumber) & 0b_01111111] = short.Parse(RegVal.Text, System.Globalization.NumberStyles.HexNumber);
+                }
+                else
+                {
+                    memory.memoryb1[0, short.Parse(RegNum.Text, System.Globalization.NumberStyles.HexNumber)] = short.Parse(RegVal.Text, System.Globalization.NumberStyles.HexNumber);
+                }
+            }
+            catch (Exception ex)
+            {
+                RegeditPopup.IsOpen = true;
+            }
+            memory.updateMemView();
+        }
+
+        private void RegClose_Click(object sender, RoutedEventArgs e)
+        {
+            RegeditPopup.IsOpen = false;
+            
+        }
+    
+ 
+
+
+
+        private void Quarzslider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
+        {
+            
+            memory.quarztakt = Quarzslider.Value;
+            // umrechnen quarztakt in MHz
+
+
+            Freq.Text = string.Format("{0:n}",(1/(memory.quarztakt)*4))+" MHz";
+        }
+    }
+    public class ThumbConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            string val = string.Format("{0:n}",value);
+            return val+" \u00B5s";
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }
+
