@@ -39,7 +39,8 @@ namespace PIC_Simulator
         public short trisaLatch;
         public short trisbLatch;
 
-        public short pc = 0;
+        public short programmcounter = 0;
+        public string pclManipulation = "";
         public double commandcounter = 0.0 ;
         public double wdtcounter = 0.0;
         public double wdttime = 0.0;
@@ -158,11 +159,43 @@ namespace PIC_Simulator
             }
         }
 
+        public void increasePc()
+        {
+            if(Pcl == (short)(programmcounter & 0b_0000_0000_1111_1111))
+            {
+                if (programmcounter >= 0x3FF)
+                {
+                    programmcounter = 0;
+                }
+                else
+                {
+                    programmcounter++;
+                }
+                Pcl = (short)(programmcounter & 0b_0000_0000_1111_1111);
+            }
+            
+        }
+
+        public void setPc(short value)
+        {
+            programmcounter = value;
+            Pcl = (short)(programmcounter & 0b_0000_0000_1111_1111);
+        }
+
         public string WReg
         {
             get
             {
                 string hexnum = string.Format("0x{0:X2}", memoryb1[0,W]);
+                return hexnum;
+            }
+        }
+
+        public string PC
+        {
+            get
+            {
+                string hexnum = string.Format("0x{0:X3}", programmcounter);
                 return hexnum;
             }
         }
@@ -236,17 +269,15 @@ namespace PIC_Simulator
             get
             {
                 char[] bits = Convert.ToString(memoryb1[0, INTCON], 2).PadLeft(8, '0').ToCharArray();
-
                 return bits;
             }
         }
 
-        public string PcllathView
+        public string PclathView
         {
             get
             {
-                string hexnum = string.Format("0x{0:X2}", memoryb1[1, Memory.PCLATH]);
-
+                string hexnum = string.Format("0x{0:X2}", memoryb1[0, Memory.PCLATH]);
                 return hexnum;
             }
         }
@@ -310,10 +341,11 @@ namespace PIC_Simulator
                 "Stackpointer",
                 "Option",
                 "Optionbits",
-                "PcllathView",
+                "PclathView",
                 "Wdtcounter",
                 "runtimecounter",
                 "Vt",
+                "PC",
             };
             foreach(string s in toNotify)
             {
@@ -365,6 +397,7 @@ namespace PIC_Simulator
 
         public void initMem()
         {
+            programmcounter = 0;
             memoryb1[0,2] = 0;
             memoryb1[0,3] = 0x18;
             memoryb1[0,10] = 0;

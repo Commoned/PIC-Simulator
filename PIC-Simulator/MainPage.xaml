@@ -139,13 +139,17 @@
                             </StackPanel>
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Margin="0,0,5,0">PCLATH:</TextBlock>
-                            <TextBlock Text="{Binding PcllathView}"></TextBlock>
+                            <TextBlock Text="{Binding PclathView}"></TextBlock>
                         </StackPanel>
                     </StackPanel>
                     <StackPanel Width="175">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Margin="0,0,5,0">VT:</TextBlock>
                             <TextBlock Text="{Binding Vt}"></TextBlock>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Margin="0,0,5,0">PC:</TextBlock>
+                            <TextBlock Text="{Binding PC}"></TextBlock>
                         </StackPanel>
                     </StackPanel>
                 </StackPanel>
