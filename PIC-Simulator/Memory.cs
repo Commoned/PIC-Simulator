@@ -33,6 +33,7 @@ namespace PIC_Simulator
 
         public short[] eeprom = new short[1024];
         public short[,] memoryb1 = new short[2, 129];
+        public short[,] comparememoryb1 = new short[2, 129];
         public ObservableCollection<string> memView = new ObservableCollection<string>();
         
         public short stackpointer = 7;
@@ -329,55 +330,67 @@ namespace PIC_Simulator
 
         public void updateMemView()
         {
-            /*
-            foreach(var item in memoryb1)
+            if(memoryb1[0,W] != comparememoryb1[0,W])
             {
-                if (i == 256) continue;
-                if (i <= 127 && memView[i]!= string.Format("{0:X2}", memoryb1[0,i]))
-                {
-                    memView[i] = string.Format("{0:X2}", memoryb1[0, i]);
-                }
-                
-                if (i > 128 && memView[i] != string.Format("{0:X2}", memoryb1[1, i/2]))
-                {
-                    memView[i] = string.Format("{0:X2}", memoryb1[1, i/2]);
-                }
-                i++;
-            }*/
-
-            for(int i=0; i<=127;i++)
-            {
-                memView[i] = string.Format("{0:X2}", memoryb1[0, i]);
+                NotifyPropertyChanged("WReg");
             }
-            for (int i = 0; i <= 127; i++)
+            if (memoryb1[0, STATUS] != comparememoryb1[0, STATUS])
             {
-                memView[i+128] = string.Format("{0:X2}", memoryb1[1, i]);
+                NotifyPropertyChanged("Status");
+                NotifyPropertyChanged("Statusbits");
+            }
+            if (memoryb1[0, PCL] != comparememoryb1[0, PCL])
+            {
+                NotifyPropertyChanged("PclView");
+            }
+            if (memoryb1[0, FSR] != comparememoryb1[0, FSR])
+            {
+                NotifyPropertyChanged("FSRReg");
+            }
+            if (memoryb1[0, INTCON] != comparememoryb1[0, INTCON])
+            {
+                NotifyPropertyChanged("Intcon");
+                NotifyPropertyChanged("Intconbits");
+            }
+            if (memoryb1[1, OPTION] != comparememoryb1[1, OPTION])
+            {
+                NotifyPropertyChanged("Option");
+                NotifyPropertyChanged("Optionbits");
+            }
+            if (memoryb1[0, PCLATH] != comparememoryb1[0, PCLATH])
+            {
+                NotifyPropertyChanged("PclathView");
+            }
+            if (memoryb1[1, EECON1] != comparememoryb1[1, EECON1])
+            {
+                NotifyPropertyChanged("Eecon1"); NotifyPropertyChanged("Eecon1bits");
             }
             string[] toNotify = {
-                "WReg",
-                "Status",
-                "PclView",
-                "FSRReg",
-                "Status",
-                "Statusbits",
-                "Intcon",
-                "Intconbits",
                 "S0", "S1", "S2", "S3", "S4", "S5", "S6", "S7",
                 "Stackpointer",
-                "Option",
-                "Optionbits",
-                "PclathView",
                 "Wdtcounter",
                 "runtimecounter",
                 "Vt",
-                "Eecon1",
-                "Eecon1bits",
                 "PC",
 
             };
             foreach(string s in toNotify)
             {
                 NotifyPropertyChanged(s);
+            }
+
+            for (int i = 0; i <= 127; i++)
+            {
+                if (memView[i] != string.Format("{0:X2}", memoryb1[0, i]))
+                {
+                    memView[i] = string.Format("{0:X2}", memoryb1[0, i]);
+                }
+                if (memView[i + 128] != string.Format("{0:X2}", memoryb1[1, i]))
+                {
+                    memView[i + 128] = string.Format("{0:X2}", memoryb1[1, i]);
+                }
+                comparememoryb1[0, i] = memoryb1[0, i];
+                comparememoryb1[1, i] = memoryb1[1, i];
             }
         }
 
