@@ -180,7 +180,7 @@ namespace PIC_Simulator
         private void Reset_Button_Click(object sender, RoutedEventArgs e)
         {
             memory.resetMem();
-            
+            processor.isSleeping = false;
             selectCode(processor.runlines[memory.Pcl].Linenumber - 1);
         }
 
@@ -309,6 +309,10 @@ namespace PIC_Simulator
             RegeditPopup.IsOpen = false;
             try
             {
+                if(RegNum.Text.ToUpper() == "INTCON")
+                {
+                    memory.memoryb1[0, Memory.INTCON] = short.Parse(RegVal.Text, System.Globalization.NumberStyles.HexNumber); 
+                }
                 if (memory.checkBit(short.Parse(RegNum.Text, System.Globalization.NumberStyles.HexNumber), 7))
                 {
                     
@@ -318,6 +322,7 @@ namespace PIC_Simulator
                 {
                     memory.memoryb1[0, short.Parse(RegNum.Text, System.Globalization.NumberStyles.HexNumber)] = short.Parse(RegVal.Text, System.Globalization.NumberStyles.HexNumber);
                 }
+                
             }
             catch (Exception ex)
             {
@@ -344,6 +349,18 @@ namespace PIC_Simulator
 
 
             Freq.Text = string.Format("{0:n}",(1/(memory.quarztakt)*4))+" MHz";
+        }
+
+        private void WDTChecker_Checked(object sender, RoutedEventArgs e)
+        {
+            memory.WDTE = 1;
+            WDTChecker.Content = "WDT aktiv";
+        }
+
+        private void WDTChecker_Unchecked(object sender, RoutedEventArgs e)
+        {
+            memory.WDTE = 0;
+            WDTChecker.Content = "WDT inaktiv";
         }
     }
     public class ThumbConverter : IValueConverter
