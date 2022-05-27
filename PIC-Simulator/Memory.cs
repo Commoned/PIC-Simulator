@@ -41,8 +41,12 @@ namespace PIC_Simulator
 
         public short pc = 0;
         public double commandcounter = 0.0 ;
+        public double wdtcounter = 0.0;
+        public double wdttime = 0.0;
+
         public double quarztakt = 1.0;
 
+        public short WDTE = 1;
         public short vt=0xFF;
         
 
@@ -256,6 +260,17 @@ namespace PIC_Simulator
             }
         }
 
+        public string Wdtcounter
+        {
+            get
+            {
+                wdttime = wdtcounter * quarztakt;
+                string num = string.Format("\u0009 {0:F4} \u00b5s", (wdtcounter * quarztakt));
+                
+                return num;
+            }
+        }
+
         public void updateMemView()
         {
             /*
@@ -296,6 +311,7 @@ namespace PIC_Simulator
                 "Option",
                 "Optionbits",
                 "PcllathView",
+                "Wdtcounter",
                 "runtimecounter",
                 "Vt",
             };
@@ -518,6 +534,11 @@ namespace PIC_Simulator
             vt = 0;
             trisaLatch = 0;
             trisbLatch = 0;
+            wdtcounter = 0;
+            pc = 0;
+            Pcl = 0;
+            wdttime = 0;
+            
             initMem();
             // To be continued...
         }
