@@ -25,6 +25,7 @@ namespace PIC_Simulator
         int precycletmr0 = 0;
         int precycleint = 0;
         int precyclerbint = 0;
+        bool isSleeping=false;
 
         public Processor(ICodeInterface codeInterface,Memory memory)
         {
@@ -84,6 +85,38 @@ namespace PIC_Simulator
             memory.vt = (short)(prescalerval) ;
         }
 
+        public void prescaleWDT()
+        {
+            short prescalerval = 0;
+            switch (memory.memoryb1[1, Memory.OPTION] & 0b_0111)
+            {
+                case 0:
+                    prescalerval = 1;
+                    break;
+                case 1:
+                    prescalerval = 2;
+                    break;
+                case 2:
+                    prescalerval = 4;
+                    break;
+                case 3:
+                    prescalerval = 8;
+                    break;
+                case 4:
+                    prescalerval = 16;
+                    break;
+                case 5:
+                    prescalerval = 32;
+                    break;
+                case 6:
+                    prescalerval = 64;
+                    break;
+                case 7:
+                    prescalerval = 128;
+                    break;
+            }
+            memory.vt = (short)(prescalerval);
+        }
 
         public void checkTMR0()
         {
@@ -110,6 +143,7 @@ namespace PIC_Simulator
                 }
                 else
                 {
+                    prescaleWDT();
                     memory.memoryb1[0, Memory.TMR0]++;
                     if (memory.memoryb1[0, Memory.TMR0] >= 0x100)
                     {
@@ -121,6 +155,7 @@ namespace PIC_Simulator
             }
             else
             {
+                prescaleWDT();
                 countTMR0 = false;
             }
             bool trigger = false;
@@ -173,6 +208,43 @@ namespace PIC_Simulator
                 precycletmr0 = 0;
             }
             memory.updateMemView();
+        }
+
+        public void checkWDT()
+        {
+            if (memory.WDTE == 1)
+            {
+                memory.wdtcounter++;
+                
+#if DEBUG // Because speed
+                if (memory.wdttime >= memory.vt * 180)
+                {
+                    if (isSleeping)
+                    {
+                        isSleeping = false;
+                        memory.Pcl++;
+                    }
+                    else
+                    {
+                        memory.resetMem();
+                        memory.memoryb1[0,Memory.STATUS] = memory.clrBit(memory.memoryb1[0, Memory.STATUS], 4);
+                    }
+                }
+#else
+                if (memory.wdttime == memory.vt * 18000)
+                {
+                    if (isSleeping)
+                    {
+
+                    }
+                    else
+                    {
+                        memory.resetMem();
+                    }
+                }
+#endif
+
+            }
         }
 
         public void checkINT()
@@ -243,6 +315,10 @@ namespace PIC_Simulator
             {
                 return;
             }
+            if(isSleeping){
+                checkWDT();
+                return;
+            }
             Line line = runlines[memory.Pcl];
             
             memory.Pcl++;
@@ -257,12 +333,14 @@ namespace PIC_Simulator
             }
 
             memory.commandcounter++;
-            
+
+
             this.Decode(line.instruction);
             checkTMR0();
             checkINT();
             checkRBINT();
             line = null;
+            checkWDT();
         }
 
         public bool checkInterrupt()
@@ -1005,6 +1083,18 @@ namespace PIC_Simulator
             memory.updateMemView();
         }
        
+        public void clrwdt()
+        {
+            memory.wdtcounter = 0;
+            memory.memoryb1[0,Memory.STATUS] = memory.setBit(memory.memoryb1[0,Memory.STATUS], 3);
+            memory.memoryb1[0, Memory.STATUS] = memory.setBit(memory.memoryb1[0, Memory.STATUS], 4);
+
+            memory.memoryb1[1, Memory.OPTION] = memory.setBit(memory.memoryb1[1, Memory.OPTION], 0);
+            memory.memoryb1[1, Memory.OPTION] = memory.setBit(memory.memoryb1[1, Memory.OPTION], 1);
+            memory.memoryb1[1, Memory.OPTION] = memory.setBit(memory.memoryb1[1, Memory.OPTION], 2);
+            memory.updateMemView();
+        }
+
         public void clrf(short value)
         {
             short freg = (short)(value & 0b_0111_1111);
@@ -1473,10 +1563,7 @@ namespace PIC_Simulator
             {
                 destreg = freg;
             }
-            if (memory.memoryb1[currentBank, destreg] == 0)
-            {
-                return true;
-            }
+            
 
             if ((short)(memory.memoryb1[currentBank,freg] + 1) <= 0b_1111_1111)
             {
@@ -1488,8 +1575,18 @@ namespace PIC_Simulator
                 memory.memoryb1[currentBank,destreg] = (short)(0b_0000_0000);
                 
             }
-            memory.updateMemView();
-            return false;
+            if (memory.memoryb1[currentBank, destreg] == 0)
+            {
+                memory.updateMemView();
+                return true;
+            }
+            else
+            {
+                memory.updateMemView();
+                return false;
+            }
+            
+            
 
             
         }

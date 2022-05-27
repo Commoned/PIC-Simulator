@@ -345,6 +345,18 @@ namespace PIC_Simulator
 
             Freq.Text = string.Format("{0:n}",(1/(memory.quarztakt)*4))+" MHz";
         }
+
+        private void WDTChecker_Checked(object sender, RoutedEventArgs e)
+        {
+            memory.WDTE = 1;
+            WDTChecker.Content = "WDT aktiv";
+        }
+
+        private void WDTChecker_Unchecked(object sender, RoutedEventArgs e)
+        {
+            memory.WDTE = 0;
+            WDTChecker.Content = "WDT inaktiv";
+        }
     }
     public class ThumbConverter : IValueConverter
     {
