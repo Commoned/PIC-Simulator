@@ -215,19 +215,19 @@ namespace PIC_Simulator
             if (memory.WDTE == 1)
             {
                 memory.wdtcounter++;
-                
 
                 if (memory.wdttime >= memory.vt * 18000)
                 {
                     if (isSleeping)
                     {
                         isSleeping = false;
-                        memory.Pcl++;
+                        memory.wdtcounter = 0;
                     }
                     else
                     {
                         memory.resetMem();
                         memory.memoryb1[0, Memory.STATUS] = memory.clrBit(memory.memoryb1[0, Memory.STATUS], 4);
+                        memory.memoryb1[0, Memory.STATUS] = memory.clrBit(memory.memoryb1[0, Memory.STATUS], 3);
                     }
                 }
 
@@ -306,6 +306,8 @@ namespace PIC_Simulator
             if(isSleeping)
             {
                 checkWDT();
+                checkTMR0();
+                memory.updateMemView();
                 return;
             }
             Line line = runlines[memory.Pcl];
@@ -636,12 +638,7 @@ namespace PIC_Simulator
 
             switch (instruction)
             {
-                case 0x64:
-                    clrwdt();
-                    break;
-                case 0x63:
-                    sleep();
-                    break;
+                
                 case 0x30: //movlw
                     movlw(value);
                     break;
@@ -745,6 +742,12 @@ namespace PIC_Simulator
                 case 0x00:
                     switch (value)
                     {
+                        case 0x64:
+                            clrwdt();
+                            break;
+                        case 0x63:
+                            sleep();
+                            break;
                         case 0x08:
                             Return();
                             break;
