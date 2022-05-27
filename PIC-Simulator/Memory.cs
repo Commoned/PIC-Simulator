@@ -44,6 +44,7 @@ namespace PIC_Simulator
 
         public short programmcounter = 0;
         public string pclManipulation = "";
+        public double runtime = 0.0;
         public double commandcounter = 0.0 ;
         public double wdtcounter = 0.0;
         public double wdttime = 0.0;
@@ -312,7 +313,8 @@ namespace PIC_Simulator
         {
             get
             {
-                string num = string.Format("\u0009 {0:F4} \u00b5s", (commandcounter * quarztakt));
+                runtime = runtime + quarztakt;
+                string num = string.Format("\u0009 {0:F4} \u00b5s", (runtime));
                 return num;
             }
         }
@@ -321,8 +323,8 @@ namespace PIC_Simulator
         {
             get
             {
-                wdttime = wdtcounter * quarztakt;
-                string num = string.Format("\u0009 {0:F4} \u00b5s", (wdtcounter * quarztakt));
+                wdttime = wdttime + quarztakt;
+                string num = string.Format("\u0009 {0:F4} \u00b5s", (wdttime));
                 
                 return num;
             }
