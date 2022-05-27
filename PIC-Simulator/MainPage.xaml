@@ -208,7 +208,7 @@
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Width="30" Margin="0,0,5,0">RBP</TextBlock>
-                    <TextBlock Width="30" Margin="0,0,5,0">IntEdg</TextBlock>
+                    <TextBlock FontSize="10" Width="30" Margin="0,2,5,0">IntEdg</TextBlock>
                     <TextBlock Width="30" Margin="0,0,5,0">T0CS</TextBlock>
                     <TextBlock Width="30" Margin="0,0,5,0">T0SE</TextBlock>
                     <TextBlock Width="30" Margin="0,0,5,0">PSA</TextBlock>
@@ -247,6 +247,33 @@
                         <TextBlock Width="30" Margin="0,0,5,0">RBIF</TextBlock>
                     </StackPanel>
                     <ItemsControl ItemsSource="{Binding Intconbits}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal"></StackPanel>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Width="30" Margin="0,0,5,0" Text="{Binding}"></TextBlock>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </Border>
+            <Border BorderThickness="2" BorderBrush="SlateGray">
+                <StackPanel Orientation="Vertical">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Margin="0,0,5,0">EECON1:</TextBlock>
+                        <TextBlock Text="{Binding Eecon1}"></TextBlock>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Width="30" Margin="0,0,5,0">EEIF</TextBlock>
+                        <TextBlock FontSize="10" Width="32" Margin="0,2,5,0">WRERR</TextBlock>
+                        <TextBlock FontSize="10" Width="30" Margin="0,2,5,0">WREN</TextBlock>
+                        <TextBlock Width="30" Margin="0,0,5,0">WR</TextBlock>
+                        <TextBlock Width="30" Margin="0,0,5,0">RD</TextBlock>
+                    </StackPanel>
+                    <ItemsControl ItemsSource="{Binding Eecon1bits}">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <StackPanel Orientation="Horizontal"></StackPanel>

@@ -24,6 +24,8 @@ namespace PIC_Simulator
         public static byte STATUS = 0x03;
         public static byte EEDATA = 0x08;
         public static byte EEADR = 0x09;
+        public static byte EECON1 = 0x08;
+        public static byte EECON2 = 0x09;
         public static byte PCLATH = 0xA;
         public static byte INTCON = 0x0B;
         public static byte W = 0x80;
@@ -189,6 +191,7 @@ namespace PIC_Simulator
                 string hexnum = string.Format("0x{0:X2}", memoryb1[0,W]);
                 return hexnum;
             }
+            
         }
 
         public string PC
@@ -273,7 +276,29 @@ namespace PIC_Simulator
             }
         }
 
+
+        public string Eecon1
+        {
+            get
+            {
+                string hexnum = string.Format("0x{0:X2}", memoryb1[1, EECON1]);
+                return hexnum;
+            }
+        }
+
+        public char[] Eecon1bits
+        {
+            get
+            {
+                char[] bits = Convert.ToString(memoryb1[1, EECON1], 2).PadLeft(5, '0').ToCharArray();
+
+                return bits;
+            }
+        }
+
+
         public string PclathView
+
         {
             get
             {
@@ -345,15 +370,15 @@ namespace PIC_Simulator
                 "Wdtcounter",
                 "runtimecounter",
                 "Vt",
+                "Eecon1",
+                "Eecon1bits",
                 "PC",
+
             };
             foreach(string s in toNotify)
             {
                 NotifyPropertyChanged(s);
             }
-            
-
-
         }
 
         
@@ -409,7 +434,7 @@ namespace PIC_Simulator
             memoryb1[1,8] = 0x0;
             memoryb1[1,0x0A] = 0x0;
             memoryb1[1,0x0B] = 0x0;
-            memoryb1[1, TRISA] = 0xFF;
+            memoryb1[1, TRISA] = 0x1F;
             memoryb1[1, TRISB] = 0xFF;
         }
 
@@ -549,19 +574,10 @@ namespace PIC_Simulator
 
         public void resetMem()
         {
-            for(int i = 0; i<memoryb1.Length/2;i++)
-            {
-                memoryb1[0,i] = 0;
-            }
-            for (int i = 0; i < memoryb1.Length / 2; i++)
-            {
-                memoryb1[1, i] = 0;
-            }
             commandcounter = 0;
             for(int i = 0; i<8;i++)
             {
                 stack[i] = 0;
-                
             }
             stackpointer = 7;
             vt = 0;
@@ -571,9 +587,20 @@ namespace PIC_Simulator
             programmcounter = 0;
             Pcl = 0;
             wdttime = 0;
+            // Standardwerte initialisieren nach reset
             
-            initMem();
-            // To be continued...
+            memoryb1[0, PCL] = 0;
+            memoryb1[0, STATUS] = (short)(memoryb1[0, STATUS] & 0b_0001_1111);
+            memoryb1[0, PCLATH] = 0;
+            memoryb1[0, INTCON] = (short)(memoryb1[0, INTCON] & 0b_01);
+            memoryb1[1, OPTION] = 0xFF;
+            memoryb1[1, TRISA] = 0x1F;
+            memoryb1[1, TRISB] = 0xFF;
+            memoryb1[1, EECON1] = (short)(memoryb1[1, EECON1] & 0b_01000);
+            memoryb1[1, PCLATH] = 0x0;
+            memoryb1[1, INTCON] = (short)(memoryb1[1, INTCON] & 0b_01);
+            updateMemView();
+
         }
     }
 
