@@ -26,6 +26,7 @@ namespace PIC_Simulator
         int precycleint = 0;
         int precyclerbint = 0;
         public bool isSleeping=false;
+        public bool eeWriting = false;
 
         public Processor(ICodeInterface codeInterface,Memory memory)
         {
@@ -302,6 +303,21 @@ namespace PIC_Simulator
             }
         }
 
+        public void checkEE()
+        {
+
+        }
+
+        public void writeEE()
+        {
+
+        }
+
+        public void readEE()
+        {
+
+        }
+
         public void Step()
         {
             mirrorRegs();
@@ -340,6 +356,7 @@ namespace PIC_Simulator
             checkRBINT();
             line = null;
             checkWDT();
+            checkEE();
         }
 
         public bool checkInterrupt()

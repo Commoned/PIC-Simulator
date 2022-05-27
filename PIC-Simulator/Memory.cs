@@ -319,9 +319,6 @@ namespace PIC_Simulator
             {
                 NotifyPropertyChanged(s);
             }
-            
-
-
         }
 
         
