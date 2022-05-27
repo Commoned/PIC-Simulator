@@ -139,13 +139,17 @@
                             </StackPanel>
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Margin="0,0,5,0">PCLATH:</TextBlock>
-                            <TextBlock Text="{Binding PcllathView}"></TextBlock>
+                            <TextBlock Text="{Binding PclathView}"></TextBlock>
                         </StackPanel>
                     </StackPanel>
                     <StackPanel Width="175">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Margin="0,0,5,0">VT:</TextBlock>
                             <TextBlock Text="{Binding Vt}"></TextBlock>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Margin="0,0,5,0">PC:</TextBlock>
+                            <TextBlock Text="{Binding PC}"></TextBlock>
                         </StackPanel>
                     </StackPanel>
                 </StackPanel>
@@ -309,7 +313,7 @@
                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                     <TextBlock Text="Quarzfrequenz" FontSize="24.667" HorizontalAlignment="Center"/>
                     <TextBlock x:Name="Freq" Text="4,0MHz" FontSize="24.667" HorizontalAlignment="Center"/>
-                    <Slider x:Name="Quarzslider" ThumbToolTipValueConverter="{StaticResource ThumbConverter}" Maximum="20" StepFrequency="0.1" ValueChanged="Quarzslider_ValueChanged"></Slider>
+                    <Slider x:Name="Quarzslider" ThumbToolTipValueConverter="{StaticResource ThumbConverter}" Maximum="100" StepFrequency="0.1" ValueChanged="Quarzslider_ValueChanged"></Slider>
                     <CheckBox x:Name="WDTChecker" Content="WDT aktiv" IsChecked="True" Checked="WDTChecker_Checked" Unchecked="WDTChecker_Unchecked" ></CheckBox>
                     <Button Content="Close" Margin="0,10,0,0" Click="settings_close_Click" HorizontalAlignment="Center"/>
 
