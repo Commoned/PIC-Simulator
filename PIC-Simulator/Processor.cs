@@ -418,7 +418,7 @@ namespace PIC_Simulator
         /// Unsets digit carry flag if there is no overflow
         /// </summary>
         /// <param name="register">Register which is checked</param>
-        /// <param name="value">Value for calculation</param>
+        /// <param name="value">Value for overflow calculation</param>
         public void checkDigitCarryFlag(short register, short value, string funcType)
         {
             ushort digitcarrymask = 0b_0000_1111;
@@ -465,6 +465,13 @@ namespace PIC_Simulator
             
         }
 
+        /// <summary>
+        /// Checks carry flag
+        /// Sets carry flag if bit 8 overflows
+        /// Unsets carry flag if there is no overflow
+        /// </summary>
+        /// <param name="register">register which is checked</param>
+        /// <param name="funcType">value for overflow calculation</param>
         public void checkCarryFlag(short register, string funcType)
         {
             ushort carryflagmask = 0b_0000_0001;
@@ -535,6 +542,7 @@ namespace PIC_Simulator
                 memory.memoryb1[currentBank,register] = (short)(memory.memoryb1[currentBank,register] & 0b_0000_0000_1111_1111);
             }
         }
+        
         /// <summary>
         /// handles Data Latch for PORTA and PORTB manipulation
         /// </summary>
@@ -1071,7 +1079,7 @@ namespace PIC_Simulator
             short pclath = (short)(memory.memoryb1[currentBank, Memory.PCLATH] & 0b_0001_1000);
             pc = (short)(pc ^ (pclath << 8));
 
-            memory.push((short)(memory.programmcounter + 1));
+            memory.push((short)(memory.programmcounter));
             memory.setPc(pc);
             nop();
             checkTMR0();
@@ -1595,18 +1603,12 @@ namespace PIC_Simulator
             {
                 destreg = freg;
             }
-            if ((short)(memory.memoryb1[currentBank,freg] + 1) <= 0b_1111_1111)
+
+            memory.memoryb1[currentBank, destreg] = (short)(memory.memoryb1[currentBank, freg] + 1);
+
+            if (memory.memoryb1[currentBank, destreg] > 255)
             {
-                memory.memoryb1[currentBank,destreg] = (short)(memory.memoryb1[currentBank,freg] + 1);
-            }
-            
-            if ((short)(memory.memoryb1[currentBank,freg] + 1) > 0b_1111_1111)
-            {
-                memory.memoryb1[currentBank,destreg] = (short)(0b_0000_0000);
-                
-            }
-            if (memory.memoryb1[currentBank, destreg] == 0)
-            {
+                memory.memoryb1[currentBank, destreg] = 0;
                 memory.updateMemView();
                 return true;
             }
