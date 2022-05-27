@@ -25,7 +25,7 @@ namespace PIC_Simulator
         int precycletmr0 = 0;
         int precycleint = 0;
         int precyclerbint = 0;
-        bool isSleeping=false;
+        public bool isSleeping=false;
 
         public Processor(ICodeInterface codeInterface,Memory memory)
         {
@@ -143,7 +143,10 @@ namespace PIC_Simulator
                 }
                 else
                 {
-                    prescaleWDT();
+                    if (memory.checkBit(memory.memoryb1[1, Memory.OPTION], 3))
+                    {
+                        prescaleWDT();
+                    }
                     memory.memoryb1[0, Memory.TMR0]++;
                     if (memory.memoryb1[0, Memory.TMR0] >= 0x100)
                     {
@@ -155,7 +158,10 @@ namespace PIC_Simulator
             }
             else
             {
-                prescaleWDT();
+                if (memory.checkBit(memory.memoryb1[1, Memory.OPTION], 3))
+                {
+                    prescaleWDT();
+                }
                 countTMR0 = false;
             }
             bool trigger = false;
