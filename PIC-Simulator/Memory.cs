@@ -568,7 +568,7 @@ namespace PIC_Simulator
             trisaLatch = 0;
             trisbLatch = 0;
             wdtcounter = 0;
-            pc = 0;
+            programmcounter = 0;
             Pcl = 0;
             wdttime = 0;
             

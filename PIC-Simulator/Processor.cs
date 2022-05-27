@@ -39,7 +39,6 @@ namespace PIC_Simulator
 
         public void Clock_Tick(object sender, object e)
         {
-            //codeInterface.selectCode(runlines[memory.Pcl].Linenumber - 1);
             codeInterface.portTrigger(memory.memoryb1[1, Memory.TRISA], memory.memoryb1[1, Memory.TRISB]);
             if(brkpnts.Contains(runlines[memory.programmcounter].Linenumber - 1))
             {
@@ -319,7 +318,6 @@ namespace PIC_Simulator
             }
             Line line = runlines[memory.programmcounter];
             
-            //memory.Pcl++;
             memory.increasePc();
 
             if((memory.memoryb1[0, Memory.STATUS] & 0b_0100000) == 0b_100000)
@@ -381,11 +379,11 @@ namespace PIC_Simulator
 
         public void executeInterrupt()
         {
-            memory.push(memory.Pcl);
+            memory.push(memory.programmcounter);
             memory.memoryb1[0, Memory.INTCON] = memory.clrBit(memory.memoryb1[0, Memory.INTCON],7);
             if (!isSleeping)
             {
-                memory.Pcl = 0x0004;
+                memory.programmcounter = 0x0004;
             }
         }
 
@@ -1061,7 +1059,6 @@ namespace PIC_Simulator
         public void retlw(short value)
         {
             memory.memoryb1[0,Memory.W] = value;
-            //memory.memoryb1[currentBank, Memory.PCL] = memory.pop();
             memory.setPc(memory.pop());
             nop();
             checkTMR0();
@@ -1083,7 +1080,6 @@ namespace PIC_Simulator
 
         public void Return()
         {
-            //memory.Pcl = memory.pop();
             memory.setPc(memory.pop());
             nop();
             checkTMR0();
