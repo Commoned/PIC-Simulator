@@ -313,6 +313,7 @@ namespace PIC_Simulator
                 checkTMR0();
                 checkINT();
                 checkRBINT();
+                memory.commandcounter++;
                 memory.updateMemView();
                 return;
             }
@@ -384,6 +385,7 @@ namespace PIC_Simulator
             if (!isSleeping)
             {
                 memory.programmcounter = 0x0004;
+                memory.Pcl = 0x004;
             }
         }
 
