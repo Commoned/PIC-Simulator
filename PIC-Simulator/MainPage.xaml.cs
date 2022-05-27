@@ -374,6 +374,18 @@ namespace PIC_Simulator
             memory.WDTE = 0;
             WDTChecker.Content = "WDT inaktiv";
         }
+
+        private void ViewEEPROM_Click(object sender, RoutedEventArgs e)
+        {
+            EEPROMPopup.IsOpen = true;
+            memory.eepromViewOpen = true;
+        }
+
+        private void closeEEPROM_Click(object sender, RoutedEventArgs e)
+        {
+            EEPROMPopup.IsOpen = false;
+            memory.eepromViewOpen = false;
+        }
     }
     public class ThumbConverter : IValueConverter
     {

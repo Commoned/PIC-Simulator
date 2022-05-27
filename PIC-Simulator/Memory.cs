@@ -35,7 +35,8 @@ namespace PIC_Simulator
         public short[,] memoryb1 = new short[2, 129];
         public short[,] comparememoryb1 = new short[2, 129];
         public ObservableCollection<string> memView = new ObservableCollection<string>();
-        
+        public ObservableCollection<string> eepromView = new ObservableCollection<string>();
+
         public short stackpointer = 7;
         public short[] stack = new short[8];
 
@@ -53,7 +54,7 @@ namespace PIC_Simulator
 
         public short WDTE = 1;
         public short vt=0xFF;
-        
+        public bool eepromViewOpen;
 
         public Memory()
         {
@@ -66,6 +67,10 @@ namespace PIC_Simulator
             for (int i = 0; i <= 127; i++)
             {
                 memView.Add(string.Format("{0:X2}", memoryb1[1, i]));
+            }
+            for (int i = 0; i <= 1023; i++)
+            {
+                eepromView.Add(string.Format("{0:X2}", eeprom[i]));
             }
 
         }
@@ -160,6 +165,18 @@ namespace PIC_Simulator
             set
             {
                 this.memView = value;
+            }
+        }
+
+        public ObservableCollection<string> EEPROMView
+        {
+            get
+            {
+                return eepromView;
+            }
+            set
+            {
+                this.eepromView = value;
             }
         }
 
@@ -313,7 +330,7 @@ namespace PIC_Simulator
         {
             get
             {
-                runtime = runtime + quarztakt;
+                
                 string num = string.Format("\u0009 {0:F4} \u00b5s", (runtime));
                 return num;
             }
@@ -323,7 +340,7 @@ namespace PIC_Simulator
         {
             get
             {
-                wdttime = wdttime + quarztakt;
+                
                 string num = string.Format("\u0009 {0:F4} \u00b5s", (wdttime));
                 
                 return num;
@@ -393,6 +410,16 @@ namespace PIC_Simulator
                 }
                 comparememoryb1[0, i] = memoryb1[0, i];
                 comparememoryb1[1, i] = memoryb1[1, i];
+            }
+            if (eepromViewOpen)
+            {
+                for (int i = 0; i <= 1023; i++)
+                {
+                    if (eepromView[i] != string.Format("{0:X2}", eeprom[i]))
+                    {
+                        eepromView[i] = string.Format("{0:X2}", eeprom[i]);
+                    }
+                }
             }
         }
 
