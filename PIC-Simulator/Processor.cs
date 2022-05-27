@@ -216,8 +216,8 @@ namespace PIC_Simulator
             {
                 memory.wdtcounter++;
                 
-#if DEBUG // Because speed
-                if (memory.wdttime >= memory.vt * 180)
+
+                if (memory.wdttime >= memory.vt * 18000)
                 {
                     if (isSleeping)
                     {
@@ -227,22 +227,10 @@ namespace PIC_Simulator
                     else
                     {
                         memory.resetMem();
-                        memory.memoryb1[0,Memory.STATUS] = memory.clrBit(memory.memoryb1[0, Memory.STATUS], 4);
+                        memory.memoryb1[0, Memory.STATUS] = memory.clrBit(memory.memoryb1[0, Memory.STATUS], 4);
                     }
                 }
-#else
-                if (memory.wdttime == memory.vt * 18000)
-                {
-                    if (isSleeping)
-                    {
 
-                    }
-                    else
-                    {
-                        memory.resetMem();
-                    }
-                }
-#endif
 
             }
         }
@@ -315,7 +303,8 @@ namespace PIC_Simulator
             {
                 return;
             }
-            if(isSleeping){
+            if(isSleeping)
+            {
                 checkWDT();
                 return;
             }
@@ -647,6 +636,12 @@ namespace PIC_Simulator
 
             switch (instruction)
             {
+                case 0x64:
+                    clrwdt();
+                    break;
+                case 0x63:
+                    sleep();
+                    break;
                 case 0x30: //movlw
                     movlw(value);
                     break;
@@ -1093,6 +1088,14 @@ namespace PIC_Simulator
             memory.memoryb1[1, Memory.OPTION] = memory.setBit(memory.memoryb1[1, Memory.OPTION], 1);
             memory.memoryb1[1, Memory.OPTION] = memory.setBit(memory.memoryb1[1, Memory.OPTION], 2);
             memory.updateMemView();
+        }
+
+        public void sleep()
+        {
+            memory.wdtcounter = 0;
+            isSleeping = true;
+            memory.memoryb1[0, Memory.STATUS] = memory.clrBit(memory.memoryb1[0, Memory.STATUS], 3);
+            memory.memoryb1[0, Memory.STATUS] = memory.setBit(memory.memoryb1[0, Memory.STATUS], 4);
         }
 
         public void clrf(short value)
