@@ -69,8 +69,15 @@ namespace PIC_Simulator
             memory.initMem();
 
             Start_Button.IsEnabled = true;
-
-            selectCode(processor.runlines[memory.Pcl].Linenumber - 1);
+            try
+            {
+                selectCode(processor.runlines[memory.Pcl].Linenumber - 1);
+            }
+            catch (Exception ex)
+            {
+                Start_Button.IsEnabled = false;
+                Skip_Button.IsEnabled = false;
+            }
 
         }
 
@@ -179,8 +186,13 @@ namespace PIC_Simulator
 
         private void Reset_Button_Click(object sender, RoutedEventArgs e)
         {
+            if(processor.eeWriting)
+            {
+                memory.memoryb1[1, Memory.EECON1] = memory.setBit(memory.memoryb1[1, Memory.EECON1], 3); // If Writing is interrupted error
+            }
             memory.resetMem();
             processor.isSleeping = false;
+            
             selectCode(processor.runlines[memory.Pcl].Linenumber - 1);
         }
 

@@ -52,7 +52,7 @@ namespace PIC_Simulator
             {
                 throw;
             }
-            
+            if (file == null) return;
 
             //Windows.Storage.StorageFile sampleFile = await StorageFile.GetFileFromPathAsync(file.Path);
             //var input = await FileIO.ReadLinesAsync(file,Windows.Storage.Streams.UnicodeEncoding.Utf8);

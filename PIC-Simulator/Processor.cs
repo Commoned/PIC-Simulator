@@ -27,6 +27,7 @@ namespace PIC_Simulator
         int precyclerbint = 0;
         public bool isSleeping=false;
         public bool eeWriting = false;
+        short eeSequence = 0;
 
         public Processor(ICodeInterface codeInterface,Memory memory)
         {
@@ -232,6 +233,10 @@ namespace PIC_Simulator
                     }
                     else
                     {
+                        if (eeWriting)
+                        {
+                            memory.memoryb1[1, Memory.EECON1] = memory.setBit(memory.memoryb1[1, Memory.EECON1], 3); // If Writing is interrupted error
+                        }
                         memory.resetMem();
                         memory.memoryb1[0, Memory.STATUS] = memory.clrBit(memory.memoryb1[0, Memory.STATUS], 4);
                         memory.memoryb1[0, Memory.STATUS] = memory.clrBit(memory.memoryb1[0, Memory.STATUS], 3);
@@ -305,17 +310,52 @@ namespace PIC_Simulator
 
         public void checkEE()
         {
-
+            if(memory.checkBit(memory.memoryb1[1,Memory.EECON1],0))
+            {
+                readEE();
+            }
+            if(memory.checkBit(memory.memoryb1[1, Memory.EECON1], 2))
+            {
+                // Following is EEPROM write Sequence
+                if(eeSequence == 0 && memory.memoryb1[1, Memory.EECON2] == 0x55 && !memory.checkBit(memory.memoryb1[1, Memory.EECON1], 1))
+                {
+                    eeSequence = 1;
+                    return;
+                }
+            }
+            else
+            {
+                memory.memoryb1[1, Memory.EECON1] = memory.clrBit(memory.memoryb1[1, Memory.EECON1],1);
+            }
+            if (eeSequence == 1 && memory.memoryb1[1, Memory.EECON2] == 0xAA && !memory.checkBit(memory.memoryb1[1, Memory.EECON1], 1))
+            {
+                eeSequence = 2;
+                return;
+            }
+            if (eeSequence == 2 && memory.checkBit(memory.memoryb1[1, Memory.EECON1], 1))
+            {
+                eeSequence = 0;
+                writeEE();
+            }
+            
         }
 
         public void writeEE()
         {
+            eeWriting = true;
+            memory.eeprom[memory.memoryb1[0,Memory.EEADR]] = memory.memoryb1[0, Memory.EEDATA];
 
+            memory.memoryb1[1, Memory.EECON1] = memory.setBit(memory.memoryb1[1, Memory.EECON1], 4); // set EEIF (Interrupt)
+
+            
+            memory.memoryb1[1, Memory.EECON1] = memory.clrBit(memory.memoryb1[1, Memory.EECON1], 3); // If Writing was interrupted error -> Cleared after write
+            eeWriting = false;
         }
 
         public void readEE()
         {
-
+            memory.memoryb1[0, Memory.EEDATA] = memory.eeprom[memory.memoryb1[0, Memory.EEADR]];
+            memory.memoryb1[1, Memory.EECON1] = memory.clrBit(memory.memoryb1[1, Memory.EECON1], 0);
         }
 
         public void Step()
@@ -378,6 +418,11 @@ namespace PIC_Simulator
                     executeInterrupt();
                     return true;
                 }
+                if (memory.checkBit(memory.memoryb1[0, Memory.INTCON], 6) && memory.checkBit(memory.memoryb1[1, Memory.EECON1], 4))
+                {
+                    executeInterrupt();
+                    return true;
+                }
                 return false;
             }
             else
@@ -390,6 +435,12 @@ namespace PIC_Simulator
                 if (isSleeping && memory.checkBit(memory.memoryb1[0, Memory.INTCON], 5) && memory.checkBit(memory.memoryb1[0, Memory.INTCON], 2))
                 {
                     isSleeping = false;
+                    return true;
+                }
+                if (memory.checkBit(memory.memoryb1[0, Memory.INTCON], 6) && memory.checkBit(memory.memoryb1[1, Memory.EECON1], 4))
+                {
+                    isSleeping = false;
+                    executeInterrupt();
                     return true;
                 }
                 return false;
