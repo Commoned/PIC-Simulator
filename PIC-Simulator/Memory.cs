@@ -538,6 +538,7 @@ namespace PIC_Simulator
             pc = 0;
             Pcl = 0;
             wdttime = 0;
+            
             initMem();
             // To be continued...
         }

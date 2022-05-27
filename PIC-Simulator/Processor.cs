@@ -307,6 +307,8 @@ namespace PIC_Simulator
             {
                 checkWDT();
                 checkTMR0();
+                checkINT();
+                checkRBINT();
                 memory.updateMemView();
                 return;
             }
@@ -357,6 +359,16 @@ namespace PIC_Simulator
             }
             else
             {
+                if(isSleeping && memory.checkBit(memory.memoryb1[0, Memory.INTCON], 4) && memory.checkBit(memory.memoryb1[0, Memory.INTCON], 1))
+                {
+                    isSleeping = false;
+                    return true;
+                }
+                if (isSleeping && memory.checkBit(memory.memoryb1[0, Memory.INTCON], 5) && memory.checkBit(memory.memoryb1[0, Memory.INTCON], 2))
+                {
+                    isSleeping = false;
+                    return true;
+                }
                 return false;
             }
         }
@@ -365,7 +377,10 @@ namespace PIC_Simulator
         {
             memory.push(memory.Pcl);
             memory.memoryb1[0, Memory.INTCON] = memory.clrBit(memory.memoryb1[0, Memory.INTCON],7);
-            memory.Pcl = 0x0004;
+            if (!isSleeping)
+            {
+                memory.Pcl = 0x0004;
+            }
         }
 
 
