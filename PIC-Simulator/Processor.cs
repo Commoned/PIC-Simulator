@@ -399,7 +399,7 @@ namespace PIC_Simulator
             line = null;
             checkWDT();
             checkEE();
-
+            memory.updateMemView();
         }
 
         public bool checkInterrupt()
