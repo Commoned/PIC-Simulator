@@ -31,7 +31,7 @@ namespace PIC_Simulator
         public static byte W = 0x80;
 
 
-        public short[] eeprom = new short[1024];
+        public short[] eeprom = new short[64];
         public short[,] memoryb1 = new short[2, 129];
         public short[,] comparememoryb1 = new short[2, 129];
         public ObservableCollection<string> memView = new ObservableCollection<string>();
@@ -68,7 +68,7 @@ namespace PIC_Simulator
             {
                 memView.Add(string.Format("{0:X2}", memoryb1[1, i]));
             }
-            for (int i = 0; i <= 1023; i++)
+            for (int i = 0; i <= 63; i++)
             {
                 eepromView.Add(string.Format("{0:X2}", eeprom[i]));
             }
@@ -413,7 +413,7 @@ namespace PIC_Simulator
             }
             if (eepromViewOpen)
             {
-                for (int i = 0; i <= 1023; i++)
+                for (int i = 0; i <= 63; i++)
                 {
                     if (eepromView[i] != string.Format("{0:X2}", eeprom[i]))
                     {
