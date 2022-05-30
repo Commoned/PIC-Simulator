@@ -66,7 +66,7 @@ namespace PIC_Simulator
                 }
             }
             memory.initMem();
-
+            processor.isSleeping = false;
             Start_Button.IsEnabled = true;
             try
             {
@@ -398,6 +398,32 @@ namespace PIC_Simulator
         {
             memory.runtime = 0;
             memory.updateMemView();
+        }
+
+        private void Speed_Button_Click(object sender, RoutedEventArgs e)
+        {
+            
+            
+            switch((string)Speed_Button.Content)
+            {
+                case "Fast":
+                    processor.Clock.Interval = new TimeSpan(0,0,1);
+                    Speed_Button.Content = "Slow";
+                    break;
+                case "Med":
+                    processor.Clock.Interval = new TimeSpan(0);
+                    Speed_Button.Content = "Fast";
+                    break;
+                case "Slow":
+                    processor.Clock.Interval = new TimeSpan(0,0,0,0,200);
+                    Speed_Button.Content = "Med";
+                    break;
+                default:
+                    processor.Clock.Interval = new TimeSpan(0);
+                    Speed_Button.Content = "Fast";
+                    break;
+            }
+
         }
     }
     public class ThumbConverter : IValueConverter

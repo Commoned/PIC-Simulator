@@ -49,7 +49,9 @@
         <StackPanel x:Name="Control_Stack" Width="55" HorizontalAlignment="Left" Background="Gray" Grid.Row="1" Grid.RowSpan="3">
             <Button x:Name="Start_Button" IsEnabled="False" Click="Start_Button_Click" Background="Green" Width="{Binding ActualWidth, ElementName=Control_Stack}" Height="{Binding ActualWidth, ElementName=Control_Stack}" FontSize="30" FontFamily="Segoe MDL2 Assets" Content="&#xE768;"></Button>
             <Button x:Name="Skip_Button" Click="Skip_Button_Click" FontFamily="Segoe MDL2 Assets" Content="&#xEA62;" FontSize="30" Background="Gray" Width="{Binding ActualWidth, ElementName=Control_Stack}" Height="{Binding ActualWidth, ElementName=Control_Stack}"/>
-            <Button x:Name="Reset_Button" Click="Reset_Button_Click"  Background="Gray" Width="{Binding ActualWidth, ElementName=Control_Stack}" Height="{Binding ActualWidth, ElementName=Control_Stack}" FontSize="30" FontFamily="Segoe MDL2 Assets" Content="&#xE777;"></Button>        
+            <Button x:Name="Reset_Button" Click="Reset_Button_Click"  Background="Gray" Width="{Binding ActualWidth, ElementName=Control_Stack}" Height="{Binding ActualWidth, ElementName=Control_Stack}" FontSize="30" FontFamily="Segoe MDL2 Assets" Content="&#xE777;"></Button>
+            <TextBlock Text="Sim Speed:" TextAlignment="Center" TextWrapping="WrapWholeWords"></TextBlock>
+            <Button x:Name="Speed_Button" FontSize="15" Content="Fast" Click="Speed_Button_Click"  Background="Gray" Width="{Binding ActualWidth, ElementName=Control_Stack}" Height="{Binding ActualWidth, ElementName=Control_Stack}" ></Button>
         </StackPanel>
         <TextBlock FontSize="36" Grid.Row="2" Grid.Column="1" VerticalAlignment="Top" Text="RAM"/>
         <ScrollViewer Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" Margin="10,50,0,0" VerticalScrollBarVisibility="Auto" Width="360">
