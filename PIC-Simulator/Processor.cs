@@ -17,7 +17,7 @@ namespace PIC_Simulator
         public bool isRunning = false;
         ICodeInterface codeInterface;
         public DispatcherTimer Clock = new DispatcherTimer();
-        public int quartz = 1;
+        public int quartz = 0;
         bool isSkip;
         public List<int> brkpnts = new List<int>();
         short currentBank = 0;
@@ -230,6 +230,7 @@ namespace PIC_Simulator
                         isSleeping = false;
                         memory.wdtcounter = 0;
                         memory.wdttime = 0;
+                        memory.memoryb1[0, Memory.STATUS] = memory.clrBit(memory.memoryb1[0, Memory.STATUS], 4);
                     }
                     else
                     {
@@ -433,11 +434,15 @@ namespace PIC_Simulator
                 if(isSleeping && memory.checkBit(memory.memoryb1[0, Memory.INTCON], 4) && memory.checkBit(memory.memoryb1[0, Memory.INTCON], 1))
                 {
                     isSleeping = false;
+                    Step();
+                    executeInterrupt();
                     return true;
                 }
                 if (isSleeping && memory.checkBit(memory.memoryb1[0, Memory.INTCON], 5) && memory.checkBit(memory.memoryb1[0, Memory.INTCON], 2))
                 {
                     isSleeping = false;
+                    Step();
+                    executeInterrupt();
                     return true;
                 }
                 if (memory.checkBit(memory.memoryb1[0, Memory.INTCON], 6) && memory.checkBit(memory.memoryb1[1, Memory.EECON1], 4))

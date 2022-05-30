@@ -72,7 +72,7 @@ namespace PIC_Simulator
             {
                 selectCode(processor.runlines[memory.Pcl].Linenumber - 1);
             }
-            catch (Exception ex)
+            catch
             {
                 Start_Button.IsEnabled = false;
                 Skip_Button.IsEnabled = false;
@@ -83,7 +83,7 @@ namespace PIC_Simulator
         public void selectCode(int line)
         {
             this.CodeStack.SelectedIndex = line;
-            this.CodeStack.ScrollIntoView(this.CodeStack.SelectedItem,ScrollIntoViewAlignment.Leading);
+            this.CodeStack.ScrollIntoView(this.CodeStack.SelectedItem,ScrollIntoViewAlignment.Default);
             
         }
 
@@ -324,6 +324,14 @@ namespace PIC_Simulator
                 {
                     memory.memoryb1[0, Memory.INTCON] = short.Parse(RegVal.Text, System.Globalization.NumberStyles.HexNumber); 
                 }
+                if (RegNum.Text.ToUpper() == "OPTION")
+                {
+                    memory.memoryb1[1, Memory.OPTION] = short.Parse(RegVal.Text, System.Globalization.NumberStyles.HexNumber);
+                }
+                if (RegNum.Text.ToUpper() == "STATUS")
+                {
+                    memory.memoryb1[0, Memory.STATUS] = short.Parse(RegVal.Text, System.Globalization.NumberStyles.HexNumber);
+                }
                 if (memory.checkBit(short.Parse(RegNum.Text, System.Globalization.NumberStyles.HexNumber), 7))
                 {
                     
@@ -335,7 +343,7 @@ namespace PIC_Simulator
                 }
                 
             }
-            catch (Exception ex)
+            catch
             {
                 RegeditPopup.IsOpen = true;
             }
@@ -406,4 +414,3 @@ namespace PIC_Simulator
         }
     }
 }
-

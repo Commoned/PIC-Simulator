@@ -70,7 +70,7 @@ namespace PIC_Simulator
                 }
                 catch { continue; }
 
-                var strings = Regex.Split(s, "[0-9]{5}");
+                var strings = Regex.Split(s, "[0-9]{5}\\s");
 
                 
                 Regex.Match(s, "");
