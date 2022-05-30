@@ -292,7 +292,7 @@ namespace PIC_Simulator
             {
                 memory.memoryb1[0, Memory.INTCON] = memory.setBit(memory.memoryb1[0, Memory.INTCON], 0);
             }
-            precyclerbint = memory.memoryb1[0,Memory.PORTB] & 0b_1111000;
+            precyclerbint = memory.memoryb1[0,Memory.PORTB] & 0b_11110000;
         }
 
         public void mirrorRegs()
