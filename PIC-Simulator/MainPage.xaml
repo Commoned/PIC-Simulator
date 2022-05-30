@@ -198,9 +198,10 @@
             <Border BorderThickness="2" BorderBrush="SlateGray">
                 <StackPanel>
                     <StackPanel Orientation="Horizontal">
-                    <TextBlock Margin="0,0,5,0">Runtimecounter:</TextBlock>
-                    <TextBlock Text="{Binding runtimecounter}"></TextBlock>
-                </StackPanel>
+                        <TextBlock Margin="0,0,5,0">Runtimecounter:</TextBlock>
+                        <TextBlock Text="{Binding runtimecounter}"></TextBlock>
+                        <Button x:Name="resetTime" Content="Reset" Height="25" FontSize="10" Margin="5,0,0,0" Click="resetTime_Click"></Button>
+                    </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Margin="0,0,5,0">WDT Counter:</TextBlock>
                     <TextBlock Text="{Binding Wdtcounter}"></TextBlock>

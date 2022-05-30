@@ -386,6 +386,12 @@ namespace PIC_Simulator
             EEPROMPopup.IsOpen = false;
             memory.eepromViewOpen = false;
         }
+
+        private void resetTime_Click(object sender, RoutedEventArgs e)
+        {
+            memory.runtime = 0;
+            memory.updateMemView();
+        }
     }
     public class ThumbConverter : IValueConverter
     {
