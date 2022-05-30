@@ -31,7 +31,6 @@ namespace PIC_Simulator
         private FileReader filereader;
         bool autoCheck;
         TextBlock tempTB;
-        ThumbConverter converter;
 
         public MainPage()
         {
@@ -373,6 +372,24 @@ namespace PIC_Simulator
         {
             memory.WDTE = 0;
             WDTChecker.Content = "WDT inaktiv";
+        }
+
+        private void ViewEEPROM_Click(object sender, RoutedEventArgs e)
+        {
+            EEPROMPopup.IsOpen = true;
+            memory.eepromViewOpen = true;
+        }
+
+        private void closeEEPROM_Click(object sender, RoutedEventArgs e)
+        {
+            EEPROMPopup.IsOpen = false;
+            memory.eepromViewOpen = false;
+        }
+
+        private void resetTime_Click(object sender, RoutedEventArgs e)
+        {
+            memory.runtime = 0;
+            memory.updateMemView();
         }
     }
     public class ThumbConverter : IValueConverter

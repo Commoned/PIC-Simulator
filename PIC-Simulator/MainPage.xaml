@@ -14,7 +14,10 @@
         <SolidColorBrush x:Key="GrayColor" Color="DimGray" />
         <local:ThumbConverter x:Key="ThumbConverter" />
     </Page.Resources>
+    
+    
     <Grid>
+        
         <Grid.RowDefinitions>
             <RowDefinition Height="45"/>
             <RowDefinition Height="60"/>
@@ -28,12 +31,17 @@
 
 
         </Grid.ColumnDefinitions>
+        
+        
         <MenuBar VerticalAlignment="Stretch" Height="45"  Grid.Row="0" Grid.ColumnSpan="3" Background="Gray">
             <MenuBarItem Width="auto"  Title="Data">
                 <MenuFlyoutItem x:Name="openButton" Text="Open file..." Click="openButton_Click">
-
                 </MenuFlyoutItem>
                 <MenuFlyoutItem x:Name="settingsButton" Text="Settings..." Click="settingsButton_Click">
+                </MenuFlyoutItem>
+            </MenuBarItem>
+            <MenuBarItem Title="EEPROM">
+                <MenuFlyoutItem x:Name="ViewEEPROM" Text="View..." Click="ViewEEPROM_Click">
                 </MenuFlyoutItem>
             </MenuBarItem>
         </MenuBar>
@@ -190,9 +198,10 @@
             <Border BorderThickness="2" BorderBrush="SlateGray">
                 <StackPanel>
                     <StackPanel Orientation="Horizontal">
-                    <TextBlock Margin="0,0,5,0">Runtimecounter:</TextBlock>
-                    <TextBlock Text="{Binding runtimecounter}"></TextBlock>
-                </StackPanel>
+                        <TextBlock Margin="0,0,5,0">Runtimecounter:</TextBlock>
+                        <TextBlock Text="{Binding runtimecounter}"></TextBlock>
+                        <Button x:Name="resetTime" Content="Reset" Height="25" FontSize="10" Margin="5,0,0,0" Click="resetTime_Click"></Button>
+                    </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Margin="0,0,5,0">WDT Counter:</TextBlock>
                     <TextBlock Text="{Binding Wdtcounter}"></TextBlock>
@@ -335,6 +344,36 @@
                 </StackPanel>
             </Border>
             
+        </Popup>
+        <Popup x:Name="EEPROMPopup"  Canvas.ZIndex="99" >
+            <Border BorderBrush="{StaticResource ApplicationForegroundThemeBrush}" 
+            Background="{StaticResource ApplicationPageBackgroundThemeBrush}"
+            BorderThickness="2" Margin="60,60,0,0">
+                <StackPanel>
+                    <RelativePanel>
+                        <TextBlock Text="EEPROM" FontSize="20"></TextBlock>
+                        <Button RelativePanel.AlignRightWithPanel="True" HorizontalAlignment="Right" x:Name="closeEEPROM" Content="X" Click="closeEEPROM_Click"></Button>
+                    </RelativePanel>
+                    <ScrollViewer  Height="900" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" Margin="10,10,10,10" VerticalScrollBarVisibility="Auto" >
+                        <ItemsControl HorizontalAlignment="Left"  x:Name="eepromitems" x:DefaultBindMode="TwoWay" ItemsSource="{Binding EEPROMView}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <ItemsWrapGrid MaximumRowsOrColumns="16" Orientation="Horizontal"></ItemsWrapGrid>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border  Background="SlateGray" BorderBrush="DarkSlateGray" BorderThickness="1">
+                                        <TextBlock  Tag="memory"  TextAlignment="Center"   Margin="10" Width="20"  Text="{Binding UpdateSourceTrigger=PropertyChanged}"/>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                            <TextBlock>TEst</TextBlock>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </StackPanel>
+            </Border>
+
         </Popup>
     </Grid>
     

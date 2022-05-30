@@ -221,6 +221,7 @@ namespace PIC_Simulator
             if (memory.WDTE == 1)
             {
                 memory.wdtcounter++;
+                memory.wdttime = memory.wdttime + memory.quarztakt;
 
                 if (memory.wdttime >= memory.vt * 18000)
                 {
@@ -228,6 +229,7 @@ namespace PIC_Simulator
                     {
                         isSleeping = false;
                         memory.wdtcounter = 0;
+                        memory.wdttime = 0;
                     }
                     else
                     {
@@ -369,7 +371,8 @@ namespace PIC_Simulator
                 checkTMR0();
                 checkINT();
                 checkRBINT();
-                memory.commandcounter++;
+                //memory.commandcounter++;
+                memory.runtime = memory.runtime + memory.quarztakt;
                 memory.updateMemView();
                 return;
             }
@@ -386,9 +389,9 @@ namespace PIC_Simulator
                 currentBank = 0;
             }
 
-            memory.commandcounter++;
-
-
+            //memory.commandcounter++;
+            memory.runtime = memory.runtime + memory.quarztakt;
+            
             this.Decode(line.instruction);
             checkTMR0();
             checkINT();
@@ -396,6 +399,7 @@ namespace PIC_Simulator
             line = null;
             checkWDT();
             checkEE();
+
         }
 
         public bool checkInterrupt()

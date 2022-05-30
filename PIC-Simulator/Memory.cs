@@ -33,8 +33,10 @@ namespace PIC_Simulator
 
         public short[] eeprom = new short[1024];
         public short[,] memoryb1 = new short[2, 129];
+        public short[,] comparememoryb1 = new short[2, 129];
         public ObservableCollection<string> memView = new ObservableCollection<string>();
-        
+        public ObservableCollection<string> eepromView = new ObservableCollection<string>();
+
         public short stackpointer = 7;
         public short[] stack = new short[8];
 
@@ -43,6 +45,7 @@ namespace PIC_Simulator
 
         public short programmcounter = 0;
         public string pclManipulation = "";
+        public double runtime = 0.0;
         public double commandcounter = 0.0 ;
         public double wdtcounter = 0.0;
         public double wdttime = 0.0;
@@ -51,7 +54,7 @@ namespace PIC_Simulator
 
         public short WDTE = 1;
         public short vt=0xFF;
-        
+        public bool eepromViewOpen;
 
         public Memory()
         {
@@ -64,6 +67,10 @@ namespace PIC_Simulator
             for (int i = 0; i <= 127; i++)
             {
                 memView.Add(string.Format("{0:X2}", memoryb1[1, i]));
+            }
+            for (int i = 0; i <= 1023; i++)
+            {
+                eepromView.Add(string.Format("{0:X2}", eeprom[i]));
             }
 
         }
@@ -158,6 +165,18 @@ namespace PIC_Simulator
             set
             {
                 this.memView = value;
+            }
+        }
+
+        public ObservableCollection<string> EEPROMView
+        {
+            get
+            {
+                return eepromView;
+            }
+            set
+            {
+                this.eepromView = value;
             }
         }
 
@@ -311,7 +330,8 @@ namespace PIC_Simulator
         {
             get
             {
-                string num = string.Format("\u0009 {0:F4} \u00b5s", (commandcounter * quarztakt));
+                
+                string num = string.Format("\u0009 {0:F4} \u00b5s", (runtime));
                 return num;
             }
         }
@@ -320,8 +340,8 @@ namespace PIC_Simulator
         {
             get
             {
-                wdttime = wdtcounter * quarztakt;
-                string num = string.Format("\u0009 {0:F4} \u00b5s", (wdtcounter * quarztakt));
+                
+                string num = string.Format("\u0009 {0:F4} \u00b5s", (wdttime));
                 
                 return num;
             }
@@ -329,55 +349,77 @@ namespace PIC_Simulator
 
         public void updateMemView()
         {
-            /*
-            foreach(var item in memoryb1)
+            if(memoryb1[0,W] != comparememoryb1[0,W])
             {
-                if (i == 256) continue;
-                if (i <= 127 && memView[i]!= string.Format("{0:X2}", memoryb1[0,i]))
-                {
-                    memView[i] = string.Format("{0:X2}", memoryb1[0, i]);
-                }
-                
-                if (i > 128 && memView[i] != string.Format("{0:X2}", memoryb1[1, i/2]))
-                {
-                    memView[i] = string.Format("{0:X2}", memoryb1[1, i/2]);
-                }
-                i++;
-            }*/
-
-            for(int i=0; i<=127;i++)
-            {
-                memView[i] = string.Format("{0:X2}", memoryb1[0, i]);
+                NotifyPropertyChanged("WReg");
             }
-            for (int i = 0; i <= 127; i++)
+            if (memoryb1[0, STATUS] != comparememoryb1[0, STATUS])
             {
-                memView[i+128] = string.Format("{0:X2}", memoryb1[1, i]);
+                NotifyPropertyChanged("Status");
+                NotifyPropertyChanged("Statusbits");
+            }
+            if (memoryb1[0, PCL] != comparememoryb1[0, PCL])
+            {
+                NotifyPropertyChanged("PclView");
+            }
+            if (memoryb1[0, FSR] != comparememoryb1[0, FSR])
+            {
+                NotifyPropertyChanged("FSRReg");
+            }
+            if (memoryb1[0, INTCON] != comparememoryb1[0, INTCON])
+            {
+                NotifyPropertyChanged("Intcon");
+                NotifyPropertyChanged("Intconbits");
+            }
+            if (memoryb1[1, OPTION] != comparememoryb1[1, OPTION])
+            {
+                NotifyPropertyChanged("Option");
+                NotifyPropertyChanged("Optionbits");
+            }
+            if (memoryb1[0, PCLATH] != comparememoryb1[0, PCLATH])
+            {
+                NotifyPropertyChanged("PclathView");
+            }
+            if (memoryb1[1, EECON1] != comparememoryb1[1, EECON1])
+            {
+                NotifyPropertyChanged("Eecon1"); NotifyPropertyChanged("Eecon1bits");
             }
             string[] toNotify = {
-                "WReg",
-                "Status",
-                "PclView",
-                "FSRReg",
-                "Status",
-                "Statusbits",
-                "Intcon",
-                "Intconbits",
                 "S0", "S1", "S2", "S3", "S4", "S5", "S6", "S7",
                 "Stackpointer",
-                "Option",
-                "Optionbits",
-                "PclathView",
                 "Wdtcounter",
                 "runtimecounter",
                 "Vt",
-                "Eecon1",
-                "Eecon1bits",
                 "PC",
 
             };
             foreach(string s in toNotify)
             {
                 NotifyPropertyChanged(s);
+            }
+
+            for (int i = 0; i <= 127; i++)
+            {
+                if (memView[i] != string.Format("{0:X2}", memoryb1[0, i]))
+                {
+                    memView[i] = string.Format("{0:X2}", memoryb1[0, i]);
+                }
+                if (memView[i + 128] != string.Format("{0:X2}", memoryb1[1, i]))
+                {
+                    memView[i + 128] = string.Format("{0:X2}", memoryb1[1, i]);
+                }
+                comparememoryb1[0, i] = memoryb1[0, i];
+                comparememoryb1[1, i] = memoryb1[1, i];
+            }
+            if (eepromViewOpen)
+            {
+                for (int i = 0; i <= 1023; i++)
+                {
+                    if (eepromView[i] != string.Format("{0:X2}", eeprom[i]))
+                    {
+                        eepromView[i] = string.Format("{0:X2}", eeprom[i]);
+                    }
+                }
             }
         }
 
