@@ -391,7 +391,7 @@ namespace PIC_Simulator
 
             //memory.commandcounter++;
             memory.runtime = memory.runtime + memory.quarztakt;
-
+            
             this.Decode(line.instruction);
             checkTMR0();
             checkINT();
@@ -399,6 +399,7 @@ namespace PIC_Simulator
             line = null;
             checkWDT();
             checkEE();
+
         }
 
         public bool checkInterrupt()

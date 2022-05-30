@@ -31,7 +31,6 @@ namespace PIC_Simulator
         private FileReader filereader;
         bool autoCheck;
         TextBlock tempTB;
-        ThumbConverter converter;
 
         public MainPage()
         {
