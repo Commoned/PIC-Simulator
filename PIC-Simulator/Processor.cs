@@ -952,14 +952,21 @@ namespace PIC_Simulator
 
             if (currentBank == 0 && (freg == Memory.PORTA || freg == Memory.PORTB))
             {
-                value = handleDataLatch(currentBank, destreg, memory.memoryb1[currentBank, freg]);
+                memory.memoryb1[currentBank,destreg] = handleDataLatch(currentBank, destreg, memory.memoryb1[currentBank, freg]);
             }
+            
             if (currentBank == 1 && (freg == Memory.TRISA || freg == Memory.TRISB))
             {
                 _ = handleDataLatch(currentBank, destreg, memory.memoryb1[currentBank, freg]);
+                memory.memoryb1[currentBank, destreg] = memory.memoryb1[currentBank, freg];
+            }
+            else
+            {
+                memory.memoryb1[currentBank, destreg] = memory.memoryb1[currentBank, freg];
+
             }
 
-            memory.memoryb1[currentBank,destreg] = memory.memoryb1[currentBank,freg];
+            
             if (destreg == Memory.TMR0)
             {
                 initTMR0();
