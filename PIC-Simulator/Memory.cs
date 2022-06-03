@@ -44,7 +44,6 @@ namespace PIC_Simulator
         public short trisbLatch;
 
         public short programmcounter = 0;
-        public string pclManipulation = "";
         public double runtime = 0.0;
         public double commandcounter = 0.0 ;
         public double wdtcounter = 0.0;
@@ -230,6 +229,7 @@ namespace PIC_Simulator
                 return hexnum;
             }
         }
+        
         public char[] Statusbits
         {
             get
@@ -240,7 +240,6 @@ namespace PIC_Simulator
 
             }
         }
-
         public string Status
         {
             get
@@ -257,8 +256,6 @@ namespace PIC_Simulator
                 return hexnum;
             }
         }
-
-
         public string Option
         {
             get
@@ -267,7 +264,6 @@ namespace PIC_Simulator
                 return hexnum;
             }
         }
-
         public char[] Optionbits
         {
             get
@@ -285,7 +281,6 @@ namespace PIC_Simulator
                 return hexnum;
             }
         }
-
         public char[] Intconbits
         {
             get
@@ -294,8 +289,6 @@ namespace PIC_Simulator
                 return bits;
             }
         }
-
-
         public string Eecon1
         {
             get
@@ -304,7 +297,6 @@ namespace PIC_Simulator
                 return hexnum;
             }
         }
-
         public char[] Eecon1bits
         {
             get
@@ -314,7 +306,6 @@ namespace PIC_Simulator
                 return bits;
             }
         }
-
 
         public string PclathView
 
@@ -423,8 +414,6 @@ namespace PIC_Simulator
             }
         }
 
-        
-
         public short Pcl
         {
             get { return memoryb1[0,0x02]; }
@@ -433,8 +422,6 @@ namespace PIC_Simulator
                 NotifyPropertyChanged("Pcl");
             }
         }
-
-        
 
         public void push(short value)
         {
@@ -580,6 +567,7 @@ namespace PIC_Simulator
             }
             return reg;
         }
+        
         public short clrBit(short reg, int bit) // clears specific bit in value and returns it
         {
             

@@ -466,7 +466,6 @@ namespace PIC_Simulator
             }
         }
 
-
         /// <summary>
         /// Checks Zero Flag
         /// Sets zero flag if register value is zero
