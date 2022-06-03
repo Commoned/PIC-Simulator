@@ -288,11 +288,11 @@ namespace PIC_Simulator
             {
                 memory.memoryb1[0, Memory.INTCON] = memory.setBit(memory.memoryb1[0, Memory.INTCON], 0);
             }
-            if (((precyclerbint & 0b_10000) != (memory.memoryb1[0, Memory.PORTB] & 0b_100000)) && memory.checkBit(memory.memoryb1[1, Memory.TRISB], 4)) // RB5 changed?
+            if (((precyclerbint & 0b_10000) != (memory.memoryb1[0, Memory.PORTB] & 0b_10000)) && memory.checkBit(memory.memoryb1[1, Memory.TRISB], 4)) // RB4 changed?
             {
                 memory.memoryb1[0, Memory.INTCON] = memory.setBit(memory.memoryb1[0, Memory.INTCON], 0);
             }
-            precyclerbint = memory.memoryb1[0,Memory.PORTB] & 0b_1110000;
+            precyclerbint = memory.memoryb1[0,Memory.PORTB] & 0b_11110000;
         }
 
         public void mirrorRegs()
@@ -397,10 +397,10 @@ namespace PIC_Simulator
             checkTMR0();
             checkINT();
             checkRBINT();
-            line = null;
             checkWDT();
             checkEE();
             memory.updateMemView();
+            line = null;
         }
 
         public bool checkInterrupt()
@@ -951,14 +951,21 @@ namespace PIC_Simulator
 
             if (currentBank == 0 && (freg == Memory.PORTA || freg == Memory.PORTB))
             {
-                value = handleDataLatch(currentBank, destreg, memory.memoryb1[currentBank, freg]);
+                memory.memoryb1[currentBank,destreg] = handleDataLatch(currentBank, destreg, memory.memoryb1[currentBank, freg]);
             }
+            
             if (currentBank == 1 && (freg == Memory.TRISA || freg == Memory.TRISB))
             {
                 _ = handleDataLatch(currentBank, destreg, memory.memoryb1[currentBank, freg]);
+                memory.memoryb1[currentBank, destreg] = memory.memoryb1[currentBank, freg];
+            }
+            else
+            {
+                memory.memoryb1[currentBank, destreg] = memory.memoryb1[currentBank, freg];
+
             }
 
-            memory.memoryb1[currentBank,destreg] = memory.memoryb1[currentBank,freg];
+            
             if (destreg == Memory.TMR0)
             {
                 initTMR0();
